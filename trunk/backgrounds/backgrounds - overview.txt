@@ -1,0 +1,27 @@
+BACKGROUNDS - OVERVIEW
+
+
+
+[status]index - name - additional info
+--------------------------------------
+[-]000 - Team Logo - start up
+[a]001 - Minor Digsite - blue sky
+[a]001a - Minor Digsite - Indy's digsite
+[a]001b - Minor Digsite - mountain panorama
+#001a and 001b may be reconjoined to one screen later on
+[a]002 - Major Digsite
+[-]003 - Abandoned Digsite - The Hut
+[-]004 - Information Table
+[-]005 - Letter of Charles Hapgood
+[-]006 - Coast
+[a]007 - Hole in the Mountains
+[a]008 - First Cave
+
+
+
+_____
+explanation of status:
+[-] not existant
+[a] work in progress (sketch)
+[b] work in progress (pixel)
+[c] done
