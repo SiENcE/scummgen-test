@@ -1,0 +1,5 @@
+<image>
+	<name>titleImage</name>
+	<transparent>true</transparent>
+	<bitmapName>image.bmp</bitmapName>
+</image>

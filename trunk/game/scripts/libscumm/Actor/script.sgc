@@ -1,0 +1,646 @@
+inline function Actor_animate(var actor, var anim)
+{
+	asm
+	{
+		pushWordVar .word actor
+		pushWordVar .word anim
+		animateActor
+	}
+}
+
+inline function Actor_face(var actor, var obj)
+{
+	asm
+	{
+		pushWordVar .word actor
+		pushWordVar .word obj
+		faceActor
+	}
+}
+
+inline function Actor_followCamera(var actor)
+{
+	asm
+	{
+		pushWordVar .word actor
+		actorFollowCamera
+	}
+}
+
+inline function Actor_getActorFromXY(var x, var y)
+{
+	var actor;
+	asm
+	{
+		pushWordVar .word x
+		pushWordVar .word y
+		getActorFromXY
+		writeWordVar .word actor
+	}
+	return actor;
+}
+
+inline function Actor_getAnimCounter(var actor)
+{
+	var animCounter;
+	asm
+	{
+		pushWordVar .word actor
+		getActorAnimCounter
+		writeWordVar .word animCounter
+	}
+	return animCounter;
+}
+
+inline function Actor_getAnimVar(var actor)
+{
+	var animVar;
+	asm
+	{
+		pushWordVar .word actor
+		getActorAnimateVariable
+		writeWordVar .word animVar
+	}
+	return animVar;
+}
+
+inline function Actor_getCostume(var actor)
+{
+	var costume;
+	asm
+	{
+		pushWordVar .word actor
+		getActorCostume
+		writeWordVar .word costume
+	}
+	return costume;
+}
+
+inline function Actor_getElevation(var actor)
+{
+	var elevation;
+	asm
+	{
+		pushWordVar .word actor
+		getActorElevation
+		writeWordVar .word elevation
+	}
+	return elevation;
+}
+
+inline function Actor_getLayer(var actor)
+{
+	var layer;
+	asm
+	{
+		pushWordVar .word actor
+		getActorLayer
+		writeWordVar .word layer
+	}
+	return layer;
+}
+
+inline function Actor_getRoom(var actor)
+{
+	var room;
+	asm
+	{
+		pushWordVar .word actor
+		getActorRoom
+		writeWordVar .word room
+	}
+	return room;
+}
+
+inline function Actor_getScaleX(var actor)
+{
+	var scaleX;
+	asm
+	{
+		pushWordVar .word actor
+		getActorScaleX
+		writeWordVar .word scaleX
+	}
+	return scaleX;
+}
+
+inline function Actor_getWalkBox(var actor)
+{
+	var walkBox;
+	asm
+	{
+		pushWordVar .word actor
+		getActorWalkBox
+		writeWordVar .word walkBox
+	}
+	return walkBox;
+}
+
+inline function Actor_getWidth(var actor)
+{
+	var width;
+	asm
+	{
+		pushWordVar .word actor
+		getActorWidth
+		writeWordVar .word width
+	}
+	return width;
+}
+
+inline function Actor_hide(var actor)
+{
+	asm
+	{
+		pushWordVar .word actor
+		pushWord .word 0
+		pushWord .word 0
+		pushWord .word 0
+		putActorAtXY
+	}
+}
+
+inline function Actor_ignoreBoxes(var ignore)
+{
+	if (ignore)
+		asm
+		{
+			actorOps ignoreBoxes
+		}
+	else
+		asm
+		{
+			actorOps followBoxes
+		}
+}
+
+inline function Actor_ignoreTurns(var ignore)
+{
+	if (ignore)
+		asm
+		{
+			actorOps actorIgnoreTurnsOn
+		}
+	else
+		asm
+		{
+			actorOps actorIgnoreTurnsOff
+		}
+}
+
+inline function Actor_init()
+{
+	asm
+	{
+		actorOps default
+	}
+}
+
+inline function Actor_isInBox(var actor, var box)
+{
+	var inBox;
+	asm
+	{
+		pushWordVar .word actors
+		pushWordVar .word box
+		isActorInBox
+		writeWordVar .word inBox
+	}
+	return inBox;
+}
+
+inline function Actor_isMoving(var actor)
+{
+	var moving;
+	asm
+	{
+		pushWordVar .word actor
+		getActorMoving
+		writeWordVar .word moving
+	}
+	return moving;
+}
+
+inline function Actor_newInit()
+{
+	asm
+	{
+		actorOps actorNew
+	}
+}
+
+inline function Actor_pauseWalk(var pause)
+{
+	if (pause)
+		asm
+		{
+			actorOps actorWalkPause
+		}
+	else
+		asm
+		{
+			actorOps actorWalkResume
+		}
+}
+
+inline function Actor_print(var actor, var string)
+{
+	asm
+	{
+		pushWordVar .word actor
+		printActor textString .string "%s{string}"
+	}
+}
+
+inline function Actor_printAt(var x, var y)
+{
+	asm
+	{
+		pushWordVar .word x
+		pushWordVar .word y
+		printActor at
+	}
+}
+
+inline function Actor_printCenter()
+{
+	asm
+	{
+		printActor center
+	}
+}
+
+inline function Actor_printClipped(var right)
+{
+	asm
+	{
+		pushWordVar .word right
+		printActor clipped
+	}
+}
+
+inline function Actor_printColor(var color)
+{
+	asm
+	{
+		pushWordVar .word color
+		printActor color
+	}
+}
+
+inline function Actor_printEgo(var string)
+{
+	asm
+	{
+		printEgo textString .string "%s{string}"
+	}
+}
+
+inline function Actor_printLeft()
+{
+	asm
+	{
+		printActor left
+	}
+}
+
+inline function Actor_printLoadDefault(var actor)
+{
+	asm
+	{
+		pushWordVar .word actor
+		printActor loadDefault
+	}
+}
+
+inline function Actor_printMumble()
+{
+	asm
+	{
+		printActor mumble
+	}
+}
+
+inline function Actor_printOverhead()
+{
+	asm
+	{
+		printActor overhead
+	}
+}
+
+inline function Actor_printSaveDefault()
+{
+	asm
+	{
+		printActor saveDefault
+	}
+}
+
+inline function Actor_putAtObject(var actor, var obj, var room)
+{
+	asm
+	{
+		pushWordVar .word actor
+		pushWordVar .word obj
+		pushWordVar .word room
+		putActorAtObject
+	}
+}
+
+inline function Actor_putAtXY(var actor, var x, var y, var room)
+{
+	asm
+	{
+		pushWordVar .word actor
+		pushWordVar .word x
+		pushWordVar .word y
+		pushWordVar .word room
+		putActorAtXY
+	}
+}
+
+inline function Actor_setAnimSpeed(var speed)
+{
+	asm
+	{
+		pushWordVar .word speed
+		actorOps animationSpeed
+	}
+}
+
+inline function Actor_setAnimVar(var animVar, var value)
+{
+	asm
+	{
+		pushWordVar .word animVar
+		pushWordVar .word value
+		actorOps actorVariable
+	}
+}
+
+inline function Actor_setCostume(var costume)
+{
+	asm
+	{
+		pushWordVar .word costume
+		actorOps costume
+	}
+}
+
+inline function Actor_setCurrent(var actor)
+{
+	asm
+	{
+		pushWordVar .word actor
+		actorOps actorSetCurrent
+	}
+}
+
+inline function Actor_setDefaultAnims()
+{
+	asm
+	{
+		actorOps animationDefault
+	}
+}
+
+const DIR_NORTH = 0;
+const DIR_EAST = 90;
+const DIR_SOUTH = 180;
+const DIR_WEST = 270;
+inline function Actor_setDirection(var dir)
+{
+	asm
+	{
+		pushWordVar .word dir
+		actorOps actorSetDirection
+	}
+}
+
+inline function Actor_setElevation(var elevation)
+{
+	asm
+	{
+		pushWordVar .word elevation
+		actorOps elevation
+	}
+}
+
+inline function Actor_setInitAnim(var anim)
+{
+	asm
+	{
+		pushWordVar .word anim
+		actorOps initAnimation
+	}
+}
+
+inline function Actor_setLayer(var layer)
+{
+	asm
+	{
+		pushWordVar .word layer
+		actorOps actorDepth
+	}
+}
+
+// TODO
+inline function Actor_setName()
+{
+}
+
+inline function Actor_setPalette(var i, var j)
+{
+	asm
+	{
+		pushWordVar .word i
+		pushWordVar .word j
+		actorOps palette
+	}
+}
+
+inline function Actor_setScale(var scale)
+{
+	asm
+	{
+		pushWordVar .word scale
+		actorOps scale
+	}
+}
+
+inline function Actor_setShadowMode(var shadowMode)
+{
+	asm
+	{
+		pushWordVar .word shadowMode
+		actorOps shadow
+	}
+}
+
+inline function Actor_setStandAnim(var anim)
+{
+	asm
+	{
+		pushWordVar .word anim
+		actorOps standAnimation
+	}
+}
+
+inline function Actor_setStepDistance(var i, var j)
+{
+	asm
+	{
+		pushWordVar .word i
+		pushWordVar .word j
+		actorOps stepDist
+	}
+}
+
+inline function Actor_setTalkAnim(var animStart, var animStop)
+{
+	asm
+	{
+		pushWordVar .word animStart
+		pushWordVar .word animStop
+		actorOps talkAnimation
+	}
+}
+
+inline function Actor_setTalkColor(var color)
+{
+	asm
+	{
+		pushWordVar .word color
+		actorOps talkColor
+	}
+}
+
+inline function Actor_setTalkScript(var talkScript)
+{
+	asm
+	{
+		pushWordVar .word talkScript
+		actorOps actorTalkScript
+	}
+}
+
+inline function Actor_setTextOffset(var offsetX, var offsetY)
+{
+	asm
+	{
+		pushWordVar .word offsetX
+		pushWordVar .word offsetY
+		actorOps textOffset
+	}
+}
+
+inline function Actor_setWalkAnim(var anim)
+{
+	asm
+	{
+		pushWordVar .word anim
+		actorOps walkAnimation
+	}
+}
+
+inline function Actor_setWalkScript(var walkScript)
+{
+	asm
+	{
+		pushWordVar .word walkScript
+		actorOps actorWalkScript
+	}
+}
+
+inline function Actor_setWidth(var width)
+{
+	asm
+	{
+		pushWordVar .word width
+		actorOps actorWidth
+	}
+}
+
+// TODO
+inline function Actor_sound()
+{
+}
+
+inline function Actor_stop()
+{
+	asm
+	{
+		actorOps actorStop
+	}
+}
+
+inline function Actor_stopTalking()
+{
+	asm
+	{
+		stopTalking
+	}
+}
+
+inline function Actor_talk(var actor, var string)
+{
+	asm
+	{
+		pushWordVar .word actor
+		talkActor .string "%s{string}"
+	}
+}
+
+inline function Actor_talkEgo(var string)
+{
+	asm
+	{
+		talkEgo .string "%s{string}"
+	}
+}
+
+inline function Actor_turnToDirection(var dir)
+{
+	asm
+	{
+		pushWordVar .word dir
+		actorOps actorTurnToDirection
+	}
+}
+
+inline function Actor_walkToObject(var actor, var obj, var dist)
+{
+	asm
+	{
+		pushWordVar .word actor
+		pushWordVar .word obj
+		pushWordVar .word dist
+		walkActorToObj
+	}
+}
+
+inline function Actor_walkToXY(var actor, var x, var y)
+{
+	asm
+	{
+		pushWordVar .word actor
+		pushWordVar .word x
+		pushWordVar .word y
+		walkActorTo
+	}
+}
+
+inline function Actor_zClip(var zClip)
+{
+	if (zClip)
+		asm
+		{
+			actorOps alwaysZClip
+		}
+	else
+		asm
+		{
+			actorOps neverZClip
+		}
+}

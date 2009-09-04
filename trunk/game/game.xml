@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<game>
+    <name>tentacle</name>
+    <description>Indiana Jones - On the Tracks of Thunder</description>
+    <key>105</key>
+	<room>creditsRoom</room>
+    <room>islandTentRoom</room>
+	<room>logoRoom</room>
+    <costume>indyCostume</costume>
+    <script>libscumm/Actor</script>
+    <script>libscumm/Interface</script>
+    <script>libscumm/Object</script>
+    <script>libscumm/Room</script>
+    <script>libscumm/Script</script>
+    <script>libscumm/Sound</script>
+    <script>libscumm/Util</script>
+    <script>libscumm/Verb</script>
+    <script>libscumm/vars</script>
+    <script>actors</script>
+    <script>input</script>
+	<script>main</script>
+    <charset>font1</charset>
+    <charset>font2</charset>
+    <charset>font3</charset>
+    <charset>font4</charset>
+    <charset>font5</charset>
+	<midi>testMidi</midi>
+</game>

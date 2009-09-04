@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<room>
+    <name>islandTentRoom</name>
+    <background>background</background>
+	<costume>indyClimbingCostume</costume>
+    <script>init</script>
+</room>

@@ -1,0 +1,175 @@
+const CREDITS_FADE_DELAY = 3;
+var creditsColor1;
+var creditsColor2;
+
+function displayIJLogo()
+{
+	var i;
+	var scale;
+
+	// Create and setup logo actor
+	Actor_setCurrent(ACTOR_LOGO);
+	Actor_setCostume(logoCostume);
+	Actor_setInitAnim(logoCostume_logoAnim);
+	Actor_ignoreBoxes(1);
+	Actor_putAtXY(ACTOR_LOGO, 161, 90, VAR_ROOM);
+
+	// Scale Indiana Jones logo gradually
+	scale = 0;
+	i = 0;
+	while (scale < 255)
+	{
+		Actor_setScale(scale);
+		scale += 1 + 20 * i / 256;
+		Script_delay(0);
+		i++;
+	}
+	Actor_setScale(255);
+
+	// Wait, and then display game title
+	Script_delaySeconds(1);
+	Object_draw(titleObject, 1);
+}
+
+inline function displayTeamFunction(var string)
+{
+	Interface_printTextLoadDefault();
+	Interface_printTextColor(creditsColor1);
+	Interface_printTextAt(160, 150);
+	Interface_printTextCenter();
+	Interface_printTextSaveDefault();
+	Interface_printText("%s{string}");
+}
+
+inline function displayTeamMember(var string)
+{
+	Interface_printLineLoadDefault();
+	Interface_printLineColor(creditsColor2);
+	Interface_printLineAt(160, 165);
+	Interface_printLineCenter();
+	Interface_printLineSaveDefault();
+	// We add spaces to force the credits to be printed longer
+	Interface_printLine("           %s{string}           ");
+}
+
+function fadeTeamMember(var start, var end, var step)
+{
+	var i;
+	for (i = start; i != end; i += step)
+	{
+		Room_setIntensity(i, creditsColor2, creditsColor2);
+		Script_delay(CREDITS_FADE_DELAY);
+	}
+	Room_setIntensity(end, creditsColor2, creditsColor2);
+}
+
+function fadeCredits(var start, var end, var step)
+{
+	var i;
+	for (i = start; i != end; i += step)
+	{
+		Room_setIntensity(i, creditsColor1, creditsColor1);
+		Room_setIntensity(i, creditsColor2, creditsColor2);
+		Script_delay(CREDITS_FADE_DELAY);
+	}
+	Room_setIntensity(end, creditsColor1, creditsColor1);
+	Room_setIntensity(end, creditsColor2, creditsColor2);
+}
+
+function displayCredits()
+{
+	const CREDITS_LOW_INTENSITY = 55;
+	const CREDITS_HIGH_INTENSITY = 255;
+	const CREDITS_INTENSITY_STEP_UP = 40;
+	const CREDITS_INTENSITY_STEP_DOWN = 50;
+
+	// Set credits color
+	creditsColor1 = COLOR_SILVER_CHALICE;
+	creditsColor2 = COLOR_SCREAMIN_GREEN;
+
+	// Set charset and text speed
+	Interface_setCharset(font3);
+	VAR_CHARINC = 3;
+
+	// Story and design
+	Room_setIntensity(CREDITS_LOW_INTENSITY, creditsColor1, creditsColor1);
+	Room_setIntensity(CREDITS_LOW_INTENSITY, creditsColor2, creditsColor2);
+	displayTeamFunction("story and design by:");
+	displayTeamMember("DOMINIK HASLINGER");
+	fadeCredits(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
+	Script_delaySeconds(2);
+	fadeTeamMember(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
+	displayTeamMember("");
+	Script_delaySeconds(1);
+	Room_setIntensity(CREDITS_LOW_INTENSITY, creditsColor2, creditsColor2);
+	displayTeamMember("JENS DOBLIES");
+	fadeTeamMember(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
+	Script_delaySeconds(2);
+	fadeTeamMember(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
+	displayTeamMember("");
+	Script_delaySeconds(1);
+	Room_setIntensity(CREDITS_LOW_INTENSITY, creditsColor2, creditsColor2);
+	displayTeamMember("SEBASTIEN RONSSE");
+	fadeTeamMember(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
+	Script_delaySeconds(2);
+	fadeCredits(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
+	displayTeamMember("");
+	Util_redraw();
+	Script_delaySeconds(1);
+
+	// Programming
+	Room_setIntensity(CREDITS_LOW_INTENSITY, creditsColor1, creditsColor1);
+	Room_setIntensity(CREDITS_LOW_INTENSITY, creditsColor2, creditsColor2);
+	displayTeamFunction("programmed by:");
+	displayTeamMember("SEBASTIEN RONSSE");
+	fadeCredits(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
+	Script_delaySeconds(2);
+	fadeTeamMember(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
+	displayTeamMember("");
+	Script_delaySeconds(1);
+	Room_setIntensity(CREDITS_LOW_INTENSITY, creditsColor2, creditsColor2);
+	displayTeamMember("DOMINIK HASLINGER");
+	fadeTeamMember(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
+	Script_delaySeconds(2);
+	fadeCredits(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
+	displayTeamMember("");
+	Util_redraw();
+	Script_delaySeconds(1);
+	
+	// Background art
+	Room_setIntensity(CREDITS_LOW_INTENSITY, creditsColor1, creditsColor1);
+	Room_setIntensity(CREDITS_LOW_INTENSITY, creditsColor2, creditsColor2);
+	displayTeamFunction("background art by:");
+	displayTeamMember("JENS DOBLIES");
+	fadeCredits(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
+	Script_delaySeconds(2);
+	fadeCredits(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
+	displayTeamMember("");
+	Util_redraw();
+	Script_delaySeconds(1);
+
+	// Hide logo and title
+	Actor_hide(ACTOR_LOGO);
+	Object_setState(titleObject, 0);
+}
+
+function entry()
+{
+	// Wait and display Indiana Jones logo
+	Script_delaySeconds(1);
+	displayIJLogo();
+
+	// Wait and display credits
+	Script_delaySeconds(2);
+	displayCredits();
+
+	// Wait, then set the transition effects and load the island tent room
+	Script_delaySeconds(1);
+	VAR_FADE_DELAY = 1;
+	Room_fade(FADE_NO_EFFECT, FADE_SCROLL_EFFECT_UP);
+	Room_load(islandTentRoom);
+}
+
+function exit()
+{
+}

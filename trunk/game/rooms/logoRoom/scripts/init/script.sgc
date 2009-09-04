@@ -1,0 +1,51 @@
+function changeIntensity(var a, var b, var minColor, var maxColor, var step)
+{
+	var i;
+
+	Room_setIntensity(a, minColor, maxColor);
+	Script_delay(0);
+
+	if (step > 0)
+		for (i = a; i < b; i += step)
+		{
+			Room_setIntensity(i, minColor, maxColor);
+			Script_delay(0);
+		}
+	else
+		for (i = a; i > b; i += step)
+		{
+			Room_setIntensity(i, minColor, maxColor);
+			Script_delay(0);
+		}
+}
+
+function displayLogo()
+{
+	const LOGO_FADE_DELAY = 3;
+	var i;
+	Room_setIntensity(0, 0, 255);
+	for (i = 0; i < 256; i += 15)
+	{
+		Room_setIntensity(i, 0, 255);
+		Script_delay(LOGO_FADE_DELAY);
+	}
+	Script_delaySeconds(4);
+}
+
+function entry()
+{
+	Sound_startMusic(testMidi);
+
+	// Display the team logo
+	displayLogo();
+
+	// Set the transition effects and load the credits screen
+	VAR_FADE_DELAY = 4;
+	Room_fade(FADE_TRANSITION_IRIS_EFFECT, FADE_TRANSITION_IRIS_EFFECT);
+	Room_load(creditsRoom);
+}
+
+function exit()
+{
+	
+}

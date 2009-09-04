@@ -1,0 +1,52 @@
+function sentenceHandler(var vrb, var objA, var objB)
+{
+	var entryPt;
+	Util_printDebug("sentenceHandler - verb: %i{vrb}, objA: %i{objA}, objB: %i{objB}");
+	entryPt = Verb_getEntryPoint(objA, vrb);
+	Util_printDebug("entryPoint: %i{entryPt}");
+	if (entryPt != 0)
+		Script_startObjectScriptQuick(objA, vrb, [1, 2, 3], 3);
+}
+
+function mouseClick(var posX, var posY)
+{
+	var object;
+
+	// Find object at mouse coordinates
+	object = Object_find(posX, posY);
+
+	// If an object has been clicked, we just say its name, otherwise we walk to the destination
+	if (object == 0)
+	{
+		Actor_walkToXY(VAR_EGO, posX, posY);
+	}
+	else
+	{
+		Verb_doSentence(13, object, 0);
+		Actor_talk(VAR_EGO, "Hey ! But... this is a %n{object} !");
+	}
+}
+
+thread inputHandler(var area, var command, var button)
+{
+	const AREA_MOUSE_CLICK = 2;
+	const AREA_KEY_PRESS = 4;
+
+	Util_printDebug("area: %i{area}, command: %i{command}, button: %i{button}");
+
+	switch (area)
+	{
+		case AREA_KEY_PRESS:
+			keyPress(command);
+			break;
+		case AREA_MOUSE_CLICK:
+			mouseClick(VAR_VIRT_MOUSE_X, VAR_VIRT_MOUSE_Y);
+			break;
+		default:
+			break;
+	}
+}
+
+function keyPress(var key)
+{
+}

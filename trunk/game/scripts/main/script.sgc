@@ -1,0 +1,13 @@
+function main(var bootParam)
+{
+	// First, setup engine variables
+	VAR_TIMER_NEXT = 1;
+	VAR_MAINMENU_KEY = 319;
+	VAR_RESTART_KEY = 322;
+	VAR_VERB_SCRIPT = inputHandler;
+	VAR_SENTENCE_SCRIPT = sentenceHandler;
+
+	// Load the logo screen
+	Room_setScreen(0, 200);
+	Room_load(logoRoom);
+}

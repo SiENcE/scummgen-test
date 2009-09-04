@@ -1,0 +1,3 @@
+// Actors list
+const ACTOR_INDY = 1;
+const ACTOR_LOGO = 2;

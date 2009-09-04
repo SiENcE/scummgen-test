@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<palette>
+    <transparentIndex>0</transparentIndex>
+	<cycle>
+		<name>logoCycle</name>
+		<start>198</start>
+		<end>221</end>
+		<delay>8</delay>
+		<forward>true</forward>
+	</cycle>	
+</palette>
