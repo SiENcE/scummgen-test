@@ -1,11 +1,11 @@
-const MAX_DIALOG_LINES = 5;
+const N_DIALOG_LINES = 5;
 
 inline function Dialog_new()
 {
 	var dialog;
 	var i;
-	dialog = Util_dimArray(ARRAY_INT, MAX_DIALOG_LINES);
-	for (i = 0; i < MAX_DIALOG_LINES; i++)
+	dialog = Util_dimArray(ARRAY_INT, N_DIALOG_LINES);
+	for (i = 0; i < N_DIALOG_LINES; i++)
 		dialog[i] = 0;
 	return dialog;
 }
@@ -15,12 +15,12 @@ inline function Dialog_add(var dialog, var string)
 	var i;
 
 	// Look for a free spot
-	for (i = 0; i < MAX_DIALOG_LINES; i++)
+	for (i = 0; i < N_DIALOG_LINES; i++)
 		if (dialog[i] == 0)
 			break;
 
 	// If we reached the maximum number of lines, we quit
-	if (i == MAX_DIALOG_LINES)
+	if (i == N_DIALOG_LINES)
 	{
 		Util_printDebug("Dialog_add: reached the maximum number of lines !");
 		Util_quit();
@@ -31,7 +31,7 @@ inline function Dialog_add(var dialog, var string)
 
 inline function Dialog_remove(var dialog, var index)
 {
-	if (index > MAX_DIALOG_LINES)
+	if (index > N_DIALOG_LINES)
 	{
 		Util_printDebug("Dialog_delete: index is invalid !");
 		Util_quit();
@@ -43,11 +43,57 @@ inline function Dialog_remove(var dialog, var index)
 
 inline function Dialog_display(var dialog)
 {
+	const BAND_X = 0;
+	const BAND_Y = 144;
+	const BAND_WIDTH = 320;
+	const BAND_HEIGHT = 56;
+	const BOX_X = 0;
+	const BOX_Y = 151;
+	const BOX_WIDTH = 320;
+	const BOX_HEIGHT = 49;
+	const LINE_STEP = 10;
+	const TEXT_X = 2;
+	const TEXT_Y = 152;
 	var i;
-	Util_printDebug("Displaying:");
-	for (i = 0; i < MAX_DIALOG_LINES; i++)
+	var s;
+	var currentLine;
+
+	// Change room height to let space for the dialog frame
+	Room_setScreen(0, BAND_Y);
+	Util_redraw();
+
+	// Draw a black band first
+	Util_drawBox(BAND_X, BAND_Y, BAND_X + BAND_WIDTH - 1, BAND_Y + BAND_HEIGHT - 1, COLOR_BLACK);
+
+	// Draw the box around the dialog
+	Util_drawBox(BOX_X, BOX_Y, BOX_X + BOX_WIDTH - 1, BOX_Y + BOX_HEIGHT - 1, COLOR_SCORPION);
+
+	// Draw a left vertical highlight
+	Util_drawBox(BOX_X, BOX_Y, BOX_X, BOX_Y + BOX_HEIGHT - 1, COLOR_SILVER_CHALICE);
+
+	// Draw horizontal lines between the dialog lines (as well as highlights)
+	for (i = 0; i < N_DIALOG_LINES; i++)
+	{
+		Util_drawBox(BOX_X, BOX_Y - 1 + i * LINE_STEP, BOX_X + BOX_WIDTH - 1, BOX_Y - 1 + i * LINE_STEP, COLOR_BLACK);
+		Util_drawBox(BOX_X, BOX_Y + i * LINE_STEP, BOX_X + BOX_WIDTH - 1, BOX_Y + i * LINE_STEP, COLOR_SILVER_CHALICE);
+	}
+
+	// Setup font
+	Interface_setCharset(font1);
+	Interface_printTextLoadDefault();
+	Interface_printTextColor(COLOR_SCREAMIN_GREEN);
+	Interface_printTextSaveDefault();
+
+	// Print dialog lines
+	currentLine = 0;
+	for (i = 0; i < N_DIALOG_LINES; i++)
 		if (dialog[i] != 0)
-			Util_printDebug(dialog[i]);
+		{
+			Interface_printTextAt(TEXT_X, TEXT_Y + currentLine * LINE_STEP);
+			s = dialog[i];
+			Interface_printText("\x05%s{s}"); // Add small arrow in front of the text
+			currentLine++;
+		}
 }
 
 inline function Dialog_delete(var dialog)

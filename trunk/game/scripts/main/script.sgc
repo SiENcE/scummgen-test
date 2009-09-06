@@ -1,3 +1,13 @@
+function preEntry()
+{
+	// Set room height before entering it
+	Room_setScreen(0, VAR_ROOM_HEIGHT);
+}
+
+function preExit()
+{
+}
+
 function main(var bootParam)
 {
 	// First, setup engine variables
@@ -6,8 +16,9 @@ function main(var bootParam)
 	VAR_RESTART_KEY = 322;
 	VAR_VERB_SCRIPT = Input_handler;
 	VAR_SENTENCE_SCRIPT = Input_sentenceHandler;
+	VAR_ENTRY_SCRIPT = preEntry;
+	VAR_EXIT_SCRIPT = preExit;
 
 	// Load the logo screen
-	Room_setScreen(0, 200);
 	Room_load(logoRoom);
 }
