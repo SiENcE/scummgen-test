@@ -1,0 +1,27 @@
+PUZZLE DOC - CHAPTER 1
+
+
+
+Puzzle #01: Entering the first cave and getting out again
+-----------------------
+
+1.a Task: Get a rope ladder and attach it to the two little hooks at the hole.
+1.b Solution: 
+Go to minor digsite. Pick up "rope ladder". 
+Go to hole-in-the-mountains-site. Use "rope ladder" with "hooks".
+
+
+2.a Task: Get light into the hole.
+2.b Solution: 
+Go to hut-reconstruction-site. Look at "Jastro's tool box". Pick up "portable lamp" from "Jastro's tool box". 
+Go to major digsite. Use "portable lamp" with "generator" (lamp lightens in inventory). 
+Go to hole-in-the-mountains-site (lamp turns off, Indy: "It's off. The cable is too short."). 
+Go to major digsite. Pick up "extension cable". Use "extension cable" with "lamp". Use "extended lamp" with "generator". 
+Go to hole-in-the-mountains-site. Go to "hole" / use "rope ladder".
+
+
+3.a Task: Get out of the hole.
+3.b Solution: 
+Pick up "rope ladder". Touch "metal thing" (dagger in a sheath). Pick up "metal thing" (dagger in a sheath). 
+Open / pull "dagger in a sheath" (takes it out of its sheath). Use "dagger" with "rope ladder". 
+Use "rope" with "pick axe". Use "grapnel" with "hole". Go to "hole" / use "rope".
