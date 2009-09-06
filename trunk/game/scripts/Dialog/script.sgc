@@ -1,0 +1,60 @@
+const MAX_DIALOG_LINES = 5;
+
+inline function Dialog_new()
+{
+	var dialog;
+	var i;
+	dialog = Util_dimArray(ARRAY_INT, MAX_DIALOG_LINES);
+	for (i = 0; i < MAX_DIALOG_LINES; i++)
+		dialog[i] = 0;
+	return dialog;
+}
+
+inline function Dialog_add(var dialog, var string)
+{
+	var i;
+
+	// Look for a free spot
+	for (i = 0; i < MAX_DIALOG_LINES; i++)
+		if (dialog[i] == 0)
+			break;
+
+	// If we reached the maximum number of lines, we quit
+	if (i == MAX_DIALOG_LINES)
+	{
+		Util_printDebug("Dialog_add: reached the maximum number of lines !");
+		Util_quit();
+	}
+
+	dialog[i] = Util_copyString(string);
+}
+
+inline function Dialog_remove(var dialog, var index)
+{
+	if (index > MAX_DIALOG_LINES)
+	{
+		Util_printDebug("Dialog_delete: index is invalid !");
+		Util_quit();
+	}
+
+	Util_nukeArray(dialog[index]);
+	dialog[index] = 0;
+}
+
+inline function Dialog_display(var dialog)
+{
+	var i;
+	Util_printDebug("Displaying:");
+	for (i = 0; i < MAX_DIALOG_LINES; i++)
+		if (dialog[i] != 0)
+			Util_printDebug(dialog[i]);
+}
+
+inline function Dialog_delete(var dialog)
+{
+	var i;
+	for (i = 0; i < MAX_DIALOG_LINES; i++)
+		if (dialog[i] != 0)
+			Util_nukeArray(dialog[0]);
+	Util_nukeArray(dialog);
+}

@@ -4,8 +4,8 @@ function main(var bootParam)
 	VAR_TIMER_NEXT = 1;
 	VAR_MAINMENU_KEY = 319;
 	VAR_RESTART_KEY = 322;
-	VAR_VERB_SCRIPT = inputHandler;
-	VAR_SENTENCE_SCRIPT = sentenceHandler;
+	VAR_VERB_SCRIPT = Input_handler;
+	VAR_SENTENCE_SCRIPT = Input_sentenceHandler;
 
 	// Load the logo screen
 	Room_setScreen(0, 200);

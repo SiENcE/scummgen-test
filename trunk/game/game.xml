@@ -17,7 +17,8 @@
     <script>libscumm/Verb</script>
     <script>libscumm/vars</script>
     <script>actors</script>
-    <script>input</script>
+    <script>Dialog</script>
+	<script>Input</script>
 	<script>main</script>
     <charset>font1</charset>
     <charset>font2</charset>

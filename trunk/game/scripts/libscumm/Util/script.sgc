@@ -1,3 +1,41 @@
+inline function Util_copyString(var string)
+{
+	var length;
+	var i;
+
+	length = Util_getStringLength(string);
+	returnValue = Util_dimArray(ARRAY_STRING, length);
+	for (i = 0; i < length; i++)
+		returnValue[i] = string[i];
+
+	// We wrote directly to returnValue, so no need to explicitely return it
+}
+
+const ARRAY_INT = 199;
+const ARRAY_STRING = 203;
+inline function Util_dimArray(var type, var size)
+{
+	returnValue = 0;
+	if (type == ARRAY_INT)
+		asm
+		{
+			pushWordVar .word size
+			dimArray intArray .word returnValue
+		}
+	else if (type == ARRAY_STRING)
+		asm
+		{
+			pushWordVar .word size
+			dimArray stringArray .word returnValue
+		}
+	else
+	{
+		Util_printDebug("Util_dimArray: type %i{type} unknown !");
+		Util_quit();
+	}
+	// We wrote directly to returnValue, so no need to explicitely return it
+}
+
 inline function Util_drawBox(var x1, var y1, var x2, var y2, var color)
 {
 	asm
@@ -101,6 +139,26 @@ inline function Util_getRandomNumberRange(var min, var max)
 		writeWordVar .word number
 	}
 	return number;
+}
+
+inline function Util_getStringLength(var string)
+{
+	const STRING_OPCODE = 0xFF;
+	const VOICE_MESSAGE = 10;
+
+	returnValue = 0;
+	while(string[returnValue] != 0)
+		if (string[returnValue] == STRING_OPCODE)
+		{
+			returnValue += 2; // STRING_OPCODE and message type
+			if (string[returnValue - 1] == VOICE_MESSAGE)
+				returnValue += 12;
+			returnValue += 2; // value
+		}
+		else
+			returnValue++;
+
+	// We wrote directly to returnValue, so no need to explicitely return it
 }
 
 inline function Util_nukeArray(var array)

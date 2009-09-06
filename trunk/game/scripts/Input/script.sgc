@@ -1,4 +1,4 @@
-function sentenceHandler(var vrb, var objA, var objB)
+function Input_sentenceHandler(var vrb, var objA, var objB)
 {
 	var entryPt;
 	Util_printDebug("sentenceHandler - verb: %i{vrb}, objA: %i{objA}, objB: %i{objB}");
@@ -8,7 +8,7 @@ function sentenceHandler(var vrb, var objA, var objB)
 		Script_startObjectScriptQuick(objA, vrb, [1, 2, 3], 3);
 }
 
-function mouseClick(var posX, var posY)
+function Input_mouseClick(var posX, var posY)
 {
 	var object;
 
@@ -27,7 +27,7 @@ function mouseClick(var posX, var posY)
 	}
 }
 
-thread inputHandler(var area, var command, var button)
+thread Input_handler(var area, var command, var button)
 {
 	const AREA_MOUSE_CLICK = 2;
 	const AREA_KEY_PRESS = 4;
@@ -37,16 +37,16 @@ thread inputHandler(var area, var command, var button)
 	switch (area)
 	{
 		case AREA_KEY_PRESS:
-			keyPress(command);
+			Input_keyPress(command);
 			break;
 		case AREA_MOUSE_CLICK:
-			mouseClick(VAR_VIRT_MOUSE_X, VAR_VIRT_MOUSE_Y);
+			Input_mouseClick(VAR_VIRT_MOUSE_X, VAR_VIRT_MOUSE_Y);
 			break;
 		default:
 			break;
 	}
 }
 
-function keyPress(var key)
+function Input_keyPress(var key)
 {
 }
