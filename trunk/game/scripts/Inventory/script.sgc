@@ -1,0 +1,163 @@
+function Inventory_display()
+{
+	const BAND_X = 0;
+	const BAND_Y = 143;
+	const BAND_WIDTH = 320;
+	const BAND_HEIGHT = 57;
+	const BOX_X = 0;
+	const BOX_Y = 153;
+	const BOX_WIDTH = 320;
+	const BOX_HEIGHT = 47;
+	const VERB_BOX_X = 2;
+	const VERB_BOX_Y = 155;
+	const VERB_BOX_WIDTH = 46;
+	const VERB_BOX_HEIGHT = 14;
+	const N_VERB_ROWS = 3;
+	const N_VERB_COLUMNS = 3;
+	const INV_BOX_X = 160;
+	const INV_BOX_Y = 153;
+	const INV_BOX_WIDTH = 32;
+	const INV_BOX_HEIGHT = 24;
+	const N_INV_ROWS = 2;
+	const N_INV_COLUMNS = 5;
+	const ARROW_BOX_X = 143;
+	const ARROW_BOX_Y = 153;
+	const ARROW_BOX_HEIGHT = 47;
+	const VERB_GIVE_X = 15;
+	const VERB_OPEN_X = 14;
+	const VERB_CLOSE_X = 12;
+	const VERB_PICK_UP_X = 54;
+	const VERB_TALK_TO_X = 53;
+	const VERB_LOOK_AT_X = 53;
+	const VERB_USE_X = 108;
+	const VERB_PUSH_X = 106;
+	const VERB_PULL_X = 108;
+	const VERB_TEXT_Y = 159;
+	const ARROW_TEXT_X = 147;
+	const ARROW_UP_TEXT_Y = 158;
+	const ARROW_DOWN_TEXT_Y = 180;
+	var i;
+
+	// Change room height to let space for the inventory frame
+	Room_setScreen(0, BAND_Y);
+	Util_redraw();
+
+	// Draw a black band first
+	Util_drawBox(BAND_X, BAND_Y, BAND_X + BAND_WIDTH - 1, BAND_Y + BAND_HEIGHT - 1, COLOR_BLACK);
+
+	// Draw the box around the dialog
+	Util_drawBox(BOX_X, BOX_Y, BOX_X + BOX_WIDTH - 1, BOX_Y + BOX_HEIGHT - 1, COLOR_SCORPION);
+
+	// Draw highlights around the box
+	Util_drawBox(BOX_X, BOX_Y, BOX_X + BOX_WIDTH - 1, BOX_Y, COLOR_SILVER_CHALICE);
+	Util_drawBox(BOX_X, BOX_Y, BOX_X, BOX_Y + BOX_HEIGHT - 1, COLOR_SILVER_CHALICE);
+
+	// Draw verb boxes horizontal highlights
+	for (i = 0; i < N_VERB_ROWS; i++)
+		Util_drawBox(VERB_BOX_X + 1,
+					 VERB_BOX_Y + 1 + i * VERB_BOX_HEIGHT,
+					 VERB_BOX_X + N_VERB_COLUMNS * VERB_BOX_WIDTH - 1,
+					 VERB_BOX_Y + 1 + i * VERB_BOX_HEIGHT,
+					 COLOR_SILVER_CHALICE);
+
+	// Draw verb boxes vertical highlights
+	for (i = 0; i < N_VERB_COLUMNS; i++)
+		Util_drawBox(VERB_BOX_X + 1 + i * VERB_BOX_WIDTH,
+					 VERB_BOX_Y + 1,
+					 VERB_BOX_X + 1 + i * VERB_BOX_WIDTH,
+					 VERB_BOX_Y + N_VERB_ROWS * VERB_BOX_HEIGHT - 1,
+					 COLOR_SILVER_CHALICE);
+
+	// Draw verb boxes horizontal black outlines
+	for (i = 0; i < N_VERB_ROWS + 1; i++)
+		Util_drawBox(VERB_BOX_X,
+					 VERB_BOX_Y + i * VERB_BOX_HEIGHT,
+					 VERB_BOX_X + N_VERB_COLUMNS * VERB_BOX_WIDTH,
+					 VERB_BOX_Y + i * VERB_BOX_HEIGHT,
+					 COLOR_BLACK);
+
+	// Draw verb boxes vertical black outlines
+	for (i = 0; i < N_VERB_COLUMNS + 1; i++)
+		Util_drawBox(VERB_BOX_X + i * VERB_BOX_WIDTH,
+					 VERB_BOX_Y,
+					 VERB_BOX_X + i * VERB_BOX_WIDTH,
+					 VERB_BOX_Y + N_VERB_ROWS * VERB_BOX_HEIGHT - 1,
+					 COLOR_BLACK);
+
+	// Draw inventory boxes horizontal highlights (only one line is necessary)
+	Util_drawBox(INV_BOX_X,
+				 INV_BOX_Y + INV_BOX_HEIGHT,
+				 INV_BOX_X + N_INV_COLUMNS * INV_BOX_WIDTH - 1,
+				 INV_BOX_Y + INV_BOX_HEIGHT,
+				 COLOR_SILVER_CHALICE);
+
+	// Draw inventory boxes vertical highlights
+	for (i = 0; i < N_INV_COLUMNS; i++)
+		Util_drawBox(INV_BOX_X + 1 + i * INV_BOX_WIDTH,
+					 INV_BOX_Y,
+					 INV_BOX_X + 1 + i * INV_BOX_WIDTH,
+					 INV_BOX_Y + N_INV_ROWS * INV_BOX_HEIGHT - 2,
+					 COLOR_SILVER_CHALICE);
+
+	// Draw inventory boxes horizontal black outline (only one line is necessary)
+	Util_drawBox(INV_BOX_X,
+				 INV_BOX_Y + INV_BOX_HEIGHT - 1,
+				 INV_BOX_X + N_INV_COLUMNS * INV_BOX_WIDTH - 1,
+				 INV_BOX_Y + INV_BOX_HEIGHT - 1,
+				 COLOR_BLACK);
+
+	// Draw inventory boxes vertical black outlines
+	for (i = 0; i < N_INV_COLUMNS; i++)
+		Util_drawBox(INV_BOX_X + i * INV_BOX_WIDTH,
+					 INV_BOX_Y,
+					 INV_BOX_X + i * INV_BOX_WIDTH,
+					 INV_BOX_Y + N_INV_ROWS * INV_BOX_HEIGHT - 2,
+					 COLOR_BLACK);
+
+	// Draw arrow box highlight
+	Util_drawBox(ARROW_BOX_X + 1,
+				 ARROW_BOX_Y,
+				 ARROW_BOX_X + 1,
+				 ARROW_BOX_Y + ARROW_BOX_HEIGHT - 1,
+				 COLOR_SILVER_CHALICE);
+
+	// Draw arrow box black outline
+	Util_drawBox(ARROW_BOX_X,
+				 ARROW_BOX_Y,
+				 ARROW_BOX_X,
+				 ARROW_BOX_Y + ARROW_BOX_HEIGHT - 1,
+				 COLOR_BLACK);
+
+	// Setup font
+	Interface_setCharset(font1);
+	Interface_printTextLoadDefault();
+	Interface_printTextLeft();
+	Interface_printTextColor(COLOR_SCREAMIN_GREEN);
+	Interface_printTextSaveDefault();
+
+	// Print verbs
+	Interface_printTextAt(VERB_GIVE_X, VERB_TEXT_Y);
+	Interface_printText("Give");
+	Interface_printTextAt(VERB_OPEN_X, VERB_TEXT_Y + VERB_BOX_HEIGHT);
+	Interface_printText("Open");
+	Interface_printTextAt(VERB_CLOSE_X, VERB_TEXT_Y + 2 * VERB_BOX_HEIGHT);
+	Interface_printText("Close");
+	Interface_printTextAt(VERB_PICK_UP_X, VERB_TEXT_Y);
+	Interface_printText("Pick up");
+	Interface_printTextAt(VERB_TALK_TO_X, VERB_TEXT_Y + VERB_BOX_HEIGHT);
+	Interface_printText("Talk to");
+	Interface_printTextAt(VERB_LOOK_AT_X, VERB_TEXT_Y + 2 * VERB_BOX_HEIGHT);
+	Interface_printText("Look at");
+	Interface_printTextAt(VERB_USE_X, VERB_TEXT_Y);
+	Interface_printText("Use");
+	Interface_printTextAt(VERB_PUSH_X, VERB_TEXT_Y + VERB_BOX_HEIGHT);
+	Interface_printText("Push");
+	Interface_printTextAt(VERB_PULL_X, VERB_TEXT_Y + 2 * VERB_BOX_HEIGHT);
+	Interface_printText("Pull");
+	
+	// Print arrows
+	Interface_printTextAt(ARROW_TEXT_X, ARROW_UP_TEXT_Y);
+	Interface_printText("\x01"); // Up arrow
+	Interface_printTextAt(ARROW_TEXT_X, ARROW_DOWN_TEXT_Y);
+	Interface_printText("\x02"); // Down arrow
+}

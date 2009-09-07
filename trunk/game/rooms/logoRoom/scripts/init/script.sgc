@@ -40,11 +40,17 @@ function entry()
 	// Display the team logo
 	displayLogo();
 
+	// Test for inventory display
+	Inventory_display();
+	Script_delaySeconds(5);
+
+	// Test for dialog display
 	dialog = Dialog_new();
 	Dialog_add(dialog, "I'm here to enjoy Madame's outrageous orations.");
 	Dialog_add(dialog, "I'm with the band.");
 	Dialog_add(dialog, "Let me in, you Darwinian nightmare.");
 	Dialog_display(1);
+	Dialog_delete(dialog);
 
 	// Wait a bit, set the transition effects and load the credits screen
 	Script_delaySeconds(10);

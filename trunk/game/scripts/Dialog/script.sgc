@@ -29,7 +29,7 @@ inline function Dialog_add(var dialog, var string)
 	dialog[i] = Util_copyString(string);
 }
 
-inline function Dialog_remove(var dialog, var index)
+function Dialog_remove(var dialog, var index)
 {
 	if (index > N_DIALOG_LINES)
 	{
@@ -41,16 +41,16 @@ inline function Dialog_remove(var dialog, var index)
 	dialog[index] = 0;
 }
 
-inline function Dialog_display(var dialog)
+function Dialog_display(var dialog)
 {
 	const BAND_X = 0;
-	const BAND_Y = 144;
+	const BAND_Y = 143;
 	const BAND_WIDTH = 320;
-	const BAND_HEIGHT = 56;
+	const BAND_HEIGHT = 57;
 	const BOX_X = 0;
-	const BOX_Y = 151;
+	const BOX_Y = 150;
 	const BOX_WIDTH = 320;
-	const BOX_HEIGHT = 49;
+	const BOX_HEIGHT = 50;
 	const LINE_STEP = 10;
 	const TEXT_X = 2;
 	const TEXT_Y = 152;
@@ -69,18 +69,19 @@ inline function Dialog_display(var dialog)
 	Util_drawBox(BOX_X, BOX_Y, BOX_X + BOX_WIDTH - 1, BOX_Y + BOX_HEIGHT - 1, COLOR_SCORPION);
 
 	// Draw a left vertical highlight
-	Util_drawBox(BOX_X, BOX_Y, BOX_X, BOX_Y + BOX_HEIGHT - 1, COLOR_SILVER_CHALICE);
+	Util_drawBox(BOX_X, BOX_Y + 1, BOX_X, BOX_Y + BOX_HEIGHT - 1, COLOR_SILVER_CHALICE);
 
 	// Draw horizontal lines between the dialog lines (as well as highlights)
 	for (i = 0; i < N_DIALOG_LINES; i++)
 	{
-		Util_drawBox(BOX_X, BOX_Y - 1 + i * LINE_STEP, BOX_X + BOX_WIDTH - 1, BOX_Y - 1 + i * LINE_STEP, COLOR_BLACK);
-		Util_drawBox(BOX_X, BOX_Y + i * LINE_STEP, BOX_X + BOX_WIDTH - 1, BOX_Y + i * LINE_STEP, COLOR_SILVER_CHALICE);
+		Util_drawBox(BOX_X, BOX_Y + i * LINE_STEP, BOX_X + BOX_WIDTH - 1, BOX_Y + i * LINE_STEP, COLOR_BLACK);
+		Util_drawBox(BOX_X, BOX_Y + 1 + i * LINE_STEP, BOX_X + BOX_WIDTH - 1, BOX_Y + 1 + i * LINE_STEP, COLOR_SILVER_CHALICE);
 	}
 
 	// Setup font
 	Interface_setCharset(font1);
 	Interface_printTextLoadDefault();
+	Interface_printTextLeft();
 	Interface_printTextColor(COLOR_SCREAMIN_GREEN);
 	Interface_printTextSaveDefault();
 
@@ -96,10 +97,10 @@ inline function Dialog_display(var dialog)
 		}
 }
 
-inline function Dialog_delete(var dialog)
+function Dialog_delete(var dialog)
 {
 	var i;
-	for (i = 0; i < MAX_DIALOG_LINES; i++)
+	for (i = 0; i < N_DIALOG_LINES; i++)
 		if (dialog[i] != 0)
 			Util_nukeArray(dialog[0]);
 	Util_nukeArray(dialog);
