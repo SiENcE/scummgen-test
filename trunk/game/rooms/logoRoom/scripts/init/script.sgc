@@ -55,7 +55,7 @@ function entry()
 	// Wait a bit, set the transition effects and load the credits screen
 	Script_delaySeconds(10);
 	VAR_FADE_DELAY = 4;
-	Room_fade(FADE_TRANSITION_IRIS_EFFECT, FADE_TRANSITION_IRIS_EFFECT);
+	Room_fade(ROOM_FADE_TRANSITION_IRIS_EFFECT, ROOM_FADE_TRANSITION_IRIS_EFFECT);
 	Room_load(creditsRoom);
 }
 

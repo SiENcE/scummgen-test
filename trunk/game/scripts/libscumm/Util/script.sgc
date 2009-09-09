@@ -1,3 +1,7 @@
+// Array types
+const ARRAY_INT = 199;
+const ARRAY_STRING = 203;
+
 inline function Util_copyString(var string)
 {
 	var length;
@@ -11,8 +15,6 @@ inline function Util_copyString(var string)
 	// We wrote directly to returnValue, so no need to explicitely return it
 }
 
-const ARRAY_INT = 199;
-const ARRAY_STRING = 203;
 inline function Util_dimArray(var type, var size)
 {
 	returnValue = 0;

@@ -1,3 +1,4 @@
+// Colors
 const COLOR_BLACK = 0;
 const COLOR_DARK_BLUE = 1;
 const COLOR_JAPANESE_LAUREL = 2;

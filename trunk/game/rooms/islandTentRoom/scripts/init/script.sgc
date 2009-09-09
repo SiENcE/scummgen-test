@@ -46,7 +46,7 @@ function entry()
 	Actor_setCostume(indyClimbingCostume);
 	Actor_setAnimSpeed(6);
 	Actor_putAtXY(VAR_EGO, 205, 193, VAR_ROOM);
-	Actor_setDirection(DIR_SOUTH);
+	Actor_setDirection(ACTOR_DIR_SOUTH);
 	Actor_animate(VAR_EGO, indyClimbingCostume_anim);
 	Script_delaySeconds(3);
 

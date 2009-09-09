@@ -166,7 +166,7 @@ function entry()
 	// Wait, then set the transition effects and load the island tent room
 	Script_delaySeconds(1);
 	VAR_FADE_DELAY = 1;
-	Room_fade(FADE_NO_EFFECT, FADE_SCROLL_EFFECT_UP);
+	Room_fade(ROOM_FADE_NO_EFFECT, ROOM_FADE_SCROLL_EFFECT_UP);
 	Room_load(islandTentRoom);
 }
 

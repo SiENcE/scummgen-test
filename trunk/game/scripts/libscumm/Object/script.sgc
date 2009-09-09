@@ -1,3 +1,18 @@
+// Object classes
+const OBJECT_CLASS_NEVER_CLIP = 20;
+const OBJECT_CLASS_ALWAYS_CLIP = 21;
+const OBJECT_CLASS_IGNORE_BOXES= 22;
+const OBJECT_CLASS_Y_FLIP = 29;
+const OBJECT_CLASS_X_FLIP = 30;
+const OBJECT_CLASS_PLAYER = 31;
+
+// Object states
+const OBJECT_STATE_DISABLED = 0;
+const OBJECT_STATE_PICKABLE = 1;
+const OBJECT_STATE_UNTOUCHABLE = 2;
+const OBJECT_STATE_LOCKED = 4;
+const OBJECT_STATE_08 = 8;
+
 inline function Object_draw(var obj, var state)
 {
 	asm
@@ -158,9 +173,21 @@ inline function Object_getY(var obj)
 	return y;
 }
 
-// TODO
-inline function Object_ifClassOfIs()
+
+inline function Object_isClassOf(var obj, var class)
 {
+	var res;
+	asm
+	{
+		pushWordVar .word obj
+		pushWordVar .word class
+		pushByte .byte 1
+		ifClassOfIs
+		writeWordVar .word res
+		
+		
+	}
+	return res;
 }
 
 inline function Object_pickup(var obj, var room)
@@ -173,14 +200,28 @@ inline function Object_pickup(var obj, var room)
 	}
 }
 
-// TODO
-inline function Object_setClass()
+inline function Object_setClass(var obj, var class, var set)
 {
+	const SET_FLAG = 0x80;
+	if (set)
+		class += SET;
+	asm
+	{
+		pushWordVar .word obj
+		pushWordVar .word class
+		pushByte .byte 1
+		setClass
+	}
+	
 }
 
-// TODO
-inline function Object_setName()
+inline function Object_setName(var obj, var name)
 {
+	asm
+	{
+		pushWordVar .word obj
+		setObjectName .string "%s{name}"
+	}
 }
 
 inline function Object_setOwner(var obj, var owner)
@@ -192,6 +233,7 @@ inline function Object_setOwner(var obj, var owner)
 		setOwner
 	}
 }
+
 
 inline function Object_setState(var obj, var state)
 {

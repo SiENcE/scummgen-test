@@ -1,3 +1,9 @@
+// Actor directions
+const ACTOR_DIR_NORTH = 0;
+const ACTOR_DIR_EAST = 90;
+const ACTOR_DIR_SOUTH = 180;
+const ACTOR_DIR_WEST = 270;
+
 inline function Actor_animate(var actor, var anim)
 {
 	asm
@@ -405,10 +411,6 @@ inline function Actor_setDefaultAnims()
 	}
 }
 
-const DIR_NORTH = 0;
-const DIR_EAST = 90;
-const DIR_SOUTH = 180;
-const DIR_WEST = 270;
 inline function Actor_setDirection(var dir)
 {
 	asm
@@ -445,9 +447,13 @@ inline function Actor_setLayer(var layer)
 	}
 }
 
-// TODO
-inline function Actor_setName()
+inline function Actor_setName(var actor, var name)
 {
+	asm
+	{
+		pushWordVar .word actor
+		actorOps actorName .string "%s{name}"
+	}
 }
 
 inline function Actor_setPalette(var i, var j)
@@ -562,9 +568,28 @@ inline function Actor_setWidth(var width)
 	}
 }
 
-// TODO
-inline function Actor_sound()
+inline function Actor_sound(var actor, var sounds, var nSounds)
 {
+	var i;
+	var sound;
+	asm
+	{
+		pushWordVar .word actor
+	}
+	for (i = 0; i < nSounds; i++)
+	{
+		sound = sounds[i];
+		asm
+		{
+			pushWordVar .word sound
+		}
+	}
+	asm
+	{
+		pushWordVar .word nSounds
+		actorOps sound
+	}
+
 }
 
 inline function Actor_stop()
