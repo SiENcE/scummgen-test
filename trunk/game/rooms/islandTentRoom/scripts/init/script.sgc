@@ -28,11 +28,17 @@ function entry()
 {
 	setupCharset();
 	setupIndy();
-
+	
+	// Print faked noise text
+	Interface_printLineLoadDefault();
+	Interface_printLineColor(COLOR_GORSE);
+	Interface_printLineAt(220, 170);
+	Interface_printLine("*cling*");
+	
 	// Set Indy out of the screen and say something
 	Actor_putAtXY(VAR_EGO, 205, 300, VAR_ROOM);
 	Script_delaySeconds(1);
-	Actor_talkEgo("Shoot ! Another broken pick axe !");
+	Actor_talkEgo("Shoot! Another broken pick axe!");
 	Script_waitForMessage();
 	Script_delaySeconds(1);
 
