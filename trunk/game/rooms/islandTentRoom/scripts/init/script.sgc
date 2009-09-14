@@ -29,11 +29,19 @@ function entry()
 	setupCharset();
 	setupIndy();
 	
-	// Print faked noise text
+	// Wait a bit then print faked noise text
+	Script_delaySeconds(1);
 	Interface_printLineLoadDefault();
 	Interface_printLineColor(COLOR_GORSE);
 	Interface_printLineAt(220, 170);
 	Interface_printLine("*cling*");
+	Script_waitForMessage();
+	Script_delaySeconds(1);
+	Interface_printLine("*clang*");
+	Script_waitForMessage();
+	Script_delaySeconds(1);
+	Interface_printLine("*CRACK*");
+	Script_waitForMessage();
 	
 	// Set Indy out of the screen and say something
 	Actor_putAtXY(VAR_EGO, 205, 300, VAR_ROOM);
@@ -55,9 +63,10 @@ function entry()
 	Actor_setAnimSpeed(4);
 
 	// Walk and say something
-	Actor_walkToXY(VAR_EGO, 250, 195);
+	Actor_walkToXY(VAR_EGO, 220, 195);
 	Script_waitForActor(VAR_EGO);
 	Actor_talkEgo("Well, I guess I'll have to find another one...");
+	
 }
 
 function exit()
