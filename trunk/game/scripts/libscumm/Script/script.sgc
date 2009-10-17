@@ -1,4 +1,4 @@
-inline function Script_breakHere()
+inline function Script_break()
 {
 	asm
 	{
@@ -142,23 +142,23 @@ inline function Script_stopObjectScript(var script)
 	}
 }
 
-inline function Script_waitForActor(var actor)
+inline function Script_waitForActor(var act)
 {
 	const OFFSET = 0xFFF9;
 	asm
 	{
-		pushWordVar .word actor
+		pushWordVar .word act
 		wait waitForActor
 		.word OFFSET
 	}
 }
 
-inline function Script_waitForAnimation(var actor)
+inline function Script_waitForAnimation(var act)
 {
 	const OFFSET = 0xFFF9;
 	asm
 	{
-		pushWordVar .word actor
+		pushWordVar .word act
 		wait waitForAnimation
 		.word OFFSET
 	}
@@ -188,12 +188,12 @@ inline function Script_waitForSentence()
 	}
 }
 
-inline function Script_waitForTurn(var actor)
+inline function Script_waitForTurn(var act)
 {
 	const OFFSET = 0xFFF9;
 	asm
 	{
-		pushWordVar .word actor
+		pushWordVar .word act
 		wait waitForTurn
 		.word OFFSET
 	}

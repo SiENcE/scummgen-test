@@ -1,24 +1,34 @@
+actor actorIndy;
+
+function tentObject_verb(var objA, var objB)
+{
+	verbLookAt:
+		Actor_talkEgo("That's the tent I pitched this morning.");
+		break;
+}
+
 function setupIndy()
 {
 	// Setup actor, costume, and animations
-	VAR_EGO = ACTOR_INDY;
-	Actor_setCurrent(VAR_EGO);
+	Actor_setCurrent(actorIndy);
+	asm { actorOps actorName .string "Indy" }
 	Actor_setCostume(indyCostume);
 	Actor_setInitAnim(indyCostume_stand);
 	Actor_setStandAnim(indyCostume_stand);
 	Actor_setWalkAnim(indyCostume_walk);
 	Actor_setTalkAnim(indyCostume_talk, indyCostume_stand);
-	Actor_setStepDistance(2, 1);
+	Actor_setStepDistance(8, 4);
+	Actor_setAnimSpeed(1);
 	Actor_ignoreBoxes(1);
 	Actor_setScale(0xFF);
+	VAR_EGO = actorIndy;
 }
 
 function setupCharset()
 {
 	Interface_setCharset(font2);
-	Interface_setCharsetColors([0, 0, 0, 0], 4);
-	Actor_setTalkColor(COLOR_WHITE);
 	Actor_printLoadDefault(VAR_EGO);
+	Actor_setTalkColor(COLOR_WHITE);
 	Actor_printCenter();
 	Actor_printOverhead();
 	Actor_printSaveDefault();
@@ -26,6 +36,8 @@ function setupCharset()
 
 function entry()
 {
+	var dialog;
+
 	setupCharset();
 	setupIndy();
 	
@@ -36,23 +48,19 @@ function entry()
 	Interface_printLineAt(220, 170);
 	Interface_printLine("*cling*");
 	Script_waitForMessage();
-	Script_delaySeconds(1);
 	Interface_printLine("*clang*");
 	Script_waitForMessage();
-	Script_delaySeconds(1);
 	Interface_printLine("*CRACK*");
 	Script_waitForMessage();
 	
 	// Set Indy out of the screen and say something
 	Actor_putAtXY(VAR_EGO, 205, 300, VAR_ROOM);
-	Script_delaySeconds(1);
 	Actor_talkEgo("Shoot! Another broken pick axe!");
 	Script_waitForMessage();
 	Script_delaySeconds(1);
 
 	// Climb out of hole
 	Actor_setCostume(indyClimbingCostume);
-	Actor_setAnimSpeed(6);
 	Actor_putAtXY(VAR_EGO, 205, 193, VAR_ROOM);
 	Actor_setDirection(ACTOR_DIR_SOUTH);
 	Actor_animate(VAR_EGO, indyClimbingCostume_anim);
@@ -60,13 +68,30 @@ function entry()
 
 	// Restore costume
 	Actor_setCostume(indyCostume);
-	Actor_setAnimSpeed(4);
 
 	// Walk and say something
 	Actor_walkToXY(VAR_EGO, 220, 195);
 	Script_waitForActor(VAR_EGO);
 	Actor_talkEgo("Well, I guess I'll have to find another one...");
-	
+	Script_waitForMessage();
+
+	// Test for inventory display
+	Actor_pickup(whipInvObject, 1);
+	Interface_activateCursor(1);
+	Interface_activateUserput(1);
+	Inventory_init();
+	Sentence_init();
+	Inventory_show();
+	Sentence_show();
+	Script_delaySeconds(10);
+
+	// Test for dialog display
+	/*dialog = Dialog_new();
+	Dialog_add(dialog, "I'm here to enjoy Madame's outrageous orations.");
+	Dialog_add(dialog, "I'm with the band.");
+	Dialog_add(dialog, "Let me in, you Darwinian nightmare.");
+	Dialog_display(1);
+	Dialog_delete(dialog);*/
 }
 
 function exit()

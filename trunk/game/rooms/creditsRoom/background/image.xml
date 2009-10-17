@@ -2,5 +2,6 @@
 <image>
     <name>background</name>
 	<transparent>false</transparent>
+	<optimizable>false</optimizable>
     <bitmapName>background.bmp</bitmapName>
 </image>

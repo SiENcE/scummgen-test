@@ -166,7 +166,7 @@ inline function Verb_setImage(var obj)
 	}
 }
 
-inline function Verb_setImageInRoom(var room, var obj)
+inline function Verb_setImageInRoom(var obj, var room)
 {
 	asm
 	{
@@ -185,18 +185,13 @@ inline function Verb_setKey(var key)
 	}
 }
 
-inline function Verb_setName(var name)
+inline function Verb_setNameString(var name)
 {
 	asm
 	{
-		verbOps
-		verbName .string "%s{name}"
+		pushWordVar .word name
+		verbOps verbNameStr
 	}
-}
-
-// TODO
-inline function Verb_setNameString()
-{
 }
 
 inline function Verb_setPos(var left, var top)
@@ -206,5 +201,13 @@ inline function Verb_setPos(var left, var top)
 		pushWordVar .word left
 		pushWordVar .word top
 		verbOps verbAt
+	}
+}
+
+inline function Verb_stopSentence()
+{
+	asm
+	{
+		stopSentence
 	}
 }

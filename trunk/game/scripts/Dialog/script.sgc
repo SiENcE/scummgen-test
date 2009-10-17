@@ -1,15 +1,6 @@
 const N_DIALOG_LINES = 5;
 
-inline function Dialog_new()
-{
-	var dialog;
-	var i;
-	dialog = Util_dimArray(ARRAY_INT, N_DIALOG_LINES);
-	for (i = 0; i < N_DIALOG_LINES; i++)
-		dialog[i] = 0;
-	return dialog;
-}
-
+// Public functions
 inline function Dialog_add(var dialog, var string)
 {
 	var i;
@@ -29,6 +20,33 @@ inline function Dialog_add(var dialog, var string)
 	dialog[i] = Util_copyString(string);
 }
 
+function Dialog_delete(var dialog)
+{
+	var i;
+	for (i = 0; i < N_DIALOG_LINES; i++)
+		if (dialog[i] != 0)
+			Util_nukeArray(dialog[0]);
+	Util_nukeArray(dialog);
+}
+
+function Dialog_hide()
+{
+}
+
+function Dialog_init()
+{
+}
+
+inline function Dialog_new()
+{
+	var dialog;
+	var i;
+	dialog = Util_dimArray(ARRAY_INT, N_DIALOG_LINES);
+	for (i = 0; i < N_DIALOG_LINES; i++)
+		dialog[i] = 0;
+	return dialog;
+}
+
 function Dialog_remove(var dialog, var index)
 {
 	if (index > N_DIALOG_LINES)
@@ -41,7 +59,7 @@ function Dialog_remove(var dialog, var index)
 	dialog[index] = 0;
 }
 
-function Dialog_display(var dialog)
+function Dialog_show(var dialog)
 {
 	const BAND_X = 0;
 	const BAND_Y = 143;
@@ -95,13 +113,4 @@ function Dialog_display(var dialog)
 			Interface_printText("\x05%s{s}"); // Add small arrow in front of the text
 			currentLine++;
 		}
-}
-
-function Dialog_delete(var dialog)
-{
-	var i;
-	for (i = 0; i < N_DIALOG_LINES; i++)
-		if (dialog[i] != 0)
-			Util_nukeArray(dialog[0]);
-	Util_nukeArray(dialog);
 }

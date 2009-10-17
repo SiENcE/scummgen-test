@@ -3,8 +3,8 @@
     <transparentIndex>0</transparentIndex>
 	<cycle>
 		<name>logoCycle</name>
-		<start>198</start>
-		<end>221</end>
+		<start>196</start>
+		<end>219</end>
 		<delay>8</delay>
 		<forward>true</forward>
 	</cycle>	

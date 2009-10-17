@@ -1,52 +1,51 @@
-function Input_sentenceHandler(var vrb, var objA, var objB)
+// Private functions
+function _Input_keyPress(var key)
 {
-	var entryPt;
-	Util_printDebug("sentenceHandler - verb: %i{vrb}, objA: %i{objA}, objB: %i{objB}");
-	entryPt = Verb_getEntryPoint(objA, vrb);
-	Util_printDebug("entryPoint: %i{entryPt}");
-	if (entryPt != 0)
-		Script_startObjectScriptQuick(objA, vrb, [1, 2, 3], 3);
 }
 
-function Input_mouseClick(var posX, var posY)
+thread _Input_mouseWatch()
 {
-	var object;
-
-	// Find object at mouse coordinates
-	object = Object_find(posX, posY);
-
-	// If an object has been clicked, we just say its name, otherwise we walk to the destination
-	if (object == 0)
+	while (1)
 	{
-		Actor_walkToXY(VAR_EGO, posX, posY);
-	}
-	else
-	{
-		Verb_doSentence(13, object, 0);
-		Actor_talk(VAR_EGO, "Hey ! But... this is a %n{object} !");
-	}
-}
+		// Don't interrupt any running sentence script
+		if (Script_isRunning(VAR_SENTENCE_SCRIPT))
+		{
+			Script_break();
+			continue;
+		}
 
-thread Input_handler(var area, var command, var button)
-{
-	const AREA_MOUSE_CLICK = 2;
-	const AREA_KEY_PRESS = 4;
+		// Check if an object is under the mouse pointer only if the inventory if visible
+		if (inventoryVisible)
+			if (Sentence_mouseMove())
+			{
+				Script_break();
+				continue;
+			}
 
-	Util_printDebug("area: %i{area}, command: %i{command}, button: %i{button}");
-
-	switch (area)
-	{
-		case AREA_KEY_PRESS:
-			Input_keyPress(command);
-			break;
-		case AREA_MOUSE_CLICK:
-			Input_mouseClick(VAR_VIRT_MOUSE_X, VAR_VIRT_MOUSE_Y);
-			break;
-		default:
-			break;
+		Script_break();
 	}
 }
 
-function Input_keyPress(var key)
+// Public functions
+function Input_handler(var area, var cmd, var btn)
 {
+	const AREA_KEYBOARD = 4;
+
+	Util_printDebug("area = %i{area}, cmd = %i{cmd}, button = %i{btn}");
+
+	// Check for a key press
+	if (area == AREA_KEYBOARD)
+	{
+		_Input_keyPress(cmd);
+		return;
+	}
+
+	// Let the Sentence class handler manage the click
+	Sentence_click(area, cmd, btn);
+}
+
+function Input_init()
+{
+	// Launch the mouse watching thread
+	_Input_mouseWatch();
 }

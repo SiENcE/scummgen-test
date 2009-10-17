@@ -1,163 +1,245 @@
-function Inventory_display()
-{
-	const BAND_X = 0;
-	const BAND_Y = 143;
-	const BAND_WIDTH = 320;
-	const BAND_HEIGHT = 57;
-	const BOX_X = 0;
-	const BOX_Y = 153;
-	const BOX_WIDTH = 320;
-	const BOX_HEIGHT = 47;
-	const VERB_BOX_X = 2;
-	const VERB_BOX_Y = 155;
-	const VERB_BOX_WIDTH = 46;
-	const VERB_BOX_HEIGHT = 14;
-	const N_VERB_ROWS = 3;
-	const N_VERB_COLUMNS = 3;
-	const INV_BOX_X = 160;
-	const INV_BOX_Y = 153;
-	const INV_BOX_WIDTH = 32;
-	const INV_BOX_HEIGHT = 24;
-	const N_INV_ROWS = 2;
-	const N_INV_COLUMNS = 5;
-	const ARROW_BOX_X = 143;
-	const ARROW_BOX_Y = 153;
-	const ARROW_BOX_HEIGHT = 47;
-	const VERB_GIVE_X = 15;
-	const VERB_OPEN_X = 14;
-	const VERB_CLOSE_X = 12;
-	const VERB_PICK_UP_X = 54;
-	const VERB_TALK_TO_X = 53;
-	const VERB_LOOK_AT_X = 53;
-	const VERB_USE_X = 108;
-	const VERB_PUSH_X = 106;
-	const VERB_PULL_X = 108;
-	const VERB_TEXT_Y = 159;
-	const ARROW_TEXT_X = 147;
-	const ARROW_UP_TEXT_Y = 158;
-	const ARROW_DOWN_TEXT_Y = 180;
-	var i;
+// Global constants
+const COLOR_VERB_BACK = 249;
+const COLOR_VERB_DIM = 250;
+const COLOR_VERB_NORMAL = 251;
+const COLOR_VERB_HI = 252;
+const INVENTORY_Y = 144;
 
-	// Change room height to let space for the inventory frame
-	Room_setScreen(0, BAND_Y);
+// Verbs
+verb verbVerbs;
+verb verbArrowUp;
+verb verbArrowDown;
+
+// Global variables
+var inventoryVisible;
+
+// Private functions
+function _Inventory_addSlot(var vrb, var posX, var posY)
+{
+	// Add inventory slot verb
+	Verb_setCurrent(vrb);
+	Verb_new();
+	Verb_setPos(posX, posY);
+}
+
+inline function _Inventory_addVerb(var vrb, var string, var posX, var posY)
+{
+	// Add verb
+	Verb_setCurrent(vrb);
+	Verb_new();
+	Verb_setNameString(string);
+	Verb_setColor(COLOR_VERB_NORMAL);
+	Verb_setBackColor(COLOR_VERB_BACK);
+	Verb_setDimColor(COLOR_VERB_DIM);
+	Verb_setHiColor(COLOR_VERB_HI);
+	Verb_setPos(posX, posY);
+}
+
+// Public functions
+inline function Inventory_checkArrows(var vrb)
+{
+	// Check arrows
+	if (vrb == verbArrowUp || vrb == verbArrowDown)
+	{
+		// TODO: update inventory display
+		Util_printDebug("An arrow has been clicked.");
+		return 1;
+	}
+
+	return 0;
+}
+
+inline function Inventory_getObject(var owner, var x, var y)
+{
+	var vrb;
+	vrb = Verb_getFromXY(x, y);
+
+	// If the verb is not an inventory object, we consider no verb has been found
+	if ((vrb < verbInvSlot1) || (vrb > verbInvSlot10))
+		return 0;
+
+	// TODO: add offset
+	return Object_findInventory(owner, vrb - verbInvSlot1 + 1);
+}
+
+function Inventory_hide()
+{
+	Room_setScreen(0, INVENTORY_Y - 1);
 	Util_redraw();
 
-	// Draw a black band first
-	Util_drawBox(BAND_X, BAND_Y, BAND_X + BAND_WIDTH - 1, BAND_Y + BAND_HEIGHT - 1, COLOR_BLACK);
+	// Draw verbs background
+	Verb_setCurrent(verbVerbs);
+	Verb_activate(0);
+	Verb_draw();
 
-	// Draw the box around the dialog
-	Util_drawBox(BOX_X, BOX_Y, BOX_X + BOX_WIDTH - 1, BOX_Y + BOX_HEIGHT - 1, COLOR_SCORPION);
+	// Draw verbs
+	Verb_setCurrent(verbGive);
+	Verb_activate(0);
+	Verb_draw();
+	Verb_setCurrent(verbPickUp);
+	Verb_activate(0);
+	Verb_draw();
+	Verb_setCurrent(verbUse);
+	Verb_activate(0);
+	Verb_draw();
+	Verb_setCurrent(verbOpen);
+	Verb_activate(0);
+	Verb_draw();
+	Verb_setCurrent(verbTalkTo);
+	Verb_activate(0);
+	Verb_draw();
+	Verb_setCurrent(verbPush);
+	Verb_activate(0);
+	Verb_draw();
+	Verb_setCurrent(verbClose);
+	Verb_activate(0);
+	Verb_draw();
+	Verb_setCurrent(verbLookAt);
+	Verb_activate(0);
+	Verb_draw();
+	Verb_setCurrent(verbPull);
+	Verb_activate(0);
+	Verb_draw();
+	
+	// Draw arrows
+	Verb_setCurrent(verbArrowUp);
+	Verb_activate(0);
+	Verb_draw();
+	Verb_setCurrent(verbArrowDown);
+	Verb_activate(0);
+	Verb_draw();
 
-	// Draw highlights around the box
-	Util_drawBox(BOX_X, BOX_Y, BOX_X + BOX_WIDTH - 1, BOX_Y, COLOR_SILVER_CHALICE);
-	Util_drawBox(BOX_X, BOX_Y, BOX_X, BOX_Y + BOX_HEIGHT - 1, COLOR_SILVER_CHALICE);
+	// Draw inventory
+	Verb_setCurrent(verbInvSlot1);
+	Verb_activate(0);
+	Verb_draw();
 
-	// Draw verb boxes horizontal highlights
-	for (i = 0; i < N_VERB_ROWS; i++)
-		Util_drawBox(VERB_BOX_X + 1,
-					 VERB_BOX_Y + 1 + i * VERB_BOX_HEIGHT,
-					 VERB_BOX_X + N_VERB_COLUMNS * VERB_BOX_WIDTH - 1,
-					 VERB_BOX_Y + 1 + i * VERB_BOX_HEIGHT,
-					 COLOR_SILVER_CHALICE);
+	// Draw sentence
+	Sentence_hide();
 
-	// Draw verb boxes vertical highlights
-	for (i = 0; i < N_VERB_COLUMNS; i++)
-		Util_drawBox(VERB_BOX_X + 1 + i * VERB_BOX_WIDTH,
-					 VERB_BOX_Y + 1,
-					 VERB_BOX_X + 1 + i * VERB_BOX_WIDTH,
-					 VERB_BOX_Y + N_VERB_ROWS * VERB_BOX_HEIGHT - 1,
-					 COLOR_SILVER_CHALICE);
+	// Change the visible state
+	inventoryVisible = 0;
+}
 
-	// Draw verb boxes horizontal black outlines
-	for (i = 0; i < N_VERB_ROWS + 1; i++)
-		Util_drawBox(VERB_BOX_X,
-					 VERB_BOX_Y + i * VERB_BOX_HEIGHT,
-					 VERB_BOX_X + N_VERB_COLUMNS * VERB_BOX_WIDTH,
-					 VERB_BOX_Y + i * VERB_BOX_HEIGHT,
-					 COLOR_BLACK);
+function Inventory_init()
+{
+	const VERB_VERBS_X = 0;
+	const VERB_VERBS_Y = 152;
+	const VERB_GIVE_X = 15;
+	const VERB_GIVE_Y = 159;
+	const VERB_PICK_UP_X = 54;
+	const VERB_PICK_UP_Y = 159;
+	const VERB_USE_X = 108;
+	const VERB_USE_Y = 159;
+	const VERB_OPEN_X = 14;
+	const VERB_OPEN_Y = 173;
+	const VERB_TALK_TO_X = 53;
+	const VERB_TALK_TO_Y = 173;
+	const VERB_PUSH_X = 106;
+	const VERB_PUSH_Y = 173;
+	const VERB_CLOSE_X = 12;
+	const VERB_CLOSE_Y = 187;
+	const VERB_LOOK_AT_X = 53;
+	const VERB_LOOK_AT_Y = 187;
+	const VERB_PULL_X = 108;
+	const VERB_PULL_Y = 187;
+	const VERB_ARROW_UP_X = 147;
+	const VERB_ARROW_UP_Y = 158;
+	const VERB_ARROW_DOWN_X = 147;
+	const VERB_ARROW_DOWN_Y = 180;
+	const VERB_INV_SLOT1_X = 160;
+	const VERB_INV_SLOT1_Y = 152;
 
-	// Draw verb boxes vertical black outlines
-	for (i = 0; i < N_VERB_COLUMNS + 1; i++)
-		Util_drawBox(VERB_BOX_X + i * VERB_BOX_WIDTH,
-					 VERB_BOX_Y,
-					 VERB_BOX_X + i * VERB_BOX_WIDTH,
-					 VERB_BOX_Y + N_VERB_ROWS * VERB_BOX_HEIGHT - 1,
-					 COLOR_BLACK);
-
-	// Draw inventory boxes horizontal highlights (only one line is necessary)
-	Util_drawBox(INV_BOX_X,
-				 INV_BOX_Y + INV_BOX_HEIGHT,
-				 INV_BOX_X + N_INV_COLUMNS * INV_BOX_WIDTH - 1,
-				 INV_BOX_Y + INV_BOX_HEIGHT,
-				 COLOR_SILVER_CHALICE);
-
-	// Draw inventory boxes vertical highlights
-	for (i = 0; i < N_INV_COLUMNS; i++)
-		Util_drawBox(INV_BOX_X + 1 + i * INV_BOX_WIDTH,
-					 INV_BOX_Y,
-					 INV_BOX_X + 1 + i * INV_BOX_WIDTH,
-					 INV_BOX_Y + N_INV_ROWS * INV_BOX_HEIGHT - 2,
-					 COLOR_SILVER_CHALICE);
-
-	// Draw inventory boxes horizontal black outline (only one line is necessary)
-	Util_drawBox(INV_BOX_X,
-				 INV_BOX_Y + INV_BOX_HEIGHT - 1,
-				 INV_BOX_X + N_INV_COLUMNS * INV_BOX_WIDTH - 1,
-				 INV_BOX_Y + INV_BOX_HEIGHT - 1,
-				 COLOR_BLACK);
-
-	// Draw inventory boxes vertical black outlines
-	for (i = 0; i < N_INV_COLUMNS; i++)
-		Util_drawBox(INV_BOX_X + i * INV_BOX_WIDTH,
-					 INV_BOX_Y,
-					 INV_BOX_X + i * INV_BOX_WIDTH,
-					 INV_BOX_Y + N_INV_ROWS * INV_BOX_HEIGHT - 2,
-					 COLOR_BLACK);
-
-	// Draw arrow box highlight
-	Util_drawBox(ARROW_BOX_X + 1,
-				 ARROW_BOX_Y,
-				 ARROW_BOX_X + 1,
-				 ARROW_BOX_Y + ARROW_BOX_HEIGHT - 1,
-				 COLOR_SILVER_CHALICE);
-
-	// Draw arrow box black outline
-	Util_drawBox(ARROW_BOX_X,
-				 ARROW_BOX_Y,
-				 ARROW_BOX_X,
-				 ARROW_BOX_Y + ARROW_BOX_HEIGHT - 1,
-				 COLOR_BLACK);
-
-	// Setup font
+	// Initialize charset
 	Interface_setCharset(font1);
 	Interface_printTextLoadDefault();
 	Interface_printTextLeft();
-	Interface_printTextColor(COLOR_SCREAMIN_GREEN);
 	Interface_printTextSaveDefault();
 
-	// Print verbs
-	Interface_printTextAt(VERB_GIVE_X, VERB_TEXT_Y);
-	Interface_printText("Give");
-	Interface_printTextAt(VERB_OPEN_X, VERB_TEXT_Y + VERB_BOX_HEIGHT);
-	Interface_printText("Open");
-	Interface_printTextAt(VERB_CLOSE_X, VERB_TEXT_Y + 2 * VERB_BOX_HEIGHT);
-	Interface_printText("Close");
-	Interface_printTextAt(VERB_PICK_UP_X, VERB_TEXT_Y);
-	Interface_printText("Pick up");
-	Interface_printTextAt(VERB_TALK_TO_X, VERB_TEXT_Y + VERB_BOX_HEIGHT);
-	Interface_printText("Talk to");
-	Interface_printTextAt(VERB_LOOK_AT_X, VERB_TEXT_Y + 2 * VERB_BOX_HEIGHT);
-	Interface_printText("Look at");
-	Interface_printTextAt(VERB_USE_X, VERB_TEXT_Y);
-	Interface_printText("Use");
-	Interface_printTextAt(VERB_PUSH_X, VERB_TEXT_Y + VERB_BOX_HEIGHT);
-	Interface_printText("Push");
-	Interface_printTextAt(VERB_PULL_X, VERB_TEXT_Y + 2 * VERB_BOX_HEIGHT);
-	Interface_printText("Pull");
+	// Add verbs background
+	Verb_setCurrent(verbVerbs);
+	Verb_new();
+	Verb_setImageInRoom(verbsObject, 1);
+	Verb_setPos(VERB_VERBS_X, VERB_VERBS_Y);
+
+	// Add verbs
+	_Inventory_addVerb(verbGive, "Give", VERB_GIVE_X, VERB_GIVE_Y);
+	_Inventory_addVerb(verbPickUp, "Pick up", VERB_PICK_UP_X, VERB_PICK_UP_Y);
+	_Inventory_addVerb(verbUse, "Use", VERB_USE_X, VERB_USE_Y);
+	_Inventory_addVerb(verbOpen, "Open", VERB_OPEN_X, VERB_OPEN_Y);
+	_Inventory_addVerb(verbTalkTo, "Talk to", VERB_TALK_TO_X, VERB_TALK_TO_Y);
+	_Inventory_addVerb(verbPush, "Push", VERB_PUSH_X, VERB_PUSH_Y);
+	_Inventory_addVerb(verbClose, "Close", VERB_CLOSE_X, VERB_CLOSE_Y);
+	_Inventory_addVerb(verbLookAt, "Look at", VERB_LOOK_AT_X, VERB_LOOK_AT_Y);
+	_Inventory_addVerb(verbPull, "Pull", VERB_PULL_X, VERB_PULL_Y);
+
+	// Add arrows
+	_Inventory_addVerb(verbArrowUp, "\x01", VERB_ARROW_UP_X, VERB_ARROW_UP_Y);
+	_Inventory_addVerb(verbArrowDown, "\x02", VERB_ARROW_DOWN_X, VERB_ARROW_DOWN_Y);
+
+	// Add inventory slots
+	_Inventory_addSlot(verbInvSlot1, VERB_INV_SLOT1_X, VERB_INV_SLOT1_Y);
+
+	// Initialize the visibility of the inventory
+	inventoryVisible = 0;
+}
+
+function Inventory_show()
+{
+	Room_setScreen(0, INVENTORY_Y - 1);
+	Util_redraw();
+
+	// Draw verbs background
+	Verb_setCurrent(verbVerbs);
+	Verb_activate(1);
+	Verb_draw();
+
+	// Draw verbs
+	Verb_setCurrent(verbGive);
+	Verb_activate(1);
+	Verb_draw();
+	Verb_setCurrent(verbPickUp);
+	Verb_activate(1);
+	Verb_draw();
+	Verb_setCurrent(verbUse);
+	Verb_activate(1);
+	Verb_draw();
+	Verb_setCurrent(verbOpen);
+	Verb_activate(1);
+	Verb_draw();
+	Verb_setCurrent(verbTalkTo);
+	Verb_activate(1);
+	Verb_draw();
+	Verb_setCurrent(verbPush);
+	Verb_activate(1);
+	Verb_draw();
+	Verb_setCurrent(verbClose);
+	Verb_activate(1);
+	Verb_draw();
+	Verb_setCurrent(verbLookAt);
+	Verb_activate(1);
+	Verb_draw();
+	Verb_setCurrent(verbPull);
+	Verb_activate(1);
+	Verb_draw();
 	
-	// Print arrows
-	Interface_printTextAt(ARROW_TEXT_X, ARROW_UP_TEXT_Y);
-	Interface_printText("\x01"); // Up arrow
-	Interface_printTextAt(ARROW_TEXT_X, ARROW_DOWN_TEXT_Y);
-	Interface_printText("\x02"); // Down arrow
+	// Draw arrows
+	Verb_setCurrent(verbArrowUp);
+	Verb_dim();
+	Verb_draw();
+	Verb_setCurrent(verbArrowDown);
+	Verb_dim();
+	Verb_draw();
+
+	// Draw inventory
+	Verb_setCurrent(verbInvSlot1);
+	Verb_activate(1);
+	Verb_setImageInRoom(whipInvObject, 1);
+	Verb_draw();
+
+	// Draw sentence
+	Sentence_show();
+
+	// Change the visible state
+	inventoryVisible = 1;
 }

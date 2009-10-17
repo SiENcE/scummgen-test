@@ -1,18 +1,23 @@
 const CREDITS_FADE_DELAY = 3;
+actor actorLogo;
 var creditsColor1;
 var creditsColor2;
 
 function displayIJLogo()
 {
+	const SCALE_FACTOR = 20;
+	const LOGO_X = 161;
+	const LOGO_Y = 90;
+
 	var i;
 	var scale;
 
 	// Create and setup logo actor
-	Actor_setCurrent(ACTOR_LOGO);
+	Actor_setCurrent(actorLogo);
 	Actor_setCostume(logoCostume);
 	Actor_setInitAnim(logoCostume_logoAnim);
 	Actor_ignoreBoxes(1);
-	Actor_putAtXY(ACTOR_LOGO, 161, 90, VAR_ROOM);
+	Actor_putAtXY(actorLogo, LOGO_X, LOGO_Y, VAR_ROOM);
 
 	// Scale Indiana Jones logo gradually
 	scale = 0;
@@ -20,8 +25,8 @@ function displayIJLogo()
 	while (scale < 255)
 	{
 		Actor_setScale(scale);
-		scale += 1 + 20 * i / 256;
-		Script_delay(0);
+		scale += 1 + SCALE_FACTOR * i / 256;
+		Script_break();
 		i++;
 	}
 	Actor_setScale(255);
@@ -33,9 +38,11 @@ function displayIJLogo()
 
 inline function displayTeamFunction(var string)
 {
+	const TEAM_FUNCTION_X = 160;
+	const TEAM_FUNCTION_Y = 150;
 	Interface_printTextLoadDefault();
 	Interface_printTextColor(creditsColor1);
-	Interface_printTextAt(160, 150);
+	Interface_printTextAt(TEAM_FUNCTION_X, TEAM_FUNCTION_Y);
 	Interface_printTextCenter();
 	Interface_printTextSaveDefault();
 	Interface_printText("%s{string}");
@@ -43,9 +50,11 @@ inline function displayTeamFunction(var string)
 
 inline function displayTeamMember(var string)
 {
+	const TEAM_MEMBER_X = 160;
+	const TEAM_MEMBER_Y = 165;
 	Interface_printLineLoadDefault();
 	Interface_printLineColor(creditsColor2);
-	Interface_printLineAt(160, 165);
+	Interface_printLineAt(TEAM_MEMBER_X, TEAM_MEMBER_Y);
 	Interface_printLineCenter();
 	Interface_printLineSaveDefault();
 	// We add spaces to force the credits to be printed longer
@@ -113,8 +122,8 @@ function displayCredits()
 	fadeTeamMember(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
 	Script_delaySeconds(2);
 	fadeCredits(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
-	displayTeamMember("");
 	Util_redraw();
+	displayTeamMember("");
 	Script_delaySeconds(1);
 
 	// Programming
@@ -132,8 +141,8 @@ function displayCredits()
 	fadeTeamMember(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
 	Script_delaySeconds(2);
 	fadeCredits(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
-	displayTeamMember("");
 	Util_redraw();
+	displayTeamMember("");
 	Script_delaySeconds(1);
 	
 	// Background art
@@ -144,17 +153,23 @@ function displayCredits()
 	fadeCredits(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
 	Script_delaySeconds(2);
 	fadeCredits(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
-	displayTeamMember("");
 	Util_redraw();
+	displayTeamMember("");
 	Script_delaySeconds(1);
 
 	// Hide logo and title
-	Actor_hide(ACTOR_LOGO);
+	Actor_hide(actorLogo);
 	Object_setState(titleObject, 0);
 }
 
 function entry()
 {
+	var previousVarTimerNext;
+
+	// Save and modify VAR_TIMER_NEXT value
+	previousVarTimerNext = VAR_TIMER_NEXT;
+	VAR_TIMER_NEXT = 1;
+
 	// Wait and display Indiana Jones logo
 	Script_delaySeconds(1);
 	displayIJLogo();
@@ -162,6 +177,9 @@ function entry()
 	// Wait and display credits
 	Script_delaySeconds(2);
 	displayCredits();
+
+	// Restore previous VAR_TIMER_NEXT value
+	VAR_TIMER_NEXT = previousVarTimerNext;
 
 	// Wait, then set the transition effects and load the island tent room
 	Script_delaySeconds(1);

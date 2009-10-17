@@ -6,6 +6,9 @@
 	<room>creditsRoom</room>
     <room>islandTentRoom</room>
 	<room>logoRoom</room>
+	<object>dialogObject</object>
+	<object>verbsObject</object>
+	<object>whipInvObject</object>
     <costume>indyCostume</costume>
     <script>libscumm/Actor</script>
     <script>libscumm/Interface</script>
@@ -16,11 +19,11 @@
     <script>libscumm/Util</script>
     <script>libscumm/Verb</script>
     <script>libscumm/vars</script>
-    <script>actors</script>
     <script>Dialog</script>
 	<script>Inventory</script>
 	<script>Input</script>
 	<script>main</script>
+	<script>Sentence</script>
     <charset>font1</charset>
     <charset>font2</charset>
     <charset>font3</charset>
