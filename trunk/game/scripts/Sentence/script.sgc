@@ -1,0 +1,315 @@
+// Sentence visible verbs
+verb verbGive;
+verb verbPickUp;
+verb verbUse;
+verb verbOpen;
+verb verbTalkTo;
+verb verbPush;
+verb verbClose;
+verb verbLookAt;
+verb verbPull;
+const N_VISIBLE_VERBS = 9;
+
+// Walk verb
+verb verbWalk;
+
+// Inventory slots
+verb verbInvSlot1;
+verb verbInvSlot2;
+verb verbInvSlot3;
+verb verbInvSlot4;
+verb verbInvSlot5;
+verb verbInvSlot6;
+verb verbInvSlot7;
+verb verbInvSlot8;
+verb verbInvSlot9;
+verb verbInvSlot10;
+
+// Prepositions
+const PREPO_ON = 1;
+const PREPO_TO = 2;
+const PREPO_WITH = 3;
+
+// Sentence line verb
+verb verbSentenceLine;
+
+// Private variables
+var _sentenceVerb;
+var _sentenceObjA;
+var _selectedObjA;
+var _sentenceObjB;
+var _selectedObjB;
+var _sentencePrepo;
+var _alternateVerb;
+
+// Public functions
+function Sentence_click(var area, var cmd, var btn)
+{
+	const AREA_ROOM = 2;
+	var over;
+
+	// Verb click
+	if (Util_isAnyOf(cmd, [verbGive, verbPickUp, verbUse, verbOpen, verbTalkTo, verbPush, verbClose, verbLookAt, verbPull], N_VISIBLE_VERBS))
+	{
+		Util_printDebug("A real verb has been clicked.");
+		Sentence_setVerb(cmd);
+		return;
+	}
+
+	// Object click
+	over = Object_find(VAR_VIRT_MOUSE_X, VAR_VIRT_MOUSE_Y);
+
+	// Actor click
+	if (!over)
+		over = Actor_getFromXY(VAR_VIRT_MOUSE_X, VAR_VIRT_MOUSE_Y);
+
+	// Inventory object click
+	if (!over)
+		over = Inventory_getObject(VAR_EGO, VAR_MOUSE_X, VAR_MOUSE_Y);
+
+	// An element has been clicked
+	if (over)
+	{
+		// Update sentence selected objects
+		if (_selectedObjA == 0)
+			_selectedObjA = _sentenceObjA;
+		else
+			_selectedObjB = _sentenceObjB;
+
+		// Launch the verb sentence
+		Verb_doSentence(_sentenceVerb, _selectedObjA, _selectedObjB);
+		Script_break();
+		while (Script_isRunning(VAR_SENTENCE_SCRIPT))
+			Script_break();
+
+		// Reset sentence if needed (meaning if the sentence doesn't need to be completed)
+		if (_sentencePrepo == 0 || _selectedObjB != 0)
+			Sentence_setVerb(verbWalk);
+
+		return;
+	}
+
+	// Set default verb or walk to position in case we click in the room
+	if (area == AREA_ROOM)
+	{
+		// Stop any active sentence
+		Verb_stopSentence();
+
+		if (_sentenceVerb != verbWalk)
+			Sentence_setVerb(verbWalk);
+		else
+		{
+			Actor_stopTalking();
+			Actor_walkToXY(VAR_EGO, VAR_VIRT_MOUSE_X, VAR_VIRT_MOUSE_Y);
+		}
+	}
+}
+
+function Sentence_handler(var vrb, var objA, var objB)
+{
+	var entryPt;
+
+	// Special case for the "Give" verb
+	if (vrb == verbGive && objB == 0)
+		Sentence_setPrepo(PREPO_TO);
+
+	// Is the verb handled by the selected object ?
+	entryPt = Verb_getEntryPoint(objA, vrb);
+	Util_printDebug("entryPoint: %i{entryPt}");
+
+	// Set charset used for actors
+	Interface_setCharset(font2);
+
+	// If the verb is not handled, say default sentences
+	if (entryPt == 0)
+		switch (vrb)
+		{
+			case verbPickUp:
+				Actor_talkEgo("I can't pick that up.");
+				break;
+			case verbUse:
+				Actor_talkEgo("I don't think that will work.");
+				break;
+			case verbOpen:
+				Actor_talkEgo("It doesn't seem to open.");
+				break;
+			case verbPush:
+			case verbPull:
+				Actor_talkEgo("I can't move it.");
+				break;
+			case verbClose:
+				Actor_talkEgo("It doesn't seem to close.");
+				break;
+		}
+	else
+		Script_startObjectScriptQuick(objA, vrb, [objA, objB], 2);
+}
+
+function Sentence_hide()
+{
+	Verb_setCurrent(verbSentenceLine);
+	Verb_activate(0);
+	Verb_draw();
+}
+
+function Sentence_init()
+{
+	const verbSentenceLine_X = 160;
+	const verbSentenceLine_Y = 144;
+
+	// Create default verb
+	Verb_setCurrent(verbWalk);
+	Verb_new();
+	Verb_setNameString("Walk");
+	_sentenceVerb = verbWalk;
+
+	// Add sentence line verb
+	Verb_setCurrent(verbSentenceLine);
+	Verb_new();
+	Verb_setNameString("%v{_sentenceVerb} %n{_sentenceObjA} %s{_sentencePrepo} %n{_sentenceObjB}");
+	Verb_center();
+	Verb_setColor(COLOR_AQUAMARINE);
+	Verb_setBackColor(COLOR_BLACK);
+	Verb_setDimColor(COLOR_AQUAMARINE);
+	Verb_setHiColor(COLOR_AQUAMARINE);
+	Verb_setPos(verbSentenceLine_X, verbSentenceLine_Y);
+}
+
+inline function Sentence_mouseMove()
+{
+	const OVER_NOTHING = 0;
+	const OVER_OBJECT = 1;
+	const OVER_ACTOR = 2;
+	const OVER_INV = 3;
+	var over;
+	var found;
+
+	found = OVER_NOTHING;
+
+	// Look for an object
+	over = Object_find(VAR_VIRT_MOUSE_X, VAR_VIRT_MOUSE_Y);
+	if (over != 0)
+		found = OVER_OBJECT;
+
+	// Look for an actor
+	if (over == 0)
+	{
+		over = Actor_getFromXY(VAR_VIRT_MOUSE_X, VAR_VIRT_MOUSE_Y);
+
+		// Don't take current actor into account
+		if (over == VAR_EGO)
+			over = 0;
+
+		if (over != 0)
+			found = OVER_ACTOR;
+	}
+
+	// Look for an inventory object
+	if (over == 0)
+	{
+		over = Inventory_getObject(VAR_EGO, VAR_MOUSE_X, VAR_MOUSE_Y);
+		if (over != 0)
+			found = OVER_INV;
+	}
+
+	// Update sentence and treat the "Give" verb as a special case
+	if (_selectedObjA == 0)
+	{
+		if (_sentenceVerb != verbGive || found != OVER_ACTOR)
+			_sentenceObjA = over;
+		_sentenceObjB = 0;
+	}
+	else if (over != _selectedObjA)
+		if (_sentenceVerb != verbGive || found == OVER_ACTOR)
+			_sentenceObjB = over;
+		else
+			_sentenceObjB = 0;
+
+	// Special case for the "Walk" verb
+	if (_sentenceVerb == verbWalk)
+	{
+		Verb_setCurrent(verbWalk);
+		if (found == OVER_NOTHING)
+			Verb_setNameString("Walk");
+		else
+			Verb_setNameString("Walk to");
+	}
+
+	// Set alternate verb if needed
+	if (found == OVER_NOTHING)
+		Sentence_setAlternateVerb(0);
+	else if (_selectedObjA == 0)
+		if (found == OVER_ACTOR)
+			Sentence_setAlternateVerb(verbTalkTo);
+		else
+			Sentence_setAlternateVerb(verbLookAt);
+
+	// Redraw sentence
+	Verb_setCurrent(verbSentenceLine);
+	Verb_draw();
+
+	return (over != 0);
+}
+
+function Sentence_setAlternateVerb(var vrb)
+{
+	if (_alternateVerb != vrb && vrb != _sentenceVerb)
+	{
+		// Reset current alternate verb color
+		Verb_setCurrent(_alternateVerb);
+		Verb_setColor(COLOR_VERB_NORMAL);
+		Verb_draw();
+
+		// Change alternate verb
+		_alternateVerb = vrb;
+
+		// Set color if needed
+		if (_alternateVerb != 0)
+		{
+			Verb_setCurrent(_alternateVerb);
+			Verb_setColor(COLOR_VERB_HI);
+			Verb_draw();
+		}
+	}
+}
+
+function Sentence_setPrepo(var prepo)
+{
+	// Nuke existing preposition if needed
+	if (_sentencePrepo != 0)
+	{
+		Util_nukeArray(_sentencePrepo);
+		_sentencePrepo = 0;
+	}
+
+	switch (prepo)
+	{
+		case PREPO_ON:
+			_sentencePrepo = "on";
+			break;
+		case 2:
+			_sentencePrepo = "to";
+			break;
+		case PREPO_WITH:
+			_sentencePrepo = "with";
+			break;
+	}
+}
+
+function Sentence_setVerb(var vrb)
+{
+	_sentenceObjA = 0;
+	_selectedObjA = 0;
+	_sentenceObjB = 0;
+	_selectedObjB = 0;
+	Sentence_setPrepo(0);
+	_sentenceVerb = vrb;
+}
+
+function Sentence_show()
+{
+	// Redraw sentence
+	Verb_setCurrent(verbSentenceLine);
+	Verb_activate(1);
+	Verb_draw();
+}
