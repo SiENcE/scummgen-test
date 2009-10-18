@@ -38,5 +38,5 @@ function main(var bootParam)
 	Dialog_init();
 
 	// Load the logo screen
-	Room_load(islandTentRoom);
+	Room_load(logoRoom);
 }
