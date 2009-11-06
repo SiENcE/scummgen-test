@@ -1,3 +1,7 @@
+// Global constants
+const AREA_ROOM = 2;
+const AREA_KEYBOARD = 4;
+
 // Private functions
 function _Input_keyPress(var key)
 {
@@ -14,13 +18,8 @@ thread _Input_mouseWatch()
 			continue;
 		}
 
-		// Check if an object is under the mouse pointer only if the inventory if visible
-		if (inventoryVisible)
-			if (Sentence_mouseMove())
-			{
-				Script_break();
-				continue;
-			}
+		// Update sentence
+		Sentence_mouseMove();
 
 		Script_break();
 	}
@@ -29,8 +28,6 @@ thread _Input_mouseWatch()
 // Public functions
 function Input_handler(var area, var cmd, var btn)
 {
-	const AREA_KEYBOARD = 4;
-
 	Util_printDebug("area = %i{area}, cmd = %i{cmd}, button = %i{btn}");
 
 	// Check for a key press

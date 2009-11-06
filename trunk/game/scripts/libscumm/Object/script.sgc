@@ -174,18 +174,16 @@ inline function Object_getY(var obj)
 }
 
 
-inline function Object_isClassOf(var obj, var class)
+inline function Object_isClassOf(var obj, var cls)
 {
 	var res;
 	asm
 	{
 		pushWordVar .word obj
-		pushWordVar .word class
+		pushWordVar .word cls
 		pushByte .byte 1
 		ifClassOfIs
 		writeWordVar .word res
-		
-		
 	}
 	return res;
 }
@@ -200,15 +198,15 @@ inline function Object_load(var obj, var room)
 	}
 }
 
-inline function Object_setClass(var obj, var class, var set)
+inline function Object_setClass(var obj, var cls, var set)
 {
 	const SET_FLAG = 0x80;
 	if (set)
-		class += SET;
+		cls += SET;
 	asm
 	{
 		pushWordVar .word obj
-		pushWordVar .word class
+		pushWordVar .word cls
 		pushByte .byte 1
 		setClass
 	}

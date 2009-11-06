@@ -4,7 +4,13 @@ function whipInvObject_verb(var objA, var objB)
 		if (objB == 0)
 			Sentence_setPrepo(PREPO_ON);
 		else if (objB == tentObject)
+		{
 			Actor_talkEgo("Let me whip that tent !");
+			Script_waitForMessage();
+			Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_1);
+			//Actor_putAtXY(VAR_EGO, 20, 50, iceCaveRoom);
+			//Room_load(iceCaveRoom);
+		}
 		else
 			Actor_talkEgo("Whipping that makes no sense !");
 		break;
@@ -14,15 +20,25 @@ function preEntry()
 {
 	// Set room height before entering it
 	Room_setScreen(0, VAR_ROOM_HEIGHT);
+
+	/*if (inventoryVisible)
+		Inventory_show();*/
 }
 
 function preExit()
 {
+	//Inventory_hide();
 }
 
 function main(var bootParam)
 {
-	// First, setup engine variables
+	// Initialize our base game "classes"
+	Input_init();
+	Inventory_init();
+	Sentence_init();
+	Dialog_init();
+
+	// Setup engine variables
 	VAR_TIMER_NEXT = 6;
 	VAR_MAINMENU_KEY = 319;
 	VAR_RESTART_KEY = 322;
@@ -31,12 +47,6 @@ function main(var bootParam)
 	VAR_ENTRY_SCRIPT = preEntry;
 	VAR_EXIT_SCRIPT = preExit;
 
-	// Initialize our base game "classes"
-	Input_init();
-	Inventory_init();
-	Sentence_init();
-	Dialog_init();
-
 	// Load the logo screen
-	Room_load(logoRoom);
+	Room_load(islandTentRoom);
 }

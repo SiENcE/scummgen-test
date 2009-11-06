@@ -11,7 +11,7 @@ verb verbArrowUp;
 verb verbArrowDown;
 
 // Global variables
-var inventoryVisible;
+var _inventoryVisible;
 
 // Private functions
 function _Inventory_addSlot(var vrb, var posX, var posY)
@@ -118,7 +118,7 @@ function Inventory_hide()
 	Sentence_hide();
 
 	// Change the visible state
-	inventoryVisible = 0;
+	_inventoryVisible = 0;
 }
 
 function Inventory_init()
@@ -180,8 +180,8 @@ function Inventory_init()
 	// Add inventory slots
 	_Inventory_addSlot(verbInvSlot1, VERB_INV_SLOT1_X, VERB_INV_SLOT1_Y);
 
-	// Initialize the visibility of the inventory
-	inventoryVisible = 0;
+	// Inventory is invisible by default
+	_inventoryVisible = 0;
 }
 
 function Inventory_show()
@@ -241,5 +241,5 @@ function Inventory_show()
 	Sentence_show();
 
 	// Change the visible state
-	inventoryVisible = 1;
+	_inventoryVisible = 1;
 }

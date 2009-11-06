@@ -79,8 +79,6 @@ function entry()
 	Actor_pickup(whipInvObject, 1);
 	Interface_activateCursor(1);
 	Interface_activateUserput(1);
-	Inventory_init();
-	Sentence_init();
 	Inventory_show();
 	Sentence_show();
 	Script_delaySeconds(10);
