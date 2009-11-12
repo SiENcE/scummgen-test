@@ -133,11 +133,11 @@ inline function Script_stop(var script)
 	}
 }
 
-inline function Script_stopObjectScript(var script)
+inline function Script_stopObjectScript(var obj)
 {
 	asm
 	{
-		pushWordVar .word script
+		pushWordVar .word obj
 		stopObjectScript
 	}
 }

@@ -4,14 +4,29 @@ const COLOR_VERB_DIM = 250;
 const COLOR_VERB_NORMAL = 251;
 const COLOR_VERB_HI = 252;
 const INVENTORY_Y = 144;
+const N_INV_SLOTS = 10;
+const N_INV_LINES = 2;
+const N_INV_COLUMNS = 5;
 
 // Verbs
 verb verbVerbs;
 verb verbArrowUp;
 verb verbArrowDown;
+verb verbInvSlot1;
+verb verbInvSlot2;
+verb verbInvSlot3;
+verb verbInvSlot4;
+verb verbInvSlot5;
+verb verbInvSlot6;
+verb verbInvSlot7;
+verb verbInvSlot8;
+verb verbInvSlot9;
+verb verbInvSlot10;
 
 // Global variables
 var _inventoryVisible;
+var _lineOffset;
+var _currentActor;
 
 // Private functions
 function _Inventory_addSlot(var vrb, var posX, var posY)
@@ -35,21 +50,75 @@ inline function _Inventory_addVerb(var vrb, var string, var posX, var posY)
 	Verb_setPos(posX, posY);
 }
 
-// Public functions
-inline function Inventory_checkArrows(var vrb)
+inline function _Inventory_drawArrows()
 {
-	// Check arrows
-	if (vrb == verbArrowUp || vrb == verbArrowDown)
-	{
-		// TODO: update inventory display
-		Util_printDebug("An arrow has been clicked.");
-		return 1;
-	}
+	// Handle up arrow
+	Verb_setCurrent(verbArrowUp);
+	if (_lineOffset > 0)
+		Verb_activate(1);
+	else
+		Verb_dim();
+	Verb_draw();
 
-	return 0;
+	// Handle down arrow
+	Verb_setCurrent(verbArrowDown);
+	if (Actor_getInventoryCount(VAR_EGO) > (_lineOffset + N_INV_LINES) * N_INV_COLUMNS)
+		Verb_activate(1);
+	else
+		Verb_dim();
+	Verb_draw();
 }
 
-inline function Inventory_getObject(var owner, var x, var y)
+inline function _Inventory_drawSlots()
+{
+	var i;
+	var obj;
+
+	for (i = 0; i < N_INV_SLOTS; i++)
+	{
+		// Find inventory object
+		obj = Actor_findInventory(VAR_EGO, (_lineOffset * N_INV_COLUMNS) + i + 1);
+
+		// Set current verb slot
+		Verb_setCurrent(verbInvSlot1 + i);
+
+		// Set slot image if an inventory object has been found
+		if (obj != 0)
+			Verb_setImage(obj);
+
+		// Show the slot if an inventory object has been found, otherwise hide it
+		Verb_activate(obj != 0);
+		Verb_draw();
+	}
+}
+
+inline function _Inventory_hideSlots()
+{
+	var i;
+	for (i = 0; i < N_INV_SLOTS; i++)
+	{
+		Verb_setCurrent(verbInvSlot1 + i);
+		Verb_activate(0);
+		Verb_draw();
+	}
+}
+
+// Public functions
+function Inventory_click(var cmd, var btn)
+{
+	// Check arrows and change the inventory offset accordingly
+	if (cmd == verbArrowUp)
+		_lineOffset--;
+	else if (cmd == verbArrowDown)
+		_lineOffset++;
+	else
+		return;
+
+	// Redraw inventory
+	Inventory_show();
+}
+
+inline function Inventory_getObject(var x, var y)
 {
 	var vrb;
 	vrb = Verb_getFromXY(x, y);
@@ -58,21 +127,37 @@ inline function Inventory_getObject(var owner, var x, var y)
 	if ((vrb < verbInvSlot1) || (vrb > verbInvSlot10))
 		return 0;
 
-	// TODO: add offset
-	return Object_findInventory(owner, vrb - verbInvSlot1 + 1);
+	// Return object
+	return Actor_findInventory(VAR_EGO, vrb - verbInvSlot1 + (_lineOffset * N_INV_COLUMNS) + 1);
+}
+
+function Inventory_handler()
+{
+	// Reset line offset if the current actor has changed
+	if (VAR_EGO != _currentActor)
+	{
+		_lineOffset = 0;
+		_currentActor = VAR_EGO;
+	}
+
+	// Redraw inventory
+	Inventory_show();
 }
 
 function Inventory_hide()
 {
+	var i;
+
+	// Set room height
 	Room_setScreen(0, INVENTORY_Y - 1);
 	Util_redraw();
 
-	// Draw verbs background
+	// Hide verbs background
 	Verb_setCurrent(verbVerbs);
 	Verb_activate(0);
 	Verb_draw();
 
-	// Draw verbs
+	// Hide verbs
 	Verb_setCurrent(verbGive);
 	Verb_activate(0);
 	Verb_draw();
@@ -101,7 +186,7 @@ function Inventory_hide()
 	Verb_activate(0);
 	Verb_draw();
 	
-	// Draw arrows
+	// Hide arrows
 	Verb_setCurrent(verbArrowUp);
 	Verb_activate(0);
 	Verb_draw();
@@ -109,12 +194,10 @@ function Inventory_hide()
 	Verb_activate(0);
 	Verb_draw();
 
-	// Draw inventory
-	Verb_setCurrent(verbInvSlot1);
-	Verb_activate(0);
-	Verb_draw();
+	// Hide slots
+	_Inventory_hideSlots();
 
-	// Draw sentence
+	// Hide sentence
 	Sentence_hide();
 
 	// Change the visible state
@@ -149,6 +232,24 @@ function Inventory_init()
 	const VERB_ARROW_DOWN_Y = 180;
 	const VERB_INV_SLOT1_X = 160;
 	const VERB_INV_SLOT1_Y = 152;
+	const VERB_INV_SLOT2_X = 192;
+	const VERB_INV_SLOT2_Y = 152;
+	const VERB_INV_SLOT3_X = 224;
+	const VERB_INV_SLOT3_Y = 152;
+	const VERB_INV_SLOT4_X = 256;
+	const VERB_INV_SLOT4_Y = 152;
+	const VERB_INV_SLOT5_X = 288;
+	const VERB_INV_SLOT5_Y = 152;
+	const VERB_INV_SLOT6_X = 160;
+	const VERB_INV_SLOT6_Y = 176;
+	const VERB_INV_SLOT7_X = 192;
+	const VERB_INV_SLOT7_Y = 176;
+	const VERB_INV_SLOT8_X = 224;
+	const VERB_INV_SLOT8_Y = 176;
+	const VERB_INV_SLOT9_X = 256;
+	const VERB_INV_SLOT9_Y = 176;
+	const VERB_INV_SLOT10_X = 288;
+	const VERB_INV_SLOT10_Y = 176;
 
 	// Initialize charset
 	Interface_setCharset(font1);
@@ -159,7 +260,7 @@ function Inventory_init()
 	// Add verbs background
 	Verb_setCurrent(verbVerbs);
 	Verb_new();
-	Verb_setImageInRoom(verbsObject, 1);
+	Verb_setImage(verbsObject);
 	Verb_setPos(VERB_VERBS_X, VERB_VERBS_Y);
 
 	// Add verbs
@@ -179,6 +280,19 @@ function Inventory_init()
 
 	// Add inventory slots
 	_Inventory_addSlot(verbInvSlot1, VERB_INV_SLOT1_X, VERB_INV_SLOT1_Y);
+	_Inventory_addSlot(verbInvSlot2, VERB_INV_SLOT2_X, VERB_INV_SLOT2_Y);
+	_Inventory_addSlot(verbInvSlot3, VERB_INV_SLOT3_X, VERB_INV_SLOT3_Y);
+	_Inventory_addSlot(verbInvSlot4, VERB_INV_SLOT4_X, VERB_INV_SLOT4_Y);
+	_Inventory_addSlot(verbInvSlot5, VERB_INV_SLOT5_X, VERB_INV_SLOT5_Y);
+	_Inventory_addSlot(verbInvSlot6, VERB_INV_SLOT6_X, VERB_INV_SLOT6_Y);
+	_Inventory_addSlot(verbInvSlot7, VERB_INV_SLOT7_X, VERB_INV_SLOT7_Y);
+	_Inventory_addSlot(verbInvSlot8, VERB_INV_SLOT8_X, VERB_INV_SLOT8_Y);
+	_Inventory_addSlot(verbInvSlot9, VERB_INV_SLOT9_X, VERB_INV_SLOT9_Y);
+	_Inventory_addSlot(verbInvSlot10, VERB_INV_SLOT10_X, VERB_INV_SLOT10_Y);
+
+	// Set current actor and offset
+	_currentActor = VAR_EGO;
+	_lineOffset = 0;
 
 	// Inventory is invisible by default
 	_inventoryVisible = 0;
@@ -186,8 +300,12 @@ function Inventory_init()
 
 function Inventory_show()
 {
+	// Set room height
 	Room_setScreen(0, INVENTORY_Y - 1);
 	Util_redraw();
+
+	// Hide slots first
+	_Inventory_hideSlots();
 
 	// Draw verbs background
 	Verb_setCurrent(verbVerbs);
@@ -224,18 +342,10 @@ function Inventory_show()
 	Verb_draw();
 	
 	// Draw arrows
-	Verb_setCurrent(verbArrowUp);
-	Verb_dim();
-	Verb_draw();
-	Verb_setCurrent(verbArrowDown);
-	Verb_dim();
-	Verb_draw();
+	_Inventory_drawArrows();
 
-	// Draw inventory
-	Verb_setCurrent(verbInvSlot1);
-	Verb_activate(1);
-	Verb_setImageInRoom(whipInvObject, 1);
-	Verb_draw();
+	// Draw slots
+	_Inventory_drawSlots();
 
 	// Draw sentence
 	Sentence_show();

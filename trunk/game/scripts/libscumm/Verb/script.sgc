@@ -157,7 +157,7 @@ inline function Verb_setHiColor(var color)
 	}
 }
 
-inline function Verb_setImage(var obj)
+inline function Verb_setImageInCurrentRoom(var obj)
 {
 	asm
 	{
@@ -166,12 +166,13 @@ inline function Verb_setImage(var obj)
 	}
 }
 
-inline function Verb_setImageInRoom(var obj, var room)
+inline function Verb_setImage(var obj)
 {
+	const ROOM = 1; // Verb images should always be in room 1
 	asm
 	{
 		pushWordVar .word obj
-		pushWordVar .word room
+		pushWord .word ROOM
 		verbOps verbImageInRoom
 	}
 }

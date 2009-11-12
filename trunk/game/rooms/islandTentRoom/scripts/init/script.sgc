@@ -3,7 +3,11 @@ actor actorIndy;
 function tentObject_verb(var objA, var objB)
 {
 	verbLookAt:
-		Actor_talkEgo("That's the tent I pitched this morning.");
+		Actor_talkEgo("Oh, there is magical whip in there !");
+		Script_waitForMessage();
+		Actor_pickup(whipInvObject);
+		Actor_talkEgo("Let's whip that tent ! HINT HINT HINT !");
+		Script_waitForMessage();
 		break;
 }
 
@@ -42,7 +46,7 @@ function entry()
 	setupIndy();
 	
 	// Wait a bit then print faked noise text
-	Script_delaySeconds(1);
+	/*Script_delaySeconds(1);
 	Interface_printLineLoadDefault();
 	Interface_printLineColor(COLOR_GORSE);
 	Interface_printLineAt(220, 170);
@@ -51,7 +55,7 @@ function entry()
 	Interface_printLine("*clang*");
 	Script_waitForMessage();
 	Interface_printLine("*CRACK*");
-	Script_waitForMessage();
+	Script_waitForMessage();*/
 	
 	// Set Indy out of the screen and say something
 	Actor_putAtXY(VAR_EGO, 205, 300, VAR_ROOM);
@@ -60,11 +64,11 @@ function entry()
 	Script_delaySeconds(1);
 
 	// Climb out of hole
-	Actor_setCostume(indyClimbingCostume);
+	/*Actor_setCostume(indyClimbingCostume);
 	Actor_putAtXY(VAR_EGO, 205, 193, VAR_ROOM);
 	Actor_setDirection(ACTOR_DIR_SOUTH);
 	Actor_animate(VAR_EGO, indyClimbingCostume_anim);
-	Script_delaySeconds(3);
+	Script_delaySeconds(3);*/
 
 	// Restore costume
 	Actor_setCostume(indyCostume);
@@ -76,9 +80,7 @@ function entry()
 	Script_waitForMessage();
 
 	// Test for inventory display
-	Actor_pickup(whipInvObject, 1);
-	Interface_activateCursor(1);
-	Interface_activateUserput(1);
+	Input_enableMouse();
 	Inventory_show();
 	Sentence_show();
 	Script_delaySeconds(10);

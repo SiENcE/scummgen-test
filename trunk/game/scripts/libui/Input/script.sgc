@@ -1,48 +1,86 @@
 // Global constants
+const MOUSE_BUTTON_2 = 2;
+const AREA_VERB = 1;
 const AREA_ROOM = 2;
 const AREA_KEYBOARD = 4;
 
+// Global variables
+var _mouseEnabled;
+
 // Private functions
+function _Input_click(var area, var cmd, var btn)
+{
+	// Indicate to the different UI classes that a click occured
+	Inventory_click(cmd, btn);
+	Sentence_click(area, cmd, btn);
+}
+
 function _Input_keyPress(var key)
 {
 }
 
-thread _Input_mouseWatch()
+thread _Input_mouseMove()
 {
-	while (1)
+	while (_mouseEnabled)
 	{
-		// Don't interrupt any running sentence script
-		if (Script_isRunning(VAR_SENTENCE_SCRIPT))
-		{
-			Script_break();
-			continue;
-		}
-
-		// Update sentence
+		// Indicate to the different UI classes that a click occured
 		Sentence_mouseMove();
-
 		Script_break();
 	}
 }
 
 // Public functions
+function Input_disableMouse()
+{
+	// Disable mouse
+	_mouseEnabled = 0;
+
+	// Make sure mouse move thread is not executing anymore
+	while (Script_isRunning(_Input_mouseMove))
+		Script_break();
+
+	// Hide cursor
+	Interface_activateCursor(0);
+}
+
+inline function Input_enableMouse()
+{
+	// Show cursor
+	Interface_activateCursor(1);
+
+	// Enable mouse
+	_mouseEnabled = 1;
+
+	// Launch mouse move thread
+	_Input_mouseMove();
+}
+
 function Input_handler(var area, var cmd, var btn)
 {
-	Util_printDebug("area = %i{area}, cmd = %i{cmd}, button = %i{btn}");
-
-	// Check for a key press
-	if (area == AREA_KEYBOARD)
+	// Switch to the appropriate sub handler
+	switch (area)
 	{
-		_Input_keyPress(cmd);
-		return;
+		case AREA_KEYBOARD:
+			while (Script_isRunning(_Input_keyPress))
+				Script_break();
+			_Input_keyPress(cmd);
+			break;
+		default:
+			if (_mouseEnabled)
+			{
+				while (Script_isRunning(_Input_click))
+					Script_break();
+				_Input_click(area, cmd, btn);
+			}
+			break;
 	}
-
-	// Let the Sentence class handler manage the click
-	Sentence_click(area, cmd, btn);
 }
 
 function Input_init()
 {
-	// Launch the mouse watching thread
-	_Input_mouseWatch();
+	// Mouse is disabled by default
+	_mouseEnabled = 0;
+
+	// Engine input is always enabled
+	Interface_activateUserput(1);
 }

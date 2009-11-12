@@ -9,19 +9,6 @@ verb verbClose;
 verb verbLookAt;
 verb verbPull;
 verb verbWalk;
-const N_VISIBLE_VERBS = 9; // Walk is not a visible verb
-
-// Inventory slots
-verb verbInvSlot1;
-verb verbInvSlot2;
-verb verbInvSlot3;
-verb verbInvSlot4;
-verb verbInvSlot5;
-verb verbInvSlot6;
-verb verbInvSlot7;
-verb verbInvSlot8;
-verb verbInvSlot9;
-verb verbInvSlot10;
 
 // Enums
 enum { PREPO_ON, PREPO_TO, PREPO_WITH, PREPO_NONE };
@@ -29,6 +16,10 @@ enum { OBJ_OBJECT, OBJ_ACTOR, OBJ_INVENTORY, OBJ_NONE };
 
 // Sentence line verb
 verb verbSentenceLine;
+
+// Global constants
+const FROZEN_INTENSITY = 255;
+const UNFROZEN_INTENSITY = 175;
 
 // Private variables
 var _sentenceVisible;
@@ -42,11 +33,13 @@ var _sentenceObjB;
 var _selectedObjB;
 var _sentencePrepo;
 var _alternateVerb;
+var _sentenceFrozen;
 var _defaultPickUpString;
 var _defaultUseString;
 var _defaultOpenString;
 var _defaultPushPullString;
 var _defaultCloseString;
+var _defaultLookAtString;
 var _prepoOnString;
 var _prepoToString;
 var _prepoWithString;
@@ -55,6 +48,10 @@ var _prepoWithString;
 inline function _Sentence_draw()
 {
 	Verb_setCurrent(verbSentenceLine);
+	if (_sentenceFrozen)
+		Room_setIntensity(FROZEN_INTENSITY, COLOR_AQUAMARINE, COLOR_AQUAMARINE);
+	else
+		Room_setIntensity(UNFROZEN_INTENSITY, COLOR_AQUAMARINE, COLOR_AQUAMARINE);
 	Verb_draw();
 }
 
@@ -77,7 +74,7 @@ inline function _Sentence_getObject()
 	}
 
 	// Inventory object check
-	_object = Inventory_getObject(VAR_EGO, VAR_MOUSE_X, VAR_MOUSE_Y);
+	_object = Inventory_getObject(VAR_MOUSE_X, VAR_MOUSE_Y);
 	if (_object != 0)
 	{
 		_objectType = OBJ_INVENTORY;
@@ -90,15 +87,43 @@ inline function _Sentence_getObject()
 
 inline function _Sentence_handleSpecialCases()
 {
-	// 1. If the sentence first object has been selected and _object is the same,
-	// then discard it
-	if ((_selectedObjA != 0) && (_object == _selectedObjA))
+	// 1. If sentence is frozen, if current verb is walk, and if _object is different than the first selected element,
+	// then reset the sentence
+	if (_sentenceFrozen && (_sentenceVerb == verbWalk) && (_object != _selectedObjA))
+		_Sentence_reset(verbWalk);
+
+	// 2. If _object is an actor and it's VAR_EGO, discard it
+	if ((_objectType == OBJ_ACTOR) && (_object == VAR_EGO))
 	{
 		_object = 0;
 		_objectType = OBJ_NONE;
 	}
-		
-	// 2. If the current verb is Walk and _object is either an object or an actor,
+
+	// 3. If the current verb is Talk To and _object is not an actor, then discard it
+	// TODO: check for class ?
+	if ((_sentenceVerb == verbTalkTo) && (_objectType != OBJ_ACTOR))
+	{
+		_object = 0;
+		_objectType = OBJ_NONE;
+	}
+
+	// 4. If the current verb is Give and the first object has not been selected,
+	// then make sure the first object is not an actor, otherwise discard it
+	if ((_sentenceVerb == verbGive) && (_selectedObjA == 0) && (_objectType == OBJ_ACTOR))
+	{
+		_object = 0;
+		_objectType = OBJ_NONE;
+	}
+
+	// 5. If the current verb is Give and the first object of the sentence is selected already,
+	// then make sure the second object is an actor, otherwise discard it
+	if ((_sentenceVerb == verbGive) && (_selectedObjA != 0) && (_objectType != OBJ_ACTOR))
+	{
+		_object = 0;
+		_objectType = OBJ_NONE;
+	}
+
+	// 6. If the current verb is Walk and _object is either an object or an actor,
 	// then change the verb name to "Walk to", otherwise, reset it to "Walk"
 	if ((_sentenceVerb == verbWalk) && ((_objectType == OBJ_OBJECT) || (_objectType == OBJ_ACTOR)))
 	{
@@ -111,35 +136,20 @@ inline function _Sentence_handleSpecialCases()
 		Verb_setNameString("Walk");
 	}
 
-	// 3. If _object is an actor and it's VAR_EGO, discard it
-	if ((_objectType == OBJ_ACTOR) && (_object == VAR_EGO))
+	// 7. If the current verb is not Walk, if the sentence first element has been selected and is the same as _object,
+	// and if the sentence is not frozen, then discard _object
+	if ((_selectedObjA != 0) && (_object == _selectedObjA) && !_sentenceFrozen)
 	{
 		_object = 0;
 		_objectType = OBJ_NONE;
 	}
 
-	// 4. If the current verb is Walk and _object is an inventory object,
+	// 8. If the current verb is Walk, if _object is an inventory object, and sentence is not frozen,
 	// then change the sentence verb to Look At
-	if ((_selectedVerb == verbWalk) && (_objectType == OBJ_INVENTORY))
-		 _sentenceVerb = verbLookAt;
+	if ((_sentenceVerb == verbWalk) && (_objectType == OBJ_INVENTORY) && !_sentenceFrozen)
+		_sentenceVerb = verbLookAt;
 
-	// 5. If the current verb is Give and the first object has not been selected,
-	// then make sure the first object is not an actor, otherwise discard it
-	if ((_sentenceVerb == verbGive) && (_selectedObjA == 0) && (_objectType == OBJ_ACTOR))
-	{
-		_object = 0;
-		_objectType = OBJ_NONE;
-	}
-
-	// 6. If the current verb is Give and the first object of the sentence is selected already,
-	// then make sure the second object is an actor, otherwise discard it
-	if ((_sentenceVerb == verbGive) && (_selectedObjA != 0) && (_objectType != OBJ_ACTOR))
-	{
-		_object = 0;
-		_objectType = OBJ_NONE;
-	}
-
-	// 7. If the current verb is Give, then set the preposition to "to" if the first object
+	// 9. If the current verb is Give, then set the preposition to "to" if the first object
 	// of the sentence is selected, otherwise clear the preposition
 	if (_sentenceVerb == verbGive)
 		if (_selectedObjA != 0)
@@ -152,7 +162,7 @@ inline function _Sentence_isComplete()
 {
 	// Depending on which verb is active and which element has been selected,
 	// we can tell if the sentence if complete or not
-	switch (_sentenceVerb)
+	switch (_selectedVerb)
 	{
 		case verbGive:
 			return (_selectedObjB != 0);
@@ -175,6 +185,45 @@ inline function _Sentence_isComplete()
 		case verbWalk:
 			return (_selectedObjA != 0);
 	}
+}
+
+inline function _Sentence_reset(var vrb)
+{
+	// Set sentence elements
+	_sentenceVerb = vrb;
+	_selectedVerb = vrb;
+	_sentenceObjA = _object;
+	_selectedObjA = 0;
+	_sentenceObjB = 0;
+	_selectedObjB = 0;
+	Sentence_setPrepo(PREPO_NONE);
+
+	// Unfreeze sentence
+	_sentenceFrozen = 0;
+}
+
+inline function _Sentence_roomClick()
+{
+	const ACTOR_DIST = 40;
+
+	// Stop actor
+	Actor_stopMoving();
+	Actor_stopTalking();
+
+	// Object click
+	if (_objectType != OBJ_NONE)
+	{
+		// Walk to object
+		Actor_walkToObject(VAR_EGO, _object, ACTOR_DIST);
+		return;
+	}
+
+	// Set the sentence verb to Walk if it is not set already
+	if (_sentenceVerb != verbWalk)
+		_Sentence_reset(verbWalk);
+
+	// Walk to mouse pointer location
+	Actor_walkToXY(VAR_EGO, VAR_VIRT_MOUSE_X, VAR_VIRT_MOUSE_Y);
 }
 
 inline function _Sentence_setAlternateVerb(var vrb)
@@ -201,34 +250,19 @@ inline function _Sentence_setAlternateVerb(var vrb)
 
 inline function _Sentence_select()
 {
-	// Select verb elements previously detected
+	// Select elements previously detected
 	_selectedObjA = _sentenceObjA;
 	_selectedObjB = _sentenceObjB;
-}
 
-inline function _Sentence_setVerb(var vrb)
-{
-	// Set sentence elements
-	_sentenceVerb = vrb;
-	_selectedVerb = vrb;
-	_sentenceObjA = 0;
-	_selectedObjA = 0;
-	_sentenceObjB = 0;
-	_selectedObjB = 0;
-	Sentence_setPrepo(PREPO_NONE);
-
-	// Reset any found object
-	_object = 0;
-	_objectType = OBJ_NONE;
+	// Freeze sentence
+	_sentenceFrozen = 1;
 }
 
 inline function _Sentence_update()
 {
-	// Set sentence verb to the selected one
-	_sentenceVerb = _selectedVerb;
-
-	// Handle special cases first
-	_Sentence_handleSpecialCases();
+	// Don't update sentence if sentence is frozen
+	if (_sentenceFrozen)
+		return;
 
 	// Update sentence elements
 	if (_selectedObjA == 0)
@@ -238,8 +272,10 @@ inline function _Sentence_update()
 	}
 	else
 		_sentenceObjB = _object;
+}
 
-	// Update alternate verb
+inline function _Sentence_updateAlternateVerb()
+{
 	switch (_objectType)
 	{
 		case OBJ_OBJECT:
@@ -258,86 +294,109 @@ inline function _Sentence_update()
 	}
 }
 
+inline function _Sentence_verbClick(var vrb)
+{
+	// Inventory object click
+	if (_objectType == OBJ_INVENTORY)
+	{
+		// Stop actor
+		Actor_stopMoving();
+		Actor_stopTalking();
+		return 0;
+	}
+
+	// Sentence verb click
+	if (Util_isAnyOf(vrb, [verbGive, verbPickUp, verbUse, verbOpen, verbTalkTo, verbPush, verbClose, verbLookAt, verbPull], 9))
+		_Sentence_reset(vrb);
+	
+	return 1;
+}
+
 // Public functions
-function Sentence_click(var area, var cmd, var btn)
+inline function Sentence_click(var area, var cmd, var btn)
 {
 	// Check if sentence if visible first
 	if (!_sentenceVisible)
 		return;
 
-	// Wait until the sentence has been fully updated
-	while (Script_isRunning(Sentence_mouseMove))
-		Script_break();
+	// Stop any running sentence
+	Verb_stopSentence();
 
-	// Verb click
-	if (Util_isAnyOf(cmd, [verbGive, verbPickUp, verbUse, verbOpen, verbTalkTo, verbPush, verbClose, verbLookAt, verbPull], N_VISIBLE_VERBS))
+	// On a right click, change current verb to the alternate verb
+	// (only applies when objB has not been selected)
+	if ((btn == MOUSE_BUTTON_2) && (_alternateVerb != 0) && (_selectedObjB == 0))
 	{
-		// Set sentence verb
-		_Sentence_setVerb(cmd);
-		return;
+		_sentenceVerb = _alternateVerb;
+		_selectedVerb = _alternateVerb;
 	}
 
-	// If no element has been clicked, just restore the default Walk verb if it's not set already,
-	// otherwise walk to the mouse pointer location
-	if (_objectType == OBJ_NONE)
+	// Treat each area separately
+	switch (area)
 	{
-		_Sentence_setVerb(verbWalk);
-		return;
+		case AREA_VERB:
+			if (_Sentence_verbClick(cmd))
+				return;
+			break;
+		case AREA_ROOM:
+			_Sentence_roomClick();
+			break;
 	}
 
 	// Select elements of the sentence
 	_Sentence_select();
-	
+
 	// Launch the verb sentence
 	Verb_doSentence(_sentenceVerb, _selectedObjA, _selectedObjB);
-	Script_break();
-
-	// Wait until the script has been executed fully
-	while (Script_isRunning(VAR_SENTENCE_SCRIPT))
-		Script_break();
-
-	// Change verb back to default if the sentence is complete
-	if (_Sentence_isComplete())
-		_Sentence_setVerb(verbWalk);
 }
 
 function Sentence_handler(var vrb, var objA, var objB)
 {
 	var entryPt;
 
-	// Check is the verb is handled by the selected object
-	entryPt = Verb_getEntryPoint(objA, vrb);
-
 	// Set charset used for actors
 	Interface_setCharset(font2);
 
-	// If the verb is not handled, say default sentences
+	// Wait for current actor to be done walking
+	Script_waitForActor(VAR_EGO);
+
+	// Get verb entry point
+	entryPt = Verb_getEntryPoint(objA, vrb);
 	if (entryPt != 0)
 	{
+		// Call appropriate object script
+		Script_stopObjectScript(objA);
 		Script_startObjectScriptQuick(objA, vrb, [objA, objB], 2);
-		return;
 	}
-	
-	// Default verb actions	
-	switch (vrb)
-	{
-		case verbPickUp:
-			Actor_talkEgo(_defaultPickUpString);
-			break;
-		case verbUse:
-			Actor_talkEgo(_defaultUseString);
-			break;
-		case verbOpen:
-			Actor_talkEgo(_defaultOpenString);
-			break;
-		case verbPush:
-		case verbPull:
-			Actor_talkEgo(_defaultPushPullString);
-			break;
-		case verbClose:
-			Actor_talkEgo(_defaultCloseString);
-			break;
-	}		
+	else // Default verb actions
+		switch (vrb)
+		{
+			case verbPickUp:
+				Actor_talkEgo(_defaultPickUpString);
+				break;
+			case verbUse:
+				Actor_talkEgo(_defaultUseString);
+				break;
+			case verbOpen:
+				Actor_talkEgo(_defaultOpenString);
+				break;
+			case verbPush:
+			case verbPull:
+				Actor_talkEgo(_defaultPushPullString);
+				break;
+			case verbClose:
+				Actor_talkEgo(_defaultCloseString);
+				break;
+			case verbLookAt:
+				Actor_talkEgo(_defaultLookAtString);
+				break;
+		}
+
+	// If sentence is complete, change verb back to the default Walk verb,
+	// otherwise make sure to unfreeze the sentence
+	if (_Sentence_isComplete())
+		_Sentence_reset(verbWalk);
+	else
+		_sentenceFrozen = 0;
 }
 
 function Sentence_hide()
@@ -358,7 +417,15 @@ function Sentence_init()
 	Verb_setCurrent(verbWalk);
 	Verb_new();
 	Verb_setNameString("Walk");
-	_Sentence_setVerb(verbWalk);
+
+	// Initialize sentence elements
+	_sentenceVerb = verbWalk;
+	_selectedVerb = verbWalk;
+	_sentenceObjA = 0;
+	_selectedObjA = 0;
+	_sentenceObjB = 0;
+	_selectedObjB = 0;
+	Sentence_setPrepo(PREPO_NONE);
 
 	// Add sentence line verb
 	Verb_setCurrent(verbSentenceLine);
@@ -370,6 +437,7 @@ function Sentence_init()
 	Verb_setDimColor(COLOR_AQUAMARINE);
 	Verb_setHiColor(COLOR_AQUAMARINE);
 	Verb_setPos(VERB_SENTENCE_LINE_X, VERB_SENTENCE_LINE_Y);
+	_sentenceFrozen = 0;
 	
 	// Default action strings
 	_defaultPickUpString = "I can't pick that up.";
@@ -377,8 +445,9 @@ function Sentence_init()
 	_defaultOpenString = "It doesn't seem to open.";
 	_defaultPushPullString = "I can't move it.";
 	_defaultCloseString = "It doesn't seem to close.";
+	_defaultLookAtString = "I don't see anything special about it.";
 
-	// Preposition strings	
+	// Preposition strings
 	_prepoOnString = "on";
 	_prepoToString = "to";
 	_prepoWithString = "with";
@@ -387,14 +456,29 @@ function Sentence_init()
 	_sentenceVisible = 0;
 }
 
-function Sentence_mouseMove()
+inline function Sentence_mouseMove()
 {
 	// Check if sentence if visible first
 	if (!_sentenceVisible)
 		return;
 
+	// Get object underneath the mouse
 	_Sentence_getObject();
+
+	// Reset sentence verb to the selected one
+	if (!_sentenceFrozen)
+	_sentenceVerb = _selectedVerb;
+
+	// Handle special cases first
+	_Sentence_handleSpecialCases();
+
+	// Update alternate verb
+	_Sentence_updateAlternateVerb();
+
+	// Update sentence elements
 	_Sentence_update();
+
+	// Redraw sentence
 	_Sentence_draw();
 }
 
@@ -419,10 +503,10 @@ inline function Sentence_setPrepo(var prepo)
 
 function Sentence_show()
 {
-	// Redraw sentence
+	// Activate sentence verb and draw it
 	Verb_setCurrent(verbSentenceLine);
 	Verb_activate(1);
-	Verb_draw();
+	_Sentence_draw();
 
 	// Sentence is now visible
 	_sentenceVisible = 1;

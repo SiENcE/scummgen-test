@@ -76,31 +76,6 @@ inline function Object_findAll(var room)
 	return array;
 }
 
-inline function Object_findInventory(var owner, var index)
-{
-	var object;
-	asm
-	{
-		pushWordVar .word owner
-		pushWordVar .word index
-		findInventory
-		writeWordVar .word object
-	}
-	return object;
-}
-
-inline function Object_getInventoryCount(var owner)
-{
-	var inventoryCount;
-	asm
-	{
-		pushWordVar .word owner
-		getInventoryCount
-		writeWordVar .word inventoryCount
-	}
-	return inventoryCount;
-}
-
 inline function Object_getNewDir(var obj)
 {
 	var dir;

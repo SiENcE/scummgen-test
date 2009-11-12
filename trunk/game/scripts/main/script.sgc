@@ -7,7 +7,7 @@ function whipInvObject_verb(var objA, var objB)
 		{
 			Actor_talkEgo("Let me whip that tent !");
 			Script_waitForMessage();
-			Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_1);
+			//Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_1);
 			//Actor_putAtXY(VAR_EGO, 20, 50, iceCaveRoom);
 			//Room_load(iceCaveRoom);
 		}
@@ -43,6 +43,7 @@ function main(var bootParam)
 	VAR_MAINMENU_KEY = 319;
 	VAR_RESTART_KEY = 322;
 	VAR_VERB_SCRIPT = Input_handler;
+	VAR_INVENTORY_SCRIPT = Inventory_handler;
 	VAR_SENTENCE_SCRIPT = Sentence_handler;
 	VAR_ENTRY_SCRIPT = preEntry;
 	VAR_EXIT_SCRIPT = preExit;

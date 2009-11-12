@@ -24,6 +24,19 @@ inline function Actor_face(var act, var obj)
 	}
 }
 
+inline function Actor_findInventory(var owner, var index)
+{
+	var object;
+	asm
+	{
+		pushWordVar .word owner
+		pushWordVar .word index
+		findInventory
+		writeWordVar .word object
+	}
+	return object;
+}
+
 inline function Actor_followCamera(var act)
 {
 	asm
@@ -31,19 +44,6 @@ inline function Actor_followCamera(var act)
 		pushWordVar .word act
 		actorFollowCamera
 	}
-}
-
-inline function Actor_getFromXY(var x, var y)
-{
-	var act;
-	asm
-	{
-		pushWordVar .word x
-		pushWordVar .word y
-		getActorFromXY
-		writeWordVar .word act
-	}
-	return act;
 }
 
 inline function Actor_getAnimCounter(var act)
@@ -92,6 +92,31 @@ inline function Actor_getElevation(var act)
 		writeWordVar .word elevation
 	}
 	return elevation;
+}
+
+inline function Actor_getFromXY(var x, var y)
+{
+	var act;
+	asm
+	{
+		pushWordVar .word x
+		pushWordVar .word y
+		getActorFromXY
+		writeWordVar .word act
+	}
+	return act;
+}
+
+inline function Actor_getInventoryCount(var owner)
+{
+	var inventoryCount;
+	asm
+	{
+		pushWordVar .word owner
+		getInventoryCount
+		writeWordVar .word inventoryCount
+	}
+	return inventoryCount;
 }
 
 inline function Actor_getLayer(var act)
@@ -249,12 +274,13 @@ inline function Actor_pauseWalk(var pause)
 		}
 }
 
-inline function Actor_pickup(var obj, var room)
+inline function Actor_pickup(var obj)
 {
+	const ROOM = 1; // ScummGEN puts all the inventory objects in room 1
 	asm
 	{
 		pushWordVar .word obj
-		pushWordVar .word room
+		pushWord .word ROOM
 		pickupObject
 	}
 }
