@@ -10,15 +10,6 @@
 	<object>verbsObject</object>
 	<object>whipInvObject</object>
     <costume>indyCostume</costume>
-    <script>libscumm/Actor</script>
-    <script>libscumm/Interface</script>
-    <script>libscumm/Object</script>
-    <script>libscumm/Room</script>
-    <script>libscumm/Script</script>
-    <script>libscumm/Sound</script>
-    <script>libscumm/Util</script>
-    <script>libscumm/Verb</script>
-    <script>libscumm/vars</script>
     <script>libui/Dialog</script>
 	<script>libui/Inventory</script>
 	<script>libui/Input</script>
