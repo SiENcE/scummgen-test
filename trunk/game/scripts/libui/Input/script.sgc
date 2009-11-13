@@ -50,6 +50,17 @@ thread _Input_mouseMove()
 	}
 }
 
+inline function _Input_setKeys()
+{
+	// As long as these are defined, they are active - we can't control which keys are actually used
+	// to perform those actions
+	VAR_CUTSCENEEXIT_KEY = 1;
+	VAR_RESTART_KEY = 1;
+	VAR_PAUSE_KEY = 1;
+	VAR_MAINMENU_KEY = 1;
+	VAR_TALKSTOP_KEY = 1;
+}
+
 // Public functions
 function Input_disableMouse()
 {
@@ -81,9 +92,8 @@ function Input_init()
 	// Engine input is always enabled
 	Interface_activateUserput(1);
 
-	// Initialize engine keys
-	VAR_MAINMENU_KEY = 319;
-	VAR_RESTART_KEY = 322;
+	// Set engine keys
+	_Input_setKeys();
 
 	// Tell SCUMM engine which script will be our input handler
 	VAR_VERB_SCRIPT = _Input_handler;
