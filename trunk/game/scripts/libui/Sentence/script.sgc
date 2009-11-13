@@ -85,6 +85,56 @@ inline function _Sentence_getObject()
 	_objectType = OBJ_NONE;
 }
 
+function _Sentence_handler(var vrb, var objA, var objB)
+{
+	var entryPt;
+
+	// Set charset used for actors
+	Interface_setCharset(font2);
+
+	// Wait for current actor to be done walking
+	Script_waitForActor(VAR_EGO);
+
+	// Get verb entry point
+	entryPt = Verb_getEntryPoint(objA, vrb);
+	if (entryPt != 0)
+	{
+		// Call appropriate object script
+		Script_stopObjectScript(objA);
+		Script_startObjectScriptQuick(objA, vrb, [objA, objB], 2);
+	}
+	else // Default verb actions
+		switch (vrb)
+		{
+			case verbPickUp:
+				Actor_talkEgo(_defaultPickUpString);
+				break;
+			case verbUse:
+				Actor_talkEgo(_defaultUseString);
+				break;
+			case verbOpen:
+				Actor_talkEgo(_defaultOpenString);
+				break;
+			case verbPush:
+			case verbPull:
+				Actor_talkEgo(_defaultPushPullString);
+				break;
+			case verbClose:
+				Actor_talkEgo(_defaultCloseString);
+				break;
+			case verbLookAt:
+				Actor_talkEgo(_defaultLookAtString);
+				break;
+		}
+
+	// If sentence is complete, change verb back to the default Walk verb,
+	// otherwise make sure to unfreeze the sentence
+	if (_Sentence_isComplete())
+		_Sentence_reset(verbWalk);
+	else
+		_sentenceFrozen = 0;
+}
+
 inline function _Sentence_handleSpecialCases()
 {
 	// 1. If sentence is frozen, if current verb is walk, and if _object is different than the first selected element,
@@ -349,56 +399,6 @@ inline function Sentence_click(var area, var cmd, var btn)
 	Verb_doSentence(_sentenceVerb, _selectedObjA, _selectedObjB);
 }
 
-function Sentence_handler(var vrb, var objA, var objB)
-{
-	var entryPt;
-
-	// Set charset used for actors
-	Interface_setCharset(font2);
-
-	// Wait for current actor to be done walking
-	Script_waitForActor(VAR_EGO);
-
-	// Get verb entry point
-	entryPt = Verb_getEntryPoint(objA, vrb);
-	if (entryPt != 0)
-	{
-		// Call appropriate object script
-		Script_stopObjectScript(objA);
-		Script_startObjectScriptQuick(objA, vrb, [objA, objB], 2);
-	}
-	else // Default verb actions
-		switch (vrb)
-		{
-			case verbPickUp:
-				Actor_talkEgo(_defaultPickUpString);
-				break;
-			case verbUse:
-				Actor_talkEgo(_defaultUseString);
-				break;
-			case verbOpen:
-				Actor_talkEgo(_defaultOpenString);
-				break;
-			case verbPush:
-			case verbPull:
-				Actor_talkEgo(_defaultPushPullString);
-				break;
-			case verbClose:
-				Actor_talkEgo(_defaultCloseString);
-				break;
-			case verbLookAt:
-				Actor_talkEgo(_defaultLookAtString);
-				break;
-		}
-
-	// If sentence is complete, change verb back to the default Walk verb,
-	// otherwise make sure to unfreeze the sentence
-	if (_Sentence_isComplete())
-		_Sentence_reset(verbWalk);
-	else
-		_sentenceFrozen = 0;
-}
-
 function Sentence_hide()
 {
 	Verb_setCurrent(verbSentenceLine);
@@ -454,6 +454,9 @@ function Sentence_init()
 
 	// Sentence is invisible by default
 	_sentenceVisible = 0;
+
+	// Tell SCUMM engine which script will be our sentence handler
+	VAR_SENTENCE_SCRIPT = _Sentence_handler;
 }
 
 inline function Sentence_mouseMove()
@@ -465,9 +468,9 @@ inline function Sentence_mouseMove()
 	// Get object underneath the mouse
 	_Sentence_getObject();
 
-	// Reset sentence verb to the selected one
+	// Reset sentence verb to the selected one if the sentence is not frozen
 	if (!_sentenceFrozen)
-	_sentenceVerb = _selectedVerb;
+		_sentenceVerb = _selectedVerb;
 
 	// Handle special cases first
 	_Sentence_handleSpecialCases();

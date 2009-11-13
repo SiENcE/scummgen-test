@@ -92,6 +92,19 @@ inline function _Inventory_drawSlots()
 	}
 }
 
+function _Inventory_handler()
+{
+	// Reset line offset if the current actor has changed
+	if (VAR_EGO != _currentActor)
+	{
+		_lineOffset = 0;
+		_currentActor = VAR_EGO;
+	}
+
+	// Redraw inventory
+	Inventory_show();
+}
+
 inline function _Inventory_hideSlots()
 {
 	var i;
@@ -129,19 +142,6 @@ inline function Inventory_getObject(var x, var y)
 
 	// Return object
 	return Actor_findInventory(VAR_EGO, vrb - verbInvSlot1 + (_lineOffset * N_INV_COLUMNS) + 1);
-}
-
-function Inventory_handler()
-{
-	// Reset line offset if the current actor has changed
-	if (VAR_EGO != _currentActor)
-	{
-		_lineOffset = 0;
-		_currentActor = VAR_EGO;
-	}
-
-	// Redraw inventory
-	Inventory_show();
 }
 
 function Inventory_hide()
@@ -296,6 +296,9 @@ function Inventory_init()
 
 	// Inventory is invisible by default
 	_inventoryVisible = 0;
+
+	// Tell SCUMM engine which script will be our inventory handler
+	VAR_INVENTORY_SCRIPT = _Inventory_handler;
 }
 
 function Inventory_show()

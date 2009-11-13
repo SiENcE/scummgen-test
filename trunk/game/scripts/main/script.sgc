@@ -32,19 +32,14 @@ function preExit()
 
 function main(var bootParam)
 {
-	// Initialize our base game "classes"
+	// Initialize GUI "classes"
 	Input_init();
 	Inventory_init();
 	Sentence_init();
 	Dialog_init();
-
+	
 	// Setup engine variables
 	VAR_TIMER_NEXT = 6;
-	VAR_MAINMENU_KEY = 319;
-	VAR_RESTART_KEY = 322;
-	VAR_VERB_SCRIPT = Input_handler;
-	VAR_INVENTORY_SCRIPT = Inventory_handler;
-	VAR_SENTENCE_SCRIPT = Sentence_handler;
 	VAR_ENTRY_SCRIPT = preEntry;
 	VAR_EXIT_SCRIPT = preExit;
 
