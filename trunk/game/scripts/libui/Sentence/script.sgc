@@ -273,7 +273,7 @@ inline function _Sentence_roomClick()
 		_Sentence_reset(verbWalk);
 
 	// Walk to mouse pointer location
-	Actor_walkToXY(VAR_EGO, VAR_VIRT_MOUSE_X, VAR_VIRT_MOUSE_Y);
+	Actor_walkToXY(VAR_EGO, mouseX, mouseY);
 }
 
 inline function _Sentence_setAlternateVerb(var vrb)
@@ -363,7 +363,7 @@ inline function _Sentence_verbClick(var vrb)
 }
 
 // Public functions
-inline function Sentence_click(var area, var cmd, var btn)
+inline function Sentence_click()
 {
 	// Check if sentence if visible first
 	if (!_sentenceVisible)
@@ -374,17 +374,17 @@ inline function Sentence_click(var area, var cmd, var btn)
 
 	// On a right click, change current verb to the alternate verb
 	// (only applies when objB has not been selected)
-	if ((btn == MOUSE_BUTTON_2) && (_alternateVerb != 0) && (_selectedObjB == 0))
+	if ((inputBtn == MOUSE_BUTTON_2) && (_alternateVerb != 0) && (_selectedObjB == 0))
 	{
 		_sentenceVerb = _alternateVerb;
 		_selectedVerb = _alternateVerb;
 	}
 
 	// Treat each area separately
-	switch (area)
+	switch (inputArea)
 	{
 		case AREA_VERB:
-			if (_Sentence_verbClick(cmd))
+			if (_Sentence_verbClick(inputCmd))
 				return;
 			break;
 		case AREA_ROOM:

@@ -117,12 +117,12 @@ inline function _Inventory_hideSlots()
 }
 
 // Public functions
-function Inventory_click(var cmd, var btn)
+function Inventory_click()
 {
 	// Check arrows and change the inventory offset accordingly
-	if (cmd == verbArrowUp)
+	if (inputCmd == verbArrowUp)
 		_lineOffset--;
-	else if (cmd == verbArrowDown)
+	else if (inputCmd == verbArrowDown)
 		_lineOffset++;
 	else
 		return;
