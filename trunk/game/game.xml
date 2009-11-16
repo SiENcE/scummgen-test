@@ -1,24 +1,25 @@
 <?xml version="1.0"?>
 <game>
-    <name>tentacle</name>
-    <description>Indiana Jones - On the Tracks of Thunder</description>
-    <key>105</key>
+	<name>tentacle</name>
+	<description>Indiana Jones - On the Tracks of Thunder</description>
+	<key>105</key>
 	<room>creditsRoom</room>
-    <room>islandTentRoom</room>
+	<room>iceCaveRoom</room>
+	<room>islandTentRoom</room>
 	<room>logoRoom</room>
 	<object>dialogObject</object>
 	<object>verbsObject</object>
 	<object>whipInvObject</object>
-    <costume>indyCostume</costume>
-    <script>libui/Dialog</script>
+	<costume>indyCostume</costume>
+	<script>libui/Dialog</script>
 	<script>libui/Inventory</script>
 	<script>libui/Input</script>
 	<script>libui/Sentence</script>
 	<script>main</script>
-    <charset>font1</charset>
-    <charset>font2</charset>
-    <charset>font3</charset>
-    <charset>font4</charset>
-    <charset>font5</charset>
+	<charset>font1</charset>
+	<charset>font2</charset>
+	<charset>font3</charset>
+	<charset>font4</charset>
+	<charset>font5</charset>
 	<midi>testMidi</midi>
 </game>

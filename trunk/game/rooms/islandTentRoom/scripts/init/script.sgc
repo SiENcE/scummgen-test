@@ -3,11 +3,21 @@ actor actorIndy;
 function tentObject_verb(var objA, var objB)
 {
 	verbLookAt:
+		asm {
+				pushByte .byte 1
+				pushByte .byte 1
+				cutscene
+			}
 		Actor_talkEgo("Oh, there is magical whip in there !");
 		Script_waitForMessage();
 		Actor_pickup(whipInvObject);
 		Actor_talkEgo("Let's whip that tent ! HINT HINT HINT !");
 		Script_waitForMessage();
+		Actor_talkEgo("This cutscene takes a long time to end !");
+		Script_waitForMessage();
+		asm {
+				endCutscene
+			}
 		break;
 }
 
@@ -80,9 +90,10 @@ function entry()
 	Script_waitForMessage();
 
 	// Test for inventory display
-	Input_enableMouse();
-	Inventory_show();
-	Sentence_show();
+	Inventory_enable();
+	//Inventory_redraw();
+	Input_enable();
+	//Sentence_enable();
 	Script_delaySeconds(10);
 
 	// Test for dialog display

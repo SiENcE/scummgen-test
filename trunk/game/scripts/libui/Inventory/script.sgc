@@ -24,7 +24,7 @@ verb verbInvSlot9;
 verb verbInvSlot10;
 
 // Global variables
-var _inventoryVisible;
+var _inventoryEnabled;
 var _lineOffset;
 var _currentActor;
 
@@ -62,7 +62,7 @@ inline function _Inventory_drawArrows()
 
 	// Handle down arrow
 	Verb_setCurrent(verbArrowDown);
-	if (Actor_getInventoryCount(VAR_EGO) > (_lineOffset + N_INV_LINES) * N_INV_COLUMNS)
+	if (Actor_getInventoryCount(_currentActor) > (_lineOffset + N_INV_LINES) * N_INV_COLUMNS)
 		Verb_activate(1);
 	else
 		Verb_dim();
@@ -77,7 +77,7 @@ inline function _Inventory_drawSlots()
 	for (i = 0; i < N_INV_SLOTS; i++)
 	{
 		// Find inventory object
-		obj = Actor_findInventory(VAR_EGO, (_lineOffset * N_INV_COLUMNS) + i + 1);
+		obj = Actor_findInventory(_currentActor, (_lineOffset * N_INV_COLUMNS) + i + 1);
 
 		// Set current verb slot
 		Verb_setCurrent(verbInvSlot1 + i);
@@ -131,9 +131,39 @@ function Inventory_click()
 	Inventory_show();
 }
 
+inline function Inventory_disable()
+{
+	// Hide the inventory
+	Inventory_hide();
+
+	// Enable sentence
+	Sentence_disable();
+
+	// Inventory is now disabled
+	_inventoryEnabled = 0;
+}
+
+inline function Inventory_enable()
+{
+	// Inventory is now enabled
+	_inventoryEnabled = 1;
+
+	// Enable sentence
+	Sentence_enable();
+
+	// Show the inventory
+	Inventory_show();
+}
+
 inline function Inventory_getObject(var x, var y)
 {
 	var vrb;
+
+	// If inventory is disabled, return
+	if (!_inventoryEnabled)
+		return 0;
+
+	// Get verb from position
 	vrb = Verb_getFromXY(x, y);
 
 	// If the verb is not an inventory object, we consider no verb has been found
@@ -141,21 +171,16 @@ inline function Inventory_getObject(var x, var y)
 		return 0;
 
 	// Return object
-	return Actor_findInventory(VAR_EGO, vrb - verbInvSlot1 + (_lineOffset * N_INV_COLUMNS) + 1);
+	return Actor_findInventory(_currentActor, vrb - verbInvSlot1 + (_lineOffset * N_INV_COLUMNS) + 1);
 }
 
-function Inventory_hide()
+inline function Inventory_hide()
 {
 	var i;
 
-	// Set room height
-	Room_setScreen(0, INVENTORY_Y - 1);
-	Util_redraw();
-
-	// Hide verbs background
-	Verb_setCurrent(verbVerbs);
-	Verb_activate(0);
-	Verb_draw();
+	// If inventory is disabled, return
+	if (!_inventoryEnabled)
+		return;
 
 	// Hide verbs
 	Verb_setCurrent(verbGive);
@@ -197,11 +222,13 @@ function Inventory_hide()
 	// Hide slots
 	_Inventory_hideSlots();
 
+	// Hide verbs background
+	Verb_setCurrent(verbVerbs);
+	Verb_activate(0);
+	Verb_draw();
+
 	// Hide sentence
 	Sentence_hide();
-
-	// Change the visible state
-	_inventoryVisible = 0;
 }
 
 function Inventory_init()
@@ -294,15 +321,19 @@ function Inventory_init()
 	_currentActor = VAR_EGO;
 	_lineOffset = 0;
 
-	// Inventory is invisible by default
-	_inventoryVisible = 0;
+	// Inventory is disabled by default
+	_inventoryEnabled = 0;
 
 	// Tell SCUMM engine which script will be our inventory handler
 	VAR_INVENTORY_SCRIPT = _Inventory_handler;
 }
 
-function Inventory_show()
+inline function Inventory_show()
 {
+	// If inventory is disabled, return
+	if (!_inventoryEnabled)
+		return;
+
 	// Set room height
 	Room_setScreen(0, INVENTORY_Y - 1);
 	Util_redraw();
@@ -352,7 +383,4 @@ function Inventory_show()
 
 	// Draw sentence
 	Sentence_show();
-
-	// Change the visible state
-	_inventoryVisible = 1;
 }

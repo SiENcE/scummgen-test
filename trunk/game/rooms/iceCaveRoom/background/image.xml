@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<image>
+    <name>background</name>
+	<transparent>false</transparent>
+	<optimizable>false</optimizable>
+    <bitmapName>background.bmp</bitmapName>
+</image>

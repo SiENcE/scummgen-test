@@ -5,11 +5,19 @@ function whipInvObject_verb(var objA, var objB)
 			Sentence_setPrepo(PREPO_ON);
 		else if (objB == tentObject)
 		{
+			/*asm {
+				pushByte .byte 1
+				pushByte .byte 1
+				cutscene
+			}
 			Actor_talkEgo("Let me whip that tent !");
 			Script_waitForMessage();
-			//Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_1);
-			//Actor_putAtXY(VAR_EGO, 20, 50, iceCaveRoom);
-			//Room_load(iceCaveRoom);
+			asm {
+				endCutscene
+			}*/
+			Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_2);
+			Actor_putAtXY(VAR_EGO, 130, 120, iceCaveRoom);
+			Room_load(iceCaveRoom);
 		}
 		else
 			Actor_talkEgo("Whipping that makes no sense !");
@@ -21,8 +29,7 @@ function preEntry()
 	// Set room height before entering it
 	Room_setScreen(0, VAR_ROOM_HEIGHT);
 
-	/*if (inventoryVisible)
-		Inventory_show();*/
+	Inventory_show();
 }
 
 function preExit()
@@ -30,18 +37,32 @@ function preExit()
 	//Inventory_hide();
 }
 
+function cutsceneStart()
+{
+	Input_disable();
+	Inventory_disable();
+}
+
+function cutsceneEnd()
+{
+	Inventory_enable();
+	Input_enable();
+}
+
 function main(var bootParam)
 {
 	// Initialize GUI "classes"
-	Input_init();
 	Inventory_init();
 	Sentence_init();
 	Dialog_init();
+	Input_init();
 	
 	// Setup engine variables
 	VAR_TIMER_NEXT = 6;
 	VAR_ENTRY_SCRIPT = preEntry;
 	VAR_EXIT_SCRIPT = preExit;
+	VAR_CUTSCENE_START_SCRIPT = cutsceneStart;
+	VAR_CUTSCENE_END_SCRIPT = cutsceneEnd;
 
 	// Load the logo screen
 	Room_load(islandTentRoom);

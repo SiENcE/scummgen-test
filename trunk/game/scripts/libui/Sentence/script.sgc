@@ -22,7 +22,7 @@ const FROZEN_INTENSITY = 255;
 const UNFROZEN_INTENSITY = 175;
 
 // Private variables
-var _sentenceVisible;
+var _sentenceEnabled;
 var _object;
 var _objectType;
 var _sentenceVerb;
@@ -45,16 +45,6 @@ var _prepoToString;
 var _prepoWithString;
 
 // Private functions
-inline function _Sentence_draw()
-{
-	Verb_setCurrent(verbSentenceLine);
-	if (_sentenceFrozen)
-		Room_setIntensity(FROZEN_INTENSITY, COLOR_AQUAMARINE, COLOR_AQUAMARINE);
-	else
-		Room_setIntensity(UNFROZEN_INTENSITY, COLOR_AQUAMARINE, COLOR_AQUAMARINE);
-	Verb_draw();
-}
-
 inline function _Sentence_getObject()
 {
 	// Object check
@@ -88,6 +78,9 @@ inline function _Sentence_getObject()
 function _Sentence_handler(var vrb, var objA, var objB)
 {
 	var entryPt;
+
+	// Freeze sentence
+	_sentenceFrozen = 1;
 
 	// Set charset used for actors
 	Interface_setCharset(font2);
@@ -303,9 +296,6 @@ inline function _Sentence_select()
 	// Select elements previously detected
 	_selectedObjA = _sentenceObjA;
 	_selectedObjB = _sentenceObjB;
-
-	// Freeze sentence
-	_sentenceFrozen = 1;
 }
 
 inline function _Sentence_update()
@@ -365,8 +355,8 @@ inline function _Sentence_verbClick(var vrb)
 // Public functions
 inline function Sentence_click()
 {
-	// Check if sentence if visible first
-	if (!_sentenceVisible)
+	// Check if sentence if enabled first
+	if (!_sentenceEnabled)
 		return;
 
 	// Stop any running sentence
@@ -399,13 +389,28 @@ inline function Sentence_click()
 	Verb_doSentence(_sentenceVerb, _selectedObjA, _selectedObjB);
 }
 
-function Sentence_hide()
+inline function Sentence_disable()
 {
+	// Sentence is now disabled
+	_sentenceEnabled = 0;
+}
+
+inline function Sentence_enable()
+{
+	// Sentence is now enabled
+	_sentenceEnabled = 1;
+}
+
+inline function Sentence_hide()
+{
+	// If sentence is disabled, return
+	if (!_sentenceEnabled)
+		return;
+
+	// Hide sentence line verb
 	Verb_setCurrent(verbSentenceLine);
 	Verb_activate(0);
 	Verb_draw();
-
-	_sentenceVisible = 0;
 }
 
 function Sentence_init()
@@ -452,8 +457,8 @@ function Sentence_init()
 	_prepoToString = "to";
 	_prepoWithString = "with";
 
-	// Sentence is invisible by default
-	_sentenceVisible = 0;
+	// Sentence is disabled by default
+	_sentenceEnabled = 0;
 
 	// Tell SCUMM engine which script will be our sentence handler
 	VAR_SENTENCE_SCRIPT = _Sentence_handler;
@@ -461,8 +466,8 @@ function Sentence_init()
 
 inline function Sentence_mouseMove()
 {
-	// Check if sentence if visible first
-	if (!_sentenceVisible)
+	// Check if sentence if enabled first
+	if (!_sentenceEnabled)
 		return;
 
 	// Get object underneath the mouse
@@ -482,7 +487,7 @@ inline function Sentence_mouseMove()
 	_Sentence_update();
 
 	// Redraw sentence
-	_Sentence_draw();
+	Sentence_show();
 }
 
 inline function Sentence_setPrepo(var prepo)
@@ -504,13 +509,20 @@ inline function Sentence_setPrepo(var prepo)
 	}
 }
 
-function Sentence_show()
+inline function Sentence_show()
 {
+	// If sentence is disabled, return
+	if (!_sentenceEnabled)
+		return;
+
+	// Set sentence intensity
+	if (_sentenceFrozen)
+		Room_setIntensity(FROZEN_INTENSITY, COLOR_AQUAMARINE, COLOR_AQUAMARINE);
+	else
+		Room_setIntensity(UNFROZEN_INTENSITY, COLOR_AQUAMARINE, COLOR_AQUAMARINE);
+
 	// Activate sentence verb and draw it
 	Verb_setCurrent(verbSentenceLine);
 	Verb_activate(1);
-	_Sentence_draw();
-
-	// Sentence is now visible
-	_sentenceVisible = 1;
+	Verb_draw();
 }

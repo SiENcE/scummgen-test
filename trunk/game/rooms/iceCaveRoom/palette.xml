@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<palette>
+    <transparentIndex>0</transparentIndex>
+	<cycle>
+		<name>waterCycle1</name>
+		<start>16</start>
+		<end>25</end>
+		<delay>1</delay>
+		<forward>false</forward>
+	</cycle>
+	<cycle>
+		<name>waterCycle2</name>
+		<start>28</start>
+		<end>32</end>
+		<delay>8</delay>
+		<forward>false</forward>
+	</cycle>	
+</palette>

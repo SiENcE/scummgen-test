@@ -5,7 +5,7 @@ const AREA_ROOM = 2;
 const AREA_KEYBOARD = 4;
 
 // Global variables
-var _mouseEnabled;
+var _enabled;
 var inputArea;
 var inputCmd;
 var inputBtn;
@@ -49,7 +49,7 @@ function _Input_keyPress()
 
 thread _Input_mouseMove()
 {
-	while (_mouseEnabled)
+	while (_enabled)
 	{
 		// Indicate to the different UI classes that a click occured
 		Sentence_mouseMove();
@@ -69,23 +69,20 @@ inline function _Input_setKeys()
 }
 
 // Public functions
-function Input_disableMouse()
+inline function Input_disable()
 {
-	// Disable mouse and let scheduler terminate the mouse move thread
-	_mouseEnabled = 0;
-	Script_break();
-
-	// Hide cursor
+	// Disable input and hide cursor
+	Interface_activateUserput(0);
 	Interface_activateCursor(0);
+	_enabled = 0;
 }
 
-inline function Input_enableMouse()
+inline function Input_enable()
 {
-	// Show cursor
+	// Show cursor and activate input
 	Interface_activateCursor(1);
-
-	// Enable mouse
-	_mouseEnabled = 1;
+	Interface_activateUserput(1);
+	_enabled = 1;
 
 	// Launch mouse move thread
 	_Input_mouseMove();
@@ -93,11 +90,8 @@ inline function Input_enableMouse()
 
 function Input_init()
 {
-	// Mouse is disabled by default
-	_mouseEnabled = 0;
-
-	// Engine input is always enabled
-	Interface_activateUserput(1);
+	// Input is disabled by default
+	_enabled = 0;
 
 	// Set engine keys
 	_Input_setKeys();
