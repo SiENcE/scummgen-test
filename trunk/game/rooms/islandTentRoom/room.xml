@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <room>
-    <name>islandTentRoom</name>
-    <background>background</background>
-	<costume>indyClimbingCostume</costume>
+	<name>islandTentRoom</name>
+	<background>background</background>
 	<object>tentObject</object>
-    <script>islandTentScript</script>
+	<script>islandTentScript</script>
+	<costume>indyClimbingCostume</costume>
 </room>

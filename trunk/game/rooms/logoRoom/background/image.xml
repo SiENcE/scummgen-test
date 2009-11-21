@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <image>
-    <name>background</name>
+	<name>background</name>
 	<transparent>false</transparent>
 	<optimizable>true</optimizable>
-    <bitmapName>logo.bmp</bitmapName>
+	<bitmapName>logo.bmp</bitmapName>
 </image>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <game>
 	<name>tentacle</name>
-	<description>Indiana Jones - On the Tracks of Thunder</description>
+	<description>Indiana Jones and the Call of Thunder</description>
 	<key>105</key>
 	<room>creditsRoom</room>
 	<room>iceCaveRoom</room>
@@ -10,6 +10,7 @@
 	<object>dialogObject</object>
 	<object>verbsObject</object>
 	<object>whipInvObject</object>
+	<midi>testMidi</midi>
 	<costume>indyCostume</costume>
 	<script>Cutscene</script>
 	<script>Dialog</script>
@@ -22,5 +23,4 @@
 	<charset>font3</charset>
 	<charset>font4</charset>
 	<charset>font5</charset>
-	<midi>testMidi</midi>
 </game>

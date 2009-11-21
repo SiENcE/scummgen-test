@@ -5,16 +5,10 @@
 	<optimizable>true</optimizable>
 	<mirror>false</mirror>
 	<anim>
-        <name>anim</name>
-        <loop>false</loop>
-        <west>
-            <command>0</command>
-        </west>
-        <east>
-            <command>0</command>
-        </east>
-        <south>
-            <command>0</command>
+		<name>anim</name>
+		<loop>false</loop>
+		<south>
+			<command>0</command>
 			<command>1</command>
 			<command>2</command>
 			<command>3</command>
@@ -42,11 +36,8 @@
 			<command>25</command>
 			<command>26</command>
 			<command>27</command>
-        </south>
-        <north>
-            <command>0</command>
-        </north>
-    </anim>
+		</south>
+	</anim>
 	<frame>
 		<bitmapName>climb.bmp</bitmapName>
 		<x>0</x>

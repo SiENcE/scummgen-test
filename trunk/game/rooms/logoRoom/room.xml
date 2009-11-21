@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <room>
-    <name>logoRoom</name>
-    <background>background</background>
-    <script>logoScript</script>
+	<name>logoRoom</name>
+	<background>background</background>
+	<script>logoScript</script>
 </room>

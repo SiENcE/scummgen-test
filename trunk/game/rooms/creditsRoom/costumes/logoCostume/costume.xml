@@ -1,32 +1,20 @@
 <?xml version="1.0"?>
 <costume>
-    <name>logoCostume</name>
+	<name>logoCostume</name>
 	<transparent>true</transparent>
 	<optimizable>false</optimizable>
-    <mirror>false</mirror>
-    <anim>
-        <name>logoAnim</name>
-        <loop>false</loop>
-        <west>
-            <command>0</command>
-        </west>
-        <east>
-            <command>0</command>
-        </east>
-        <south>
-            <command>0</command>
-        </south>
-        <north>
-            <command>0</command>
-        </north>
-    </anim>
-    <frame>
-        <bitmapName>logo.bmp</bitmapName>
-        <x>0</x>
-        <y>0</y>
-        <width>239</width>
-        <height>51</height>
-        <xOffset>-120</xOffset>
-        <yOffset>-26</yOffset>
-    </frame>
+	<mirror>false</mirror>
+	<anim>
+		<name>logoAnim</name>
+		<loop>false</loop>
+	</anim>
+	<frame>
+		<bitmapName>logo.bmp</bitmapName>
+		<x>0</x>
+		<y>0</y>
+		<width>239</width>
+		<height>51</height>
+		<xOffset>-120</xOffset>
+		<yOffset>-26</yOffset>
+	</frame>
 </costume>

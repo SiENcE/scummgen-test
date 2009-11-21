@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <palette>
-    <transparentIndex>0</transparentIndex>
+	<transparentIndex>0</transparentIndex>
 	<cycle>
 		<name>waterCycle1</name>
 		<start>123</start>
@@ -14,5 +14,5 @@
 		<end>139</end>
 		<delay>12</delay>
 		<forward>true</forward>
-	</cycle>	
+	</cycle>
 </palette>
