@@ -1,0 +1,32 @@
+function entry()
+{
+	Room_setIntensity(30, 16, 139);
+	//Room_setIntensity(30, 151, 255);
+
+	cutscene ()
+	{
+		var i;
+		Room_setShaking(1);
+		Script_delaySeconds(1);
+		Actor_talkEgo("What the...");
+		Script_waitForMessage();
+		Actor_setDirection(ACTOR_DIR_SOUTH);
+		Room_setShaking(0);
+		Actor_talkEgo("Whipping a tent brought me here ?");
+		Script_waitForMessage();
+		for (i = 1; i < 10; i++)
+		{
+			Room_setIntensity(i * 25 + 5, 16, 139);
+			//Room_setIntensity(i * 25 + 5, 151, 255);
+			Script_break();
+		}
+		Actor_setCurrent(VAR_EGO);
+		Actor_setDirection(ACTOR_DIR_SOUTH);
+		Actor_talkEgo("And then there was light...");
+		Script_waitForMessage();
+	}
+}
+
+function exit()
+{
+}

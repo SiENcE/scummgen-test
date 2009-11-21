@@ -3,21 +3,25 @@ actor actorIndy;
 function tentObject_verb(var objA, var objB)
 {
 	verbLookAt:
-		asm {
-				pushByte .byte 1
-				pushByte .byte 1
-				cutscene
+		cutscene ()
+		{
+			try
+			{
+				Actor_talkEgo("Oh, there is magical whip in there !");
+				Script_waitForMessage();
+				Actor_talkEgo("We're still in the try block !");
+				Script_waitForMessage();
 			}
-		Actor_talkEgo("Oh, there is magical whip in there !");
-		Script_waitForMessage();
-		Actor_pickup(whipInvObject);
-		Actor_talkEgo("Let's whip that tent ! HINT HINT HINT !");
-		Script_waitForMessage();
-		Actor_talkEgo("This cutscene takes a long time to end !");
-		Script_waitForMessage();
-		asm {
-				endCutscene
+			catch
+			{
+				Actor_talkEgo("Seb pressed the ESC key !");
+				Script_waitForMessage();
 			}
+			finally
+			{
+				Actor_pickup(whipInvObject);
+			}
+		}
 		break;
 }
 
@@ -33,6 +37,7 @@ function setupIndy()
 	Actor_setTalkAnim(indyCostume_talk, indyCostume_stand);
 	Actor_setStepDistance(8, 4);
 	Actor_setAnimSpeed(1);
+	Actor_setWidth(0);
 	Actor_ignoreBoxes(1);
 	Actor_setScale(0xFF);
 	VAR_EGO = actorIndy;
@@ -71,7 +76,7 @@ function entry()
 	Actor_putAtXY(VAR_EGO, 205, 300, VAR_ROOM);
 	Actor_talkEgo("Shoot! Another broken pick axe!");
 	Script_waitForMessage();
-	Script_delaySeconds(1);
+	//Script_delaySeconds(1);
 
 	// Climb out of hole
 	/*Actor_setCostume(indyClimbingCostume);

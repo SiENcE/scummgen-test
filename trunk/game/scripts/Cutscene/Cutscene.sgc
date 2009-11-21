@@ -1,0 +1,40 @@
+enum { CUTSCENE_TYPE_KEEP_INVENTORY, CUTSCENE_TYPE_DISABLE_INVENTORY};
+
+// Private functions
+function _Cutscene_start(var type)
+{
+	// Disable input
+	Input_disable();
+
+	switch (type)
+	{
+		case CUTSCENE_TYPE_KEEP_INVENTORY:
+			break;
+		case CUTSCENE_TYPE_DISABLE_INVENTORY:
+			Inventory_disable();
+			break;
+	}
+}
+
+function _Cutscene_end(var type)
+{
+	switch (type)
+	{
+		case CUTSCENE_TYPE_KEEP_INVENTORY:
+			break;
+		case CUTSCENE_TYPE_DISABLE_INVENTORY:
+			Inventory_enable();
+			break;
+	}
+
+	// Enable input
+	Input_enable();
+}
+
+// Public functions
+function Cutscene_init()
+{
+	// Initialize engine cutscene start and end scripts
+	VAR_CUTSCENE_START_SCRIPT = _Cutscene_start;
+	VAR_CUTSCENE_END_SCRIPT = _Cutscene_end;
+}

@@ -2,5 +2,5 @@
 	<name>verbsImage</name>
 	<transparent>false</transparent>
 	<optimizable>false</optimizable>
-	<bitmapName>image.bmp</bitmapName>
+	<bitmapName>verbs.bmp</bitmapName>
 </image>

@@ -4,5 +4,5 @@
     <background>background</background>
 	<costume>logoCostume</costume>
 	<object>titleObject</object>
-    <script>init</script>
+    <script>creditsScript</script>
 </room>

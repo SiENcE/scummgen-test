@@ -3,5 +3,5 @@
     <name>background</name>
 	<transparent>false</transparent>
 	<optimizable>true</optimizable>
-    <bitmapName>background.bmp</bitmapName>
+    <bitmapName>logo.bmp</bitmapName>
 </image>

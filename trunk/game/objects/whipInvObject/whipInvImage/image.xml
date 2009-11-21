@@ -2,5 +2,5 @@
 	<name>whipInvImage</name>
 	<transparent>true</transparent>
 	<optimizable>true</optimizable>
-	<bitmapName>image.bmp</bitmapName>
+	<bitmapName>whip.bmp</bitmapName>
 </image>

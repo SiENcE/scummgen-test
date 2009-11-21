@@ -2,5 +2,5 @@
 	<name>dialogImage</name>
 	<transparent>false</transparent>
 	<optimizable>true</optimizable>
-	<bitmapName>image.bmp</bitmapName>
+	<bitmapName>dialog.bmp</bitmapName>
 </image>

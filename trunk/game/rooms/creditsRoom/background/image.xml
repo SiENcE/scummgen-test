@@ -3,5 +3,5 @@
     <name>background</name>
 	<transparent>false</transparent>
 	<optimizable>false</optimizable>
-    <bitmapName>background.bmp</bitmapName>
+    <bitmapName>credits.bmp</bitmapName>
 </image>

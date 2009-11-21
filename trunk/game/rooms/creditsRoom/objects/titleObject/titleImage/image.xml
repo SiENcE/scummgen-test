@@ -2,5 +2,5 @@
 	<name>titleImage</name>
 	<transparent>true</transparent>
 	<optimizable>true</optimizable>
-	<bitmapName>image.bmp</bitmapName>
+	<bitmapName>title.bmp</bitmapName>
 </image>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <charset>
     <name>font5</name>
-    <bitmapName>charset.bmp</bitmapName>
+    <bitmapName>font5.bmp</bitmapName>
     <fontHeight>8</fontHeight>
     <char>
         <id>1</id>

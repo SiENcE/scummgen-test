@@ -11,10 +11,11 @@
 	<object>verbsObject</object>
 	<object>whipInvObject</object>
 	<costume>indyCostume</costume>
-	<script>libui/Dialog</script>
-	<script>libui/Inventory</script>
-	<script>libui/Input</script>
-	<script>libui/Sentence</script>
+	<script>Cutscene</script>
+	<script>Dialog</script>
+	<script>Inventory</script>
+	<script>Input</script>
+	<script>Sentence</script>
 	<script>main</script>
 	<charset>font1</charset>
 	<charset>font2</charset>

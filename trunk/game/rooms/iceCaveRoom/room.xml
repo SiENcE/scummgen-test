@@ -2,5 +2,5 @@
 <room>
     <name>iceCaveRoom</name>
     <background>background</background>
-    <script>init</script>
+    <script>iceCaveScript</script>
 </room>

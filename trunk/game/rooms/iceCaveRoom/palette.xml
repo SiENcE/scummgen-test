@@ -3,16 +3,16 @@
     <transparentIndex>0</transparentIndex>
 	<cycle>
 		<name>waterCycle1</name>
-		<start>16</start>
-		<end>25</end>
-		<delay>1</delay>
-		<forward>false</forward>
+		<start>123</start>
+		<end>133</end>
+		<delay>12</delay>
+		<forward>true</forward>
 	</cycle>
 	<cycle>
 		<name>waterCycle2</name>
-		<start>28</start>
-		<end>32</end>
-		<delay>8</delay>
-		<forward>false</forward>
+		<start>135</start>
+		<end>139</end>
+		<delay>12</delay>
+		<forward>true</forward>
 	</cycle>	
 </palette>
