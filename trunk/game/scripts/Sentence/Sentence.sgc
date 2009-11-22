@@ -131,17 +131,17 @@ function _Sentence_handler(var vrb, var objA, var objB)
 
 inline function _Sentence_handleSpecialCases()
 {
-	// 1. If sentence is frozen, if current verb is walk, and if _object is different than the first selected element,
-	// then reset the sentence
-	if (_sentenceFrozen && (_sentenceVerb == verbWalk) && (_object != _selectedObjA))
-		_Sentence_reset(verbWalk);
-
-	// 2. If _object is an actor and it's VAR_EGO, discard it
+	// 1. If _object is an actor and it's VAR_EGO, discard it
 	if ((_objectType == OBJ_ACTOR) && (_object == VAR_EGO))
 	{
 		_object = 0;
 		_objectType = OBJ_NONE;
 	}
+
+	// 2. If sentence is frozen, if current verb is walk, and if _object is different than the first selected element,
+	// then reset the sentence
+	if (_sentenceFrozen && (_sentenceVerb == verbWalk) && (_object != _selectedObjA))
+		_Sentence_reset(verbWalk);
 
 	// 3. If the current verb is Talk To and _object is not an actor, then discard it
 	// TODO: check for class ?
