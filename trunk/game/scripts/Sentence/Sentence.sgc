@@ -43,6 +43,7 @@ var _defaultLookAtString;
 var _prepoOnString;
 var _prepoToString;
 var _prepoWithString;
+var _verbUnderMouse;
 
 // Private functions
 inline function _Sentence_getObject()
@@ -274,9 +275,12 @@ inline function _Sentence_setAlternateVerb(var vrb)
 	if (vrb != _alternateVerb)
 	{
 		// Reset current alternate verb color
-		Verb_setCurrent(_alternateVerb);
-		Verb_setColor(COLOR_VERB_NORMAL);
-		Verb_draw();
+		if (_alternateVerb != 0)
+		{
+			Verb_setCurrent(_alternateVerb);
+			Verb_setColor(COLOR_VERB_NORMAL);
+			Verb_draw();
+		}
 
 		// Change alternate verb
 		_alternateVerb = vrb;
@@ -334,6 +338,53 @@ inline function _Sentence_updateAlternateVerb()
 	}
 }
 
+inline function _Sentence_updateVerbUnderMouse()
+{
+	const VERBS_ZONE_START_X = 3;
+	const VERBS_ZONE_START_Y = 156;
+	const VERBS_ZONE_WIDTH = 46;
+	const VERBS_ZONE_HEIGHT = 14;
+	const VERBS_N_COLUMNS = 3;
+	const VERBS_N_LINES = 3;
+	var vrb;
+
+	// Get verb under mouse
+	vrb = Verb_getFromXY(VAR_MOUSE_X, VAR_MOUSE_Y);
+
+	// Get inventory verb from mouse location
+	if (vrb != verbVerbs)
+		vrb = 0;
+	else if ((VAR_MOUSE_X < VERBS_ZONE_START_X) || (VAR_MOUSE_X >= VERBS_ZONE_START_X + VERBS_N_COLUMNS * VERBS_ZONE_WIDTH))
+		vrb = 0;
+	else if ((VAR_MOUSE_Y < VERBS_ZONE_START_Y) || (VAR_MOUSE_Y >= VERBS_ZONE_START_Y + VERBS_N_LINES * VERBS_ZONE_HEIGHT))
+		vrb = 0;
+	else
+		vrb = verbGive + ((VAR_MOUSE_X - VERBS_ZONE_START_X) / VERBS_ZONE_WIDTH) + ((VAR_MOUSE_Y - VERBS_ZONE_START_Y) / VERBS_ZONE_HEIGHT) * VERBS_N_COLUMNS;
+
+	// Update verb color
+	if (vrb != _verbUnderMouse)
+	{
+		// Reset current verb color
+		if (_verbUnderMouse != 0)
+		{
+			Verb_setCurrent(_verbUnderMouse);
+			Verb_setColor(COLOR_VERB_NORMAL);
+			Verb_draw();
+		}
+
+		// Select verb under mouse
+		_verbUnderMouse = vrb;
+
+		// Set color if needed
+		if (_verbUnderMouse != 0)
+		{
+			Verb_setCurrent(_verbUnderMouse);
+			Verb_setColor(COLOR_VERB_HI);
+			Verb_draw();
+		}
+	}
+}
+
 inline function _Sentence_verbClick(var vrb)
 {
 	// Inventory object click
@@ -348,6 +399,8 @@ inline function _Sentence_verbClick(var vrb)
 	// Sentence verb click
 	if (Util_isAnyOf(vrb, [verbGive, verbPickUp, verbUse, verbOpen, verbTalkTo, verbPush, verbClose, verbLookAt, verbPull], 9))
 		_Sentence_reset(vrb);
+	else if (_verbUnderMouse != 0)
+		_Sentence_reset(_verbUnderMouse);
 	
 	return 1;
 }
@@ -469,6 +522,9 @@ inline function Sentence_mouseMove()
 	// Check if sentence if enabled first
 	if (!_sentenceEnabled)
 		return;
+
+	// Update verb under mouse
+	_Sentence_updateVerbUnderMouse();
 
 	// Get object underneath the mouse
 	_Sentence_getObject();
