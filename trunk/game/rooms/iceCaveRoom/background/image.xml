@@ -2,6 +2,19 @@
 <image>
 	<name>background</name>
 	<transparent>false</transparent>
-	<optimizable>false</optimizable>
 	<bitmapName>iceCave.bmp</bitmapName>
+	<cycle>
+		<name>waterCycle1</name>
+		<start>107</start>
+		<end>117</end>
+		<delay>12</delay>
+		<forward>true</forward>
+	</cycle>
+	<cycle>
+		<name>waterCycle2</name>
+		<start>119</start>
+		<end>123</end>
+		<delay>12</delay>
+		<forward>true</forward>
+	</cycle>
 </image>

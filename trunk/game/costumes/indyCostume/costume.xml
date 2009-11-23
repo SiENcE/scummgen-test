@@ -2,7 +2,6 @@
 <costume>
 	<name>indyCostume</name>
 	<transparent>true</transparent>
-	<optimizable>true</optimizable>
 	<mirror>true</mirror>
 	<anim>
 		<name>stand</name>

@@ -2,6 +2,5 @@
 <image>
 	<name>background</name>
 	<transparent>false</transparent>
-	<optimizable>true</optimizable>
 	<bitmapName>logo.bmp</bitmapName>
 </image>

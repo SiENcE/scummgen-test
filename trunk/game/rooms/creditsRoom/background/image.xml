@@ -2,6 +2,5 @@
 <image>
 	<name>background</name>
 	<transparent>false</transparent>
-	<optimizable>false</optimizable>
 	<bitmapName>credits.bmp</bitmapName>
 </image>
