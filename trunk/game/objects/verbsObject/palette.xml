@@ -1,0 +1,23 @@
+<palette>
+	<transparent>false</transparent>
+	<area>
+		<name>areaBack</name>
+		<start>1</start>
+		<end>1</end>
+	</area>
+	<area>
+		<name>areaDim</name>
+		<start>2</start>
+		<end>2</end>
+	</area>
+	<area>
+		<name>areaNormal</name>
+		<start>3</start>
+		<end>3</end>
+	</area>
+	<area>
+		<name>areaHi</name>
+		<start>4</start>
+		<end>4</end>
+	</area>
+</palette>

@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <costume>
 	<name>indyCostume</name>
-	<transparent>true</transparent>
 	<mirror>true</mirror>
 	<anim>
 		<name>stand</name>

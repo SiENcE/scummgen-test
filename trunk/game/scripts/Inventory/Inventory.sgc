@@ -1,8 +1,4 @@
 // Global constants
-const COLOR_VERB_BACK = 249;
-const COLOR_VERB_DIM = 250;
-const COLOR_VERB_NORMAL = 251;
-const COLOR_VERB_HI = 252;
 const INVENTORY_Y = 144;
 const N_INV_SLOTS = 10;
 const N_INV_LINES = 2;
@@ -43,10 +39,10 @@ inline function _Inventory_addVerb(var vrb, var string, var posX, var posY)
 	Verb_setCurrent(vrb);
 	Verb_new();
 	Verb_setNameString(string);
-	Verb_setColor(COLOR_VERB_NORMAL);
-	Verb_setBackColor(COLOR_VERB_BACK);
-	Verb_setDimColor(COLOR_VERB_DIM);
-	Verb_setHiColor(COLOR_VERB_HI);
+	Verb_setColor(areaNormal_start);
+	Verb_setBackColor(areaBack_start);
+	Verb_setDimColor(areaDim_start);
+	Verb_setHiColor(areaHi_start);
 	Verb_setPos(posX, posY);
 }
 

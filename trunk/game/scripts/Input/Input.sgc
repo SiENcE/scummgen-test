@@ -43,6 +43,22 @@ function _Input_handler(var area, var cmd, var btn)
 	}
 }
 
+inline function _Input_initCursor()
+{
+	const RESOURCE_ROOM = 1;
+	const CURSOR_HOTSPOT_X = 7;
+	const CURSOR_HOTSPOT_Y = 7;
+
+	// Set cursor image
+	Interface_setCursorImage(cursorObject, RESOURCE_ROOM);
+
+	// Enable cursor transparency
+	Interface_setCursorTransparentColor(0);
+
+	// Set cursor hotspot
+	Interface_setCursorHotspot(CURSOR_HOTSPOT_X, CURSOR_HOTSPOT_Y);
+}
+
 function _Input_keyPress()
 {
 }
@@ -95,6 +111,9 @@ function Input_init()
 
 	// Set engine keys
 	_Input_setKeys();
+
+	// Initialize cursor
+	_Input_initCursor();
 
 	// Tell SCUMM engine which script will be our input handler
 	VAR_VERB_SCRIPT = _Input_handler;

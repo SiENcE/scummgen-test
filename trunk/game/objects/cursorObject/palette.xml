@@ -1,0 +1,10 @@
+<palette>
+	<transparent>true</transparent>
+	<cycle>
+		<name>cursorCycle</name>
+		<start>1</start>
+		<end>4</end>
+		<delay>12</delay>
+		<forward>false</forward>
+	</cycle>
+</palette>

@@ -278,7 +278,7 @@ inline function _Sentence_setAlternateVerb(var vrb)
 		if (_alternateVerb != 0)
 		{
 			Verb_setCurrent(_alternateVerb);
-			Verb_setColor(COLOR_VERB_NORMAL);
+			Verb_setColor(areaNormal_start);
 			Verb_draw();
 		}
 
@@ -289,7 +289,7 @@ inline function _Sentence_setAlternateVerb(var vrb)
 		if (_alternateVerb != 0)
 		{
 			Verb_setCurrent(_alternateVerb);
-			Verb_setColor(COLOR_VERB_HI);
+			Verb_setColor(areaHi_start);
 			Verb_draw();
 		}
 	}
@@ -368,7 +368,7 @@ inline function _Sentence_updateVerbUnderMouse()
 		if (_verbUnderMouse != 0)
 		{
 			Verb_setCurrent(_verbUnderMouse);
-			Verb_setColor(COLOR_VERB_NORMAL);
+			Verb_setColor(areaNormal_start);
 			Verb_draw();
 		}
 
@@ -379,7 +379,7 @@ inline function _Sentence_updateVerbUnderMouse()
 		if (_verbUnderMouse != 0)
 		{
 			Verb_setCurrent(_verbUnderMouse);
-			Verb_setColor(COLOR_VERB_HI);
+			Verb_setColor(areaHi_start);
 			Verb_draw();
 		}
 	}

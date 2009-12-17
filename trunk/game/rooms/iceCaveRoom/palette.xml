@@ -1,7 +1,10 @@
-<?xml version="1.0"?>
-<image>
-	<name>background</name>
-	<bitmapName>iceCave.bmp</bitmapName>
+<palette>
+	<transparent>false</transparent>
+	<area>
+		<name>darkArea</name>
+		<start>0</start>
+		<end>123</end>
+	</area>
 	<cycle>
 		<name>waterCycle1</name>
 		<start>107</start>
@@ -16,4 +19,4 @@
 		<delay>12</delay>
 		<forward>true</forward>
 	</cycle>
-</image>
+</palette>

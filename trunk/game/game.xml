@@ -7,6 +7,7 @@
 	<room>iceCaveRoom</room>
 	<room>islandTentRoom</room>
 	<room>logoRoom</room>
+	<object>cursorObject</object>
 	<object>dialogObject</object>
 	<object>verbsObject</object>
 	<object>whipInvObject</object>

@@ -1,6 +1,6 @@
 function entry()
 {
-	Room_setIntensity(30, 16, 139);
+	Room_setIntensity(30, darkArea_start, darkArea_end);
 	//Room_setIntensity(30, 151, 255);
 
 	cutscene ()
@@ -16,7 +16,7 @@ function entry()
 		Script_waitForMessage();
 		for (i = 1; i < 10; i++)
 		{
-			Room_setIntensity(i * 25 + 5, 16, 139);
+			Room_setIntensity(i * 25 + 5, darkArea_start, darkArea_end);
 			//Room_setIntensity(i * 25 + 5, 151, 255);
 			Script_break();
 		}
