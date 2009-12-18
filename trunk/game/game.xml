@@ -11,6 +11,12 @@
 	<object>dialogObject</object>
 	<object>verbsObject</object>
 	<object>whipInvObject</object>
+	<object>demoBoneInvObject</object>
+	<object>demoDaggerInvObject</object>
+	<object>demoMatchesInvObject</object>
+	<object>demoRingInvObject</object>
+	<object>demoRuneStoneInvObject</object>
+	<object>demoTornRopeInvObject</object>
 	<midi>testMidi</midi>
 	<costume>indyCostume</costume>
 	<script>Cutscene</script>
