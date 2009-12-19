@@ -7,19 +7,25 @@ function tentObject_verb(var objA, var objB)
 		{
 			try
 			{
-				Actor_talkEgo("Oh, there is magical whip in there !");
+				Actor_talkEgo("Oh, there is ton of stuff is there !");
 				Script_waitForMessage();
 				Actor_talkEgo("We're still in the try block !");
 				Script_waitForMessage();
 			}
 			catch
 			{
-				Actor_talkEgo("Seb pressed the ESC key !");
+				Util_printDebug("Seb pressed the ESC key !");
 				Script_waitForMessage();
 			}
 			finally
 			{
 				Actor_pickup(whipInvObject);
+				Actor_pickup(demoBoneInvObject);
+				Actor_pickup(demoDaggerInvObject);
+				Actor_pickup(demoMatchesInvObject);
+				Actor_pickup(demoRingInvObject);
+				Actor_pickup(demoRuneStoneInvObject);
+				Actor_pickup(demoTornRopeInvObject);
 			}
 		}
 		break;
@@ -35,7 +41,7 @@ function setupIndy()
 	Actor_setStandAnim(indyCostume_stand);
 	Actor_setWalkAnim(indyCostume_walk);
 	Actor_setTalkAnim(indyCostume_talk, indyCostume_stand);
-	Actor_setStepDistance(8, 4);
+	Actor_setStepDistance(7, 4);
 	Actor_setAnimSpeed(1);
 	Actor_setWidth(0);
 	Actor_ignoreBoxes(1);

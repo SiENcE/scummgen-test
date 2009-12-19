@@ -25,6 +25,8 @@ function entry()
 		Actor_talkEgo("And then there was light...");
 		Script_waitForMessage();
 	}
+	Room_createBoxMatrix();
+	Actor_ignoreBoxes(0);
 }
 
 function exit()

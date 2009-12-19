@@ -2,6 +2,7 @@
 <image>
 	<name>background</name>
 	<bitmapName>iceCave.bmp</bitmapName>
+	<zPlaneName>iceCaveZPlane.bmp</zPlaneName>
 	<cycle>
 		<name>waterCycle1</name>
 		<start>107</start>
