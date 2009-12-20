@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<object>
+	<name>ringObject</name>
+	<displayName>ring</displayName>
+	<imageX>0</imageX>
+	<imageY>0</imageY>
+	<hotspotX>144</hotspotX>
+	<hotspotY>88</hotspotY>
+	<x>144</x>
+	<y>88</y>
+	<width>8</width>
+	<height>8</height>
+	<flags>1</flags>
+	<parent>0</parent>
+	<owner>15</owner>
+	<actorDir>1</actorDir>
+	<classData>0</classData>
+	<image>ringImage</image>
+</object>

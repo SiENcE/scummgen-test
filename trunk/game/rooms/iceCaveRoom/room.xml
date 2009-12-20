@@ -2,5 +2,6 @@
 <room>
 	<name>iceCaveRoom</name>
 	<background>background</background>
+	<object>ringObject</object>
 	<script>iceCaveScript</script>
 </room>

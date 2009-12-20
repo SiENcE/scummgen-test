@@ -1,3 +1,15 @@
+function ringObject_verb(var objA, var objB)
+{
+	verbPickUp:
+		Actor_pickup(demoRingInvObject);
+		Object_setState(ringObject, 0);
+		break;
+	verbLookAt:
+		Actor_talkEgo("Hmmm, it looks shiny !");
+		Script_waitForMessage();
+		break;
+}
+
 function entry()
 {
 	Room_setIntensity(30, darkArea_start, darkArea_end);

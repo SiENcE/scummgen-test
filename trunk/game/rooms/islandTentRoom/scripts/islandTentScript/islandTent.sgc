@@ -23,7 +23,6 @@ function tentObject_verb(var objA, var objB)
 				Actor_pickup(demoBoneInvObject);
 				Actor_pickup(demoDaggerInvObject);
 				Actor_pickup(demoMatchesInvObject);
-				Actor_pickup(demoRingInvObject);
 				Actor_pickup(demoRuneStoneInvObject);
 				Actor_pickup(demoTornRopeInvObject);
 			}
