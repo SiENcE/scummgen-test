@@ -2,32 +2,35 @@ actor actorIndy;
 
 function tentObject_verb(var objA, var objB)
 {
-	verbLookAt:
-		cutscene ()
-		{
-			try
+	action
+	{
+		case verbLookAt:
+			cutscene ()
 			{
-				Actor_talkEgo("Oh, there is ton of stuff is there !");
-				Script_waitForMessage();
-				Actor_talkEgo("We're still in the try block !");
-				Script_waitForMessage();
+				try
+				{
+					Actor_talkEgo("Oh, there is ton of stuff in there !");
+					Script_waitForMessage();
+					Actor_talkEgo("We're still in the try block !");
+					Script_waitForMessage();
+				}
+				catch
+				{
+					Util_printDebug("Seb pressed the ESC key !");
+					Script_waitForMessage();
+				}
+				finally
+				{
+					Actor_pickup(whipInvObject);
+					Actor_pickup(demoBoneInvObject);
+					Actor_pickup(demoDaggerInvObject);
+					Actor_pickup(demoMatchesInvObject);
+					Actor_pickup(demoRuneStoneInvObject);
+					Actor_pickup(demoTornRopeInvObject);
+				}
 			}
-			catch
-			{
-				Util_printDebug("Seb pressed the ESC key !");
-				Script_waitForMessage();
-			}
-			finally
-			{
-				Actor_pickup(whipInvObject);
-				Actor_pickup(demoBoneInvObject);
-				Actor_pickup(demoDaggerInvObject);
-				Actor_pickup(demoMatchesInvObject);
-				Actor_pickup(demoRuneStoneInvObject);
-				Actor_pickup(demoTornRopeInvObject);
-			}
-		}
-		break;
+			break;
+	}
 }
 
 function setupIndy()

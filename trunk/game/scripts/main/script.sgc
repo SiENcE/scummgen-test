@@ -1,27 +1,20 @@
 function whipInvObject_verb(var objA, var objB)
 {
-	verbUse:
-		if (objB == 0)
-			Sentence_setPrepo(PREPO_ON);
-		else if (objB == tentObject)
-		{
-			/*asm {
-				pushByte .byte 1
-				pushByte .byte 1
-				cutscene
+	action
+	{
+		case verbUse:
+			if (objB == 0)
+				Sentence_setPrepo(PREPO_ON);
+			else if (objB == tentObject)
+			{
+				Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_2);
+				Actor_putAtXY(VAR_EGO, 103, 58, iceCaveRoom);
+				Room_load(iceCaveRoom);
 			}
-			Actor_talkEgo("Let me whip that tent !");
-			Script_waitForMessage();
-			asm {
-				endCutscene
-			}*/
-			Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_2);
-			Actor_putAtXY(VAR_EGO, 103, 58, iceCaveRoom);
-			Room_load(iceCaveRoom);
-		}
-		else
-			Actor_talkEgo("Whipping that makes no sense !");
-		break;
+			else
+				Actor_talkEgo("Whipping that makes no sense !");
+			break;
+	}
 }
 
 function preEntry()

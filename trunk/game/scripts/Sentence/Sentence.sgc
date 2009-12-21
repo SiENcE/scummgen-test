@@ -91,6 +91,7 @@ function _Sentence_handler(var vrb, var objA, var objB)
 
 	// Get verb entry point
 	entryPt = Verb_getEntryPoint(objA, vrb);
+	Util_printDebug("entryPt = %i{entryPt}");
 	if (entryPt != 0)
 	{
 		// Call appropriate object script
