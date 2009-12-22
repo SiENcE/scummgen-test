@@ -1,5 +1,6 @@
 function whipInvObject_verb(var objA, var objB)
 {
+	var random;
 	action
 	{
 		case verbUse:
@@ -14,7 +15,17 @@ function whipInvObject_verb(var objA, var objB)
 			else
 				Actor_talkEgo("Whipping that makes no sense !");
 			break;
+		case verbLookAt:
+			random = Util_getRandomNumber(2);
+			if (random == 0) 
+				Actor_talkEgo("That's my whip.");
+			else if (random == 1) 
+				Actor_talkEgo("It can be useful in the right spot.");
+			else 
+				Actor_talkEgo("It's my favorite piece of equipment.");
+			break;
 	}
+	
 }
 
 function preEntry()
@@ -57,6 +68,6 @@ function main(var bootParam)
 	VAR_CUTSCENE_START_SCRIPT = cutsceneStart;
 	VAR_CUTSCENE_END_SCRIPT = cutsceneEnd;
 
-	// Load the logo screen
+	// Load the cave room
 	Room_load(islandTentRoom);
 }
