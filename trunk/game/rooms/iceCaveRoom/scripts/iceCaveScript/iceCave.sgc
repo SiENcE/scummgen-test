@@ -1,3 +1,4 @@
+//Object interaction
 function ringObject_verb(var objA, var objB)
 {
 	action
@@ -6,18 +7,76 @@ function ringObject_verb(var objA, var objB)
 			Actor_pickup(demoRingInvObject);
 			break;
 		case verbLookAt:
-			Actor_talkEgo("Hmmm, it looks shiny !");
+			Actor_talkEgo("Hmmm, it looks shiny!");
+			Script_waitForMessage();
+			break;
+	}
+}
+function entranceObject_verb(var objA, var objB)
+{
+	action
+	{
+		case verbLookAt:
+			Actor_talkEgo("That's the way out.");
+			Script_waitForMessage();
+			break;
+		case verbTalkTo:
+			Actor_talkEgo("In the final demo, we start a dialog.");
 			Script_waitForMessage();
 			break;
 	}
 }
 
+
+
+
+
+function setupIndy()
+{
+	// Setup actor, costume, and animations
+	Actor_setCurrent(actorIndy);
+	asm { actorOps actorName .string "Indy" }
+	Actor_setCostume(indyCostume);
+	Actor_setInitAnim(indyCostume_stand);
+	Actor_setStandAnim(indyCostume_stand);
+	Actor_setWalkAnim(indyCostume_walk);
+	Actor_setTalkAnim(indyCostume_talk, indyCostume_stand);
+	Actor_setStepDistance(7, 4);
+	Actor_setAnimSpeed(1);
+	Actor_setWidth(0);
+	Actor_ignoreBoxes(1);
+	Actor_setScale(0xFF);
+	VAR_EGO = actorIndy;
+}
+
+function setupCharset()
+{
+	Interface_setCharset(font2);
+	Actor_printLoadDefault(VAR_EGO);
+	Actor_setTalkColor(COLOR_WHITE);
+	Actor_printCenter();
+	Actor_printOverhead();
+	Actor_printSaveDefault();
+}
+
+
 function entry()
 {
 	Room_setIntensity(30, darkArea_start, darkArea_end);
-	//Room_setIntensity(30, 151, 255);
-
-	cutscene ()
+	
+	setupIndy();
+	setupCharset();
+	Room_createBoxMatrix();
+	Actor_ignoreBoxes(0);
+	Actor_putAtXY(actorIndy, 96, 48, VAR_ROOM);
+	Inventory_enable();
+	Input_enable();
+	mousePos();
+	
+	Actor_pickup(whipInvObject);
+	Actor_pickup(demoMatchesInvObject);
+	
+	/*cutscene ()
 	{
 		var i;
 		Room_setShaking(1);
@@ -31,16 +90,25 @@ function entry()
 		for (i = 1; i < 10; i++)
 		{
 			Room_setIntensity(i * 25 + 5, darkArea_start, darkArea_end);
-			//Room_setIntensity(i * 25 + 5, 151, 255);
 			Script_break();
 		}
 		Actor_setCurrent(VAR_EGO);
 		Actor_setDirection(ACTOR_DIR_SOUTH);
 		Actor_talkEgo("And then there was light...");
 		Script_waitForMessage();
-	}
-	Room_createBoxMatrix();
-	Actor_ignoreBoxes(0);
+	}*/
+	
+}
+
+thread mousePos()
+{
+	Interface_printTextLoadDefault();
+	Interface_printTextAt(220, 5);
+	Interface_printText("X: %i{VAR_MOUSE_X}");
+	Interface_printTextAt(220, 15);
+	Interface_printText("Y: %i{VAR_MOUSE_Y}");
+	Script_delayFrames(1);
+	mousePos();
 }
 
 function exit()

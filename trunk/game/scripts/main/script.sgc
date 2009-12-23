@@ -1,3 +1,4 @@
+//Inventory object interactions
 function whipInvObject_verb(var objA, var objB)
 {
 	var random;
@@ -13,7 +14,7 @@ function whipInvObject_verb(var objA, var objB)
 				Room_load(iceCaveRoom);
 			}
 			else
-				Actor_talkEgo("Whipping that makes no sense !");
+				Actor_talkEgo("Whipping that makes no sense!");
 			break;
 		case verbLookAt:
 			random = Util_getRandomNumber(2);
@@ -28,6 +29,7 @@ function whipInvObject_verb(var objA, var objB)
 	
 }
 
+//Standard game events
 function preEntry()
 {
 	// Set room height before entering it
@@ -69,5 +71,5 @@ function main(var bootParam)
 	VAR_CUTSCENE_END_SCRIPT = cutsceneEnd;
 
 	// Load the cave room
-	Room_load(islandTentRoom);
+	Room_load(iceCaveRoom);
 }
