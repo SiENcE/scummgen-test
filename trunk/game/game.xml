@@ -17,6 +17,11 @@
 	<object>demoRingInvObject</object>
 	<object>demoRuneStoneInvObject</object>
 	<object>demoTornRopeInvObject</object>
+	<object>demoPointyStoneInvObject</object>
+	<object>demoAngularStoneInvObject</object>
+	<object>demoFlintstonesInvObject</object>
+	<object>demoLitTorchInvObject</object>
+	<object>demoUnlitTorchInvObject</object>
 	<midi>testMidi</midi>
 	<costume>indyCostume</costume>
 	<script>Cutscene</script>

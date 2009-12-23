@@ -20,15 +20,23 @@ function entranceObject_verb(var objA, var objB)
 			Actor_talkEgo("That's the way out.");
 			Script_waitForMessage();
 			break;
-		case verbTalkTo:
-			Actor_talkEgo("In the final demo, we start a dialog.");
+		case verbUse:
+			Actor_talkEgo("In the final demo, we will start a dialog.");
 			Script_waitForMessage();
 			break;
 	}
 }
-
-
-
+function wallObject_verb(var objA, var objB)
+{
+	action
+	{
+		case verbLookAt:
+			//Actor_animate(actorIndy, );
+			Actor_talkEgo("It feels somehow loose.");
+			Script_waitForMessage();
+			break;
+	}
+}
 
 
 function setupIndy()
@@ -69,12 +77,19 @@ function entry()
 	Room_createBoxMatrix();
 	Actor_ignoreBoxes(0);
 	Actor_putAtXY(actorIndy, 96, 48, VAR_ROOM);
+	Actor_setDirection(ACTOR_DIR_SOUTH);
 	Inventory_enable();
 	Input_enable();
 	mousePos();
 	
 	Actor_pickup(whipInvObject);
 	Actor_pickup(demoMatchesInvObject);
+	
+	//TODO: Fall down and stand up animation  *OUCH*
+	//Actor from surface: "Everything alright Indy?"
+	Actor_talkEgo("It's ok.");
+	//Small dialog -> torch falls down
+	
 	
 	/*cutscene ()
 	{
@@ -102,13 +117,17 @@ function entry()
 
 thread mousePos()
 {
-	Interface_printTextLoadDefault();
-	Interface_printTextAt(220, 5);
-	Interface_printText("X: %i{VAR_MOUSE_X}");
-	Interface_printTextAt(220, 15);
-	Interface_printText("Y: %i{VAR_MOUSE_Y}");
-	Script_delayFrames(1);
-	mousePos();
+   Interface_printTextLoadDefault();
+   while (1)
+   {
+      Util_redraw();
+      Script_break();
+      Interface_printTextAt(220, 5);
+      Interface_printText("X: %i{VAR_MOUSE_X}");
+      Interface_printTextAt(220, 15);
+      Interface_printText("Y: %i{VAR_MOUSE_Y}");
+      Script_break();
+   }
 }
 
 function exit()
