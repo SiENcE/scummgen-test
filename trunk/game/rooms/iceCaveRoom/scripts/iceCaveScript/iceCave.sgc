@@ -7,8 +7,9 @@ function ringObject_verb(var objA, var objB)
 			Actor_pickup(demoRingInvObject);
 			break;
 		case verbLookAt:
-			Actor_talkEgo("Hmmm, it looks shiny!");
-			Script_waitForMessage();
+			Actor_talkEgo("Hmmm, it feels like a ring.");
+			asm { pushWordVar .word objA setObjectName .string "ring?" }
+			Script_waitForMessage();			
 			break;
 	}
 }
@@ -16,10 +17,6 @@ function entranceObject_verb(var objA, var objB)
 {
 	action
 	{
-		case verbLookAt:
-			Actor_talkEgo("That's the way out.");
-			Script_waitForMessage();
-			break;
 		case verbUse:
 			Actor_talkEgo("In the final demo, we will start a dialog.");
 			Script_waitForMessage();
@@ -76,18 +73,29 @@ function entry()
 	setupCharset();
 	Room_createBoxMatrix();
 	Actor_ignoreBoxes(0);
+	
+	//Position Actor
 	Actor_putAtXY(actorIndy, 96, 48, VAR_ROOM);
 	Actor_setDirection(ACTOR_DIR_SOUTH);
+	//Give starting items
+	Actor_pickup(whipInvObject);
+	Actor_pickup(demoMatchesInvObject);
+	
+	//Change verb look at to touch
+	Verb_setCurrent(verbLookAt);
+	Verb_setNameString("Touch");
+	
 	Inventory_enable();
 	Input_enable();
 	mousePos();
 	
-	Actor_pickup(whipInvObject);
-	Actor_pickup(demoMatchesInvObject);
+	
 	
 	//TODO: Fall down and stand up animation  *OUCH*
 	//Actor from surface: "Everything alright Indy?"
 	Actor_talkEgo("It's ok.");
+	Script_waitForMessage();
+	Actor_printEgo("It's ok.");
 	//Small dialog -> torch falls down
 	
 	

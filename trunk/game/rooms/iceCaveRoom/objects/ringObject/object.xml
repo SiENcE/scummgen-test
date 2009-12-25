@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <object>
 	<name>ringObject</name>
-	<displayName>ring</displayName>
+	<displayName>shiny thing</displayName>
 	<imageX>0</imageX>
 	<imageY>0</imageY>
 	<hotspotX>144</hotspotX>
