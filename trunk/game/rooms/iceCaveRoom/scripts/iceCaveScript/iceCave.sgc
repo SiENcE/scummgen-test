@@ -8,8 +8,8 @@ function ringObject_verb(var objA, var objB)
 			break;
 		case verbLookAt:
 			Actor_talkEgo("Hmmm, it feels like a ring.");
+			Script_waitForMessage();
 			asm { pushWordVar .word objA setObjectName .string "ring?" }
-			Script_waitForMessage();			
 			break;
 	}
 }
@@ -84,19 +84,20 @@ thread mousePos()
 // Gradually makes the room and its objects brighter
 thread changeIntensity()
 {
-    const MAX_INTENSITY = 35;
+    const MAX_INTENSITY = 150;
     var i;
     for (i = 15; i < MAX_INTENSITY; i++)
     {
 		Room_setIntensity(i, darkArea_start, darkArea_end);
 		Room_setIntensity(i, indyCostumeArea_start, indyCostumeArea_end);
 		Room_setIntensity(i, ringObjectArea_start, ringObjectArea_end);
-        Script_delaySeconds(4);
+        Script_delaySeconds(1);
     }
 }
 
 function entry()
 {
+	var t;
 	changeIntensity();
 	
 	//Set up game
@@ -104,6 +105,9 @@ function entry()
 	setupCharset();
 	Room_createBoxMatrix();
 	Actor_ignoreBoxes(0);
+
+	Object_setClass(ringObject, classOpenable, 1);
+	Object_setClass(entranceObject, classPerson, 1);
 	
 	//Change verb 'look at' to 'touch'
 	Verb_setCurrent(verbLookAt);
