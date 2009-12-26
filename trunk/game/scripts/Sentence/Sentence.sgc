@@ -333,6 +333,8 @@ inline function _Sentence_updateAlternateVerb()
 				_Sentence_setAlternateVerb(verbTalkTo);
 			else if (Object_isClassOf(_object, classOpenable))
 				_Sentence_setAlternateVerb(verbOpen);
+			else if (Object_isClassOf(_object, classUsable))
+				_Sentence_setAlternateVerb(verbUse);
 			else
 				_Sentence_setAlternateVerb(verbLookAt);
 			break;
