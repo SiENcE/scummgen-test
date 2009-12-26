@@ -65,14 +65,53 @@ function setupCharset()
 }
 
 
+// Just for debbuging
+thread mousePos()
+{
+   Interface_printTextLoadDefault();
+   while (1)
+   {
+      Util_redraw();
+      Script_break();
+      Interface_printTextAt(220, 5);
+      Interface_printText("X: %i{VAR_MOUSE_X}");
+      Interface_printTextAt(220, 15);
+      Interface_printText("Y: %i{VAR_MOUSE_Y}");
+      Script_break();
+   }
+}
+
+// Gradually makes the room and its objects brighter
+thread changeIntensity()
+{
+    const MAX_INTENSITY = 35;
+    var i;
+    for (i = 15; i < MAX_INTENSITY; i++)
+    {
+		Room_setIntensity(i, darkArea_start, darkArea_end);
+		Room_setIntensity(i, indyCostumeArea_start, indyCostumeArea_end);
+		Room_setIntensity(i, ringObjectArea_start, ringObjectArea_end);
+        Script_delaySeconds(4);
+    }
+}
+
 function entry()
 {
-	Room_setIntensity(30, darkArea_start, darkArea_end);
+	changeIntensity();
 	
+	//Set up game
 	setupIndy();
 	setupCharset();
 	Room_createBoxMatrix();
 	Actor_ignoreBoxes(0);
+	
+	//Change verb 'look at' to 'touch'
+	Verb_setCurrent(verbLookAt);
+	Verb_setNameString("Touch");
+	//TODO: Center verb
+	
+	Inventory_enable();
+	Input_enable();	
 	
 	//Position Actor
 	Actor_putAtXY(actorIndy, 96, 48, VAR_ROOM);
@@ -81,15 +120,9 @@ function entry()
 	Actor_pickup(whipInvObject);
 	Actor_pickup(demoMatchesInvObject);
 	
-	//Change verb look at to touch
-	Verb_setCurrent(verbLookAt);
-	Verb_setNameString("Touch");
 	
-	Inventory_enable();
-	Input_enable();
+	
 	mousePos();
-	
-	
 	
 	//TODO: Fall down and stand up animation  *OUCH*
 	//Actor from surface: "Everything alright Indy?"
@@ -121,21 +154,6 @@ function entry()
 		Script_waitForMessage();
 	}*/
 	
-}
-
-thread mousePos()
-{
-   Interface_printTextLoadDefault();
-   while (1)
-   {
-      Util_redraw();
-      Script_break();
-      Interface_printTextAt(220, 5);
-      Interface_printText("X: %i{VAR_MOUSE_X}");
-      Interface_printTextAt(220, 15);
-      Interface_printText("Y: %i{VAR_MOUSE_Y}");
-      Script_break();
-   }
 }
 
 function exit()
