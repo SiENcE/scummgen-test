@@ -4,6 +4,7 @@
 	<background>background</background>
 	<object>ringObject</object>
 	<object>entranceObject</object>
+	<object>iceObject</object>
 	<object>wallObject</object>
 	<script>iceCaveScript</script>
 </room>

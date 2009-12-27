@@ -7,11 +7,21 @@ function whipInvObject_verb(var objA, var objB)
 		case verbUse:
 			if (objB == 0)
 				Sentence_setPrepo(PREPO_ON);
-			else if (objB == tentObject)
+			else if (Actor_getRoom(VAR_EGO) == islandTentRoom)
 			{
-				Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_2);
-				Actor_putAtXY(VAR_EGO, 103, 58, iceCaveRoom);
-				Room_load(iceCaveRoom);
+				if (objB == tentObject)
+				{
+					Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_2);
+					Actor_putAtXY(VAR_EGO, 103, 58, iceCaveRoom);
+					Room_load(iceCaveRoom);
+				}
+			}
+			else if (Actor_getRoom(VAR_EGO) == iceCaveRoom)
+			{
+				if (objB == entranceObject)
+				{
+					Actor_talkEgo("I can't already go.");
+				}
 			}
 			else
 				Actor_talkEgo("Whipping that makes no sense!");
@@ -26,7 +36,39 @@ function whipInvObject_verb(var objA, var objB)
 				Actor_talkEgo("It's my favorite piece of equipment.");
 			break;
 	}
-	
+}
+function demoMatchesInvObject_verb(var objA, var objB)
+{
+	action
+	{
+		case verbLookAt:
+			Actor_talkEgo("I used them to light the torch...");
+			Script_waitForMessage();
+			Actor_talkEgo("...but unfortunatly they got wet by the rainy weather outside.");
+			break;
+	}
+}
+function demoRingInvObject_verb(var objA, var objB)
+{
+	action
+	{
+		case verbUse:
+			if (objB == 0)
+				Sentence_setPrepo(PREPO_ON);
+			else if (Actor_getRoom(VAR_EGO) == iceCaveRoom)
+			{
+				/*if (objB == ...)
+				{
+					bla
+				}*/
+			}
+			else
+				Actor_talkEgo("That doesn't work!");
+			break;
+		case verbLookAt:
+				Actor_talkEgo("That's a nice golden ring.");
+			break;
+	}
 }
 
 //Standard game events

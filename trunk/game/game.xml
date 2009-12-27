@@ -5,6 +5,7 @@
 	<key>105</key>
 	<room>creditsRoom</room>
 	<room>iceCaveRoom</room>
+	<room>iceCaveMechanismRoom</room>
 	<room>islandTentRoom</room>
 	<room>logoRoom</room>
 	<object>cursorObject</object>

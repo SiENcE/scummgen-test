@@ -8,7 +8,7 @@ function ringObject_verb(var objA, var objB)
 			Object_setState(objA, OBJECT_STATE_DISABLED);
 			break;
 		case verbLookAt:
-			Actor_talkEgo("Hmmm, it feels like a ring.");
+			Actor_talkEgo("Hmm, that's probably a ring.");
 			Script_waitForMessage();
 			asm { pushWordVar .word objA setObjectName .string "ring?" }
 			break;
@@ -19,8 +19,20 @@ function entranceObject_verb(var objA, var objB)
 	action
 	{
 		case verbUse:
+			Actor_talkEgo("No go. That's way to high to climb.");
+			break;
+		case verbTalkTo:
 			Actor_talkEgo("In the final demo, we will start a dialog.");
-			Script_waitForMessage();
+			break;
+	}
+}
+function iceObject_verb(var objA, var objB)
+{
+	action
+	{
+		case verbLookAt:
+			Actor_talkEgo("Let's change room!!!!");
+			Room_load(iceCaveMechanismRoom);
 			break;
 	}
 }
@@ -31,7 +43,6 @@ function wallObject_verb(var objA, var objB)
 		case verbLookAt:
 			//Actor_animate(actorIndy, );
 			Actor_talkEgo("It feels somehow loose.");
-			Script_waitForMessage();
 			break;
 	}
 }
@@ -86,7 +97,7 @@ thread changeIntensity()
 {
 	const MIN_INTENSITY = 10;
     const MAX_INTENSITY = 45;
-	const DELAY = 3;
+	const DELAY = 6;
     var i;
 
 	// Gradually makes the room and its objects brighter
@@ -120,9 +131,6 @@ function entry()
 	Verb_setNameString("Touch");
 	Verb_setPos(VERB_TOUCH_X, VERB_TOUCH_Y);
 	
-	Inventory_enable();
-	Input_enable();	
-	
 	//Position Actor
 	Actor_putAtXY(actorIndy, 96, 48, VAR_ROOM);
 	Actor_setDirection(ACTOR_DIR_SOUTH);
@@ -130,40 +138,16 @@ function entry()
 	Actor_pickup(whipInvObject);
 	Actor_pickup(demoMatchesInvObject);
 	
-	
-	
-	mousePos();
+	mousePos(); //Show mouse coordinates
 	
 	//TODO: Fall down and stand up animation  *OUCH*
 	//Actor from surface: "Everything alright Indy?"
 	Actor_talkEgo("It's ok.");
 	Script_waitForMessage();
-	Actor_printEgo("It's ok.");
 	//Small dialog -> torch falls down
 	
-	
-	/*cutscene ()
-	{
-		var i;
-		Room_setShaking(1);
-		Script_delaySeconds(1);
-		Actor_talkEgo("What the...");
-		Script_waitForMessage();
-		Actor_setDirection(ACTOR_DIR_SOUTH);
-		Room_setShaking(0);
-		Actor_talkEgo("Whipping a tent brought me here ?");
-		Script_waitForMessage();
-		for (i = 1; i < 10; i++)
-		{
-			Room_setIntensity(i * 25 + 5, darkArea_start, darkArea_end);
-			Script_break();
-		}
-		Actor_setCurrent(VAR_EGO);
-		Actor_setDirection(ACTOR_DIR_SOUTH);
-		Actor_talkEgo("And then there was light...");
-		Script_waitForMessage();
-	}*/
-	
+	Inventory_enable();
+	Input_enable();	
 }
 
 function exit()
