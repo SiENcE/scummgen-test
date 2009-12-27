@@ -5,6 +5,7 @@ function ringObject_verb(var objA, var objB)
 	{
 		case verbPickUp:
 			Actor_pickup(demoRingInvObject);
+			Object_setState(objA, OBJECT_STATE_DISABLED);
 			break;
 		case verbLookAt:
 			Actor_talkEgo("Hmmm, it feels like a ring.");
@@ -81,22 +82,27 @@ thread mousePos()
    }
 }
 
-// Gradually makes the room and its objects brighter
 thread changeIntensity()
 {
-    const MAX_INTENSITY = 150;
+	const MIN_INTENSITY = 10;
+    const MAX_INTENSITY = 45;
+	const DELAY = 3;
     var i;
-    for (i = 15; i < MAX_INTENSITY; i++)
+
+	// Gradually makes the room and its objects brighter
+    for (i = MIN_INTENSITY; i < MAX_INTENSITY; i++)
     {
 		Room_setIntensity(i, darkArea_start, darkArea_end);
 		Room_setIntensity(i, indyCostumeArea_start, indyCostumeArea_end);
 		Room_setIntensity(i, ringObjectArea_start, ringObjectArea_end);
-        Script_delaySeconds(1);
+        Script_delayFrames(DELAY);
     }
 }
 
 function entry()
 {
+	const VERB_TOUCH_X = 57;
+	const VERB_TOUCH_Y = 187;
 	var t;
 	changeIntensity();
 	
@@ -106,13 +112,13 @@ function entry()
 	Room_createBoxMatrix();
 	Actor_ignoreBoxes(0);
 
-	Object_setClass(ringObject, classOpenable, 1);
+	//Object_setClass(ringObject, classOpenable, 1);
 	Object_setClass(entranceObject, classPerson, 1);
 	
 	//Change verb 'look at' to 'touch'
 	Verb_setCurrent(verbLookAt);
 	Verb_setNameString("Touch");
-	//TODO: Center verb
+	Verb_setPos(VERB_TOUCH_X, VERB_TOUCH_Y);
 	
 	Inventory_enable();
 	Input_enable();	

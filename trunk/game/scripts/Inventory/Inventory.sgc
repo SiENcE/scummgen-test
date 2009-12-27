@@ -4,6 +4,52 @@ const N_INV_SLOTS = 10;
 const N_INV_LINES = 2;
 const N_INV_COLUMNS = 5;
 
+// Verb positions
+const VERB_VERBS_X = 0;
+const VERB_VERBS_Y = 152;
+const VERB_GIVE_X = 15;
+const VERB_GIVE_Y = 159;
+const VERB_PICK_UP_X = 54;
+const VERB_PICK_UP_Y = 159;
+const VERB_USE_X = 108;
+const VERB_USE_Y = 159;
+const VERB_OPEN_X = 14;
+const VERB_OPEN_Y = 173;
+const VERB_TALK_TO_X = 53;
+const VERB_TALK_TO_Y = 173;
+const VERB_PUSH_X = 106;
+const VERB_PUSH_Y = 173;
+const VERB_CLOSE_X = 12;
+const VERB_CLOSE_Y = 187;
+const VERB_LOOK_AT_X = 53;
+const VERB_LOOK_AT_Y = 187;
+const VERB_PULL_X = 108;
+const VERB_PULL_Y = 187;
+const VERB_ARROW_UP_X = 147;
+const VERB_ARROW_UP_Y = 158;
+const VERB_ARROW_DOWN_X = 147;
+const VERB_ARROW_DOWN_Y = 180;
+const VERB_INV_SLOT1_X = 160;
+const VERB_INV_SLOT1_Y = 152;
+const VERB_INV_SLOT2_X = 192;
+const VERB_INV_SLOT2_Y = 152;
+const VERB_INV_SLOT3_X = 224;
+const VERB_INV_SLOT3_Y = 152;
+const VERB_INV_SLOT4_X = 256;
+const VERB_INV_SLOT4_Y = 152;
+const VERB_INV_SLOT5_X = 288;
+const VERB_INV_SLOT5_Y = 152;
+const VERB_INV_SLOT6_X = 160;
+const VERB_INV_SLOT6_Y = 176;
+const VERB_INV_SLOT7_X = 192;
+const VERB_INV_SLOT7_Y = 176;
+const VERB_INV_SLOT8_X = 224;
+const VERB_INV_SLOT8_Y = 176;
+const VERB_INV_SLOT9_X = 256;
+const VERB_INV_SLOT9_Y = 176;
+const VERB_INV_SLOT10_X = 288;
+const VERB_INV_SLOT10_Y = 176;
+
 // Verbs
 verb verbVerbs;
 verb verbArrowUp;
@@ -229,51 +275,6 @@ inline function Inventory_hide()
 
 function Inventory_init()
 {
-	const VERB_VERBS_X = 0;
-	const VERB_VERBS_Y = 152;
-	const VERB_GIVE_X = 15;
-	const VERB_GIVE_Y = 159;
-	const VERB_PICK_UP_X = 54;
-	const VERB_PICK_UP_Y = 159;
-	const VERB_USE_X = 108;
-	const VERB_USE_Y = 159;
-	const VERB_OPEN_X = 14;
-	const VERB_OPEN_Y = 173;
-	const VERB_TALK_TO_X = 53;
-	const VERB_TALK_TO_Y = 173;
-	const VERB_PUSH_X = 106;
-	const VERB_PUSH_Y = 173;
-	const VERB_CLOSE_X = 12;
-	const VERB_CLOSE_Y = 187;
-	const VERB_LOOK_AT_X = 53;
-	const VERB_LOOK_AT_Y = 187;
-	const VERB_PULL_X = 108;
-	const VERB_PULL_Y = 187;
-	const VERB_ARROW_UP_X = 147;
-	const VERB_ARROW_UP_Y = 158;
-	const VERB_ARROW_DOWN_X = 147;
-	const VERB_ARROW_DOWN_Y = 180;
-	const VERB_INV_SLOT1_X = 160;
-	const VERB_INV_SLOT1_Y = 152;
-	const VERB_INV_SLOT2_X = 192;
-	const VERB_INV_SLOT2_Y = 152;
-	const VERB_INV_SLOT3_X = 224;
-	const VERB_INV_SLOT3_Y = 152;
-	const VERB_INV_SLOT4_X = 256;
-	const VERB_INV_SLOT4_Y = 152;
-	const VERB_INV_SLOT5_X = 288;
-	const VERB_INV_SLOT5_Y = 152;
-	const VERB_INV_SLOT6_X = 160;
-	const VERB_INV_SLOT6_Y = 176;
-	const VERB_INV_SLOT7_X = 192;
-	const VERB_INV_SLOT7_Y = 176;
-	const VERB_INV_SLOT8_X = 224;
-	const VERB_INV_SLOT8_Y = 176;
-	const VERB_INV_SLOT9_X = 256;
-	const VERB_INV_SLOT9_Y = 176;
-	const VERB_INV_SLOT10_X = 288;
-	const VERB_INV_SLOT10_Y = 176;
-
 	// Initialize charset
 	Interface_setCharset(font1);
 	Interface_printTextLoadDefault();
