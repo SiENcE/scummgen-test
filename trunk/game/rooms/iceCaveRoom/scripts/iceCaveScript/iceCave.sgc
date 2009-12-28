@@ -1,4 +1,19 @@
-//Object interaction
+thread mousePos()
+{
+	// TODO: remove this thread as it's only used for debugging purposes
+   Interface_printTextLoadDefault();
+   while (1)
+   {
+      Util_redraw();
+      Script_break();
+      Interface_printTextAt(220, 5);
+      Interface_printText("X: %i{VAR_MOUSE_X}");
+      Interface_printTextAt(220, 15);
+      Interface_printText("Y: %i{VAR_MOUSE_Y}");
+      Script_break();
+   }
+}
+
 function ringObject_verb(var objA, var objB)
 {
 	action
@@ -14,83 +29,39 @@ function ringObject_verb(var objA, var objB)
 			break;
 	}
 }
+
 function entranceObject_verb(var objA, var objB)
 {
 	action
 	{
 		case verbUse:
-			Actor_talkEgo("No go. That's way to high to climb.");
+			Actor_talkEgo("That's way too high to climb.");
 			break;
 		case verbTalkTo:
 			Actor_talkEgo("In the final demo, we will start a dialog.");
 			break;
 	}
 }
+
 function iceObject_verb(var objA, var objB)
 {
 	action
 	{
 		case verbLookAt:
-			Actor_talkEgo("Let's change room!!!!");
 			Room_load(iceCaveMechanismRoom);
 			break;
 	}
 }
+
 function wallObject_verb(var objA, var objB)
 {
 	action
 	{
 		case verbLookAt:
 			//Actor_animate(actorIndy, );
-			Actor_talkEgo("It feels somehow loose.");
+			Actor_printEgo("It feels loose somehow.");
 			break;
 	}
-}
-
-
-function setupIndy()
-{
-	// Setup actor, costume, and animations
-	Actor_setCurrent(actorIndy);
-	asm { actorOps actorName .string "Indy" }
-	Actor_setCostume(indyCostume);
-	Actor_setInitAnim(indyCostume_stand);
-	Actor_setStandAnim(indyCostume_stand);
-	Actor_setWalkAnim(indyCostume_walk);
-	Actor_setTalkAnim(indyCostume_talk, indyCostume_stand);
-	Actor_setStepDistance(7, 4);
-	Actor_setAnimSpeed(1);
-	Actor_setWidth(0);
-	Actor_ignoreBoxes(1);
-	Actor_setScale(0xFF);
-	VAR_EGO = actorIndy;
-}
-
-function setupCharset()
-{
-	Interface_setCharset(font2);
-	Actor_printLoadDefault(VAR_EGO);
-	Actor_setTalkColor(COLOR_WHITE);
-	Actor_printCenter();
-	Actor_printOverhead();
-	Actor_printSaveDefault();
-}
-
-
-// Just for debbuging
-thread mousePos()
-{
-   Interface_printTextLoadDefault();
-   while (1)
-   {
-      Util_redraw();
-      Script_break();
-      Interface_printTextAt(220, 5);
-      Interface_printText("X: %i{VAR_MOUSE_X}");
-      Interface_printTextAt(220, 15);
-      Interface_printText("Y: %i{VAR_MOUSE_Y}");
-      Script_break();
-   }
 }
 
 thread changeIntensity()
@@ -110,44 +81,47 @@ thread changeIntensity()
     }
 }
 
+function setupObjects()
+{
+	// Set objects classes
+	Object_setClass(entranceObject, classPerson, 1);
+}
+
 function entry()
 {
-	const VERB_TOUCH_X = 57;
-	const VERB_TOUCH_Y = 187;
-	var t;
+	const START_X = 96;
+	const START_Y = 48;
+
+	// Change room insensity slowly as soon as we enter the room
 	changeIntensity();
 	
-	//Set up game
-	setupIndy();
-	setupCharset();
-	Room_createBoxMatrix();
-	Actor_ignoreBoxes(0);
+	// Set Indy as the default actor
+	VAR_EGO = actorIndy;
 
-	//Object_setClass(ringObject, classOpenable, 1);
-	Object_setClass(entranceObject, classPerson, 1);
-	
-	//Change verb 'look at' to 'touch'
-	Verb_setCurrent(verbLookAt);
-	Verb_setNameString("Touch");
-	Verb_setPos(VERB_TOUCH_X, VERB_TOUCH_Y);
-	
-	//Position Actor
-	Actor_putAtXY(actorIndy, 96, 48, VAR_ROOM);
+	// Setup local objects
+	setupObjects();
+
+	// Position Indy
+	Actor_putAtXY(actorIndy, START_X, START_Y, VAR_ROOM);
 	Actor_setDirection(ACTOR_DIR_SOUTH);
-	//Give starting items
+
+	// Give default items to Indy
 	Actor_pickup(whipInvObject);
 	Actor_pickup(demoMatchesInvObject);
+
+	// Set inventory touch mode and enable inventory and input
+	Inventory_setTouchVerb(1);
+	Inventory_enable();
+	Input_enable();
 	
-	mousePos(); //Show mouse coordinates
-	
-	//TODO: Fall down and stand up animation  *OUCH*
-	//Actor from surface: "Everything alright Indy?"
+	// TODO: Fall down and stand up animation *OUCH*
+	// Actor from surface: "Everything's alright Indy?"
 	Actor_talkEgo("It's ok.");
 	Script_waitForMessage();
-	//Small dialog -> torch falls down
-	
-	Inventory_enable();
-	Input_enable();	
+	// Small dialog -> torch falls down
+
+	// Show mouse coordinates
+	mousePos();
 }
 
 function exit()

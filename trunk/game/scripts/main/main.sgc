@@ -1,0 +1,95 @@
+// Global constants
+const TIMER_NEXT = 6;
+const STEP_DIST_X = 7;
+const STEP_DIST_Y = 4;
+const ANIM_SPEED = 1;
+
+function setupEngine()
+{
+	// Setup engine variables
+	VAR_TIMER_NEXT = TIMER_NEXT;
+	VAR_ENTRY_SCRIPT = preEntry;
+	VAR_EXIT_SCRIPT = preExit;
+	VAR_CUTSCENE_START_SCRIPT = cutsceneStart;
+	VAR_CUTSCENE_END_SCRIPT = cutsceneEnd;
+}
+
+function setupGame()
+{
+	// Initialize GUI "classes"
+	Inventory_init();
+	Sentence_init();
+	Dialog_init();
+	Input_init();
+
+	// Setup actors and default charset
+	setupActors();
+	setupCharset();
+}
+
+function setupActors()
+{
+	// Setup Indy
+	Actor_setCurrent(actorIndy);
+	asm { actorOps actorName .string "Indy" }
+	Actor_setCostume(indyCostume);
+	Actor_setInitAnim(indyCostume_stand);
+	Actor_setStandAnim(indyCostume_stand);
+	Actor_setWalkAnim(indyCostume_walk);
+	Actor_setTalkAnim(indyCostume_talk, indyCostume_stand);
+	Actor_setStepDistance(STEP_DIST_X, STEP_DIST_Y);
+	Actor_setAnimSpeed(ANIM_SPEED);
+}
+
+function setupCharset()
+{
+	// Setup default charset
+	Interface_setCharset(font2);
+	Actor_printLoadDefault(VAR_EGO);
+	Actor_setTalkColor(COLOR_WHITE);
+	Actor_printCenter();
+	Actor_printOverhead();
+	Actor_printSaveDefault();
+}
+
+function preEntry()
+{
+	// Set room height before entering it
+	Room_setScreen(0, VAR_ROOM_HEIGHT);
+
+	// Show inventory
+	Inventory_show();
+
+	// Build room map
+	Room_createBoxMatrix();
+}
+
+function preExit()
+{
+	// Hide inventory
+	Inventory_hide();
+}
+
+function cutsceneStart()
+{
+	// Disable input and inventory
+	Input_disable();
+	Inventory_disable();
+}
+
+function cutsceneEnd()
+{
+	// Re-enable inventory and input
+	Inventory_enable();
+	Input_enable();
+}
+
+function main(var bootParam)
+{	
+	// Setup engine and game
+	setupEngine();
+	setupGame();
+
+	// Load the ice cave room
+	Room_load(iceCaveRoom);
+}

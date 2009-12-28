@@ -23,6 +23,8 @@ const VERB_CLOSE_X = 12;
 const VERB_CLOSE_Y = 187;
 const VERB_LOOK_AT_X = 53;
 const VERB_LOOK_AT_Y = 187;
+const VERB_TOUCH_X = 57;
+const VERB_TOUCH_Y = 187;
 const VERB_PULL_X = 108;
 const VERB_PULL_Y = 187;
 const VERB_ARROW_UP_X = 147;
@@ -323,6 +325,22 @@ function Inventory_init()
 
 	// Tell SCUMM engine which script will be our inventory handler
 	VAR_INVENTORY_SCRIPT = _Inventory_handler;
+}
+
+inline function Inventory_setTouchVerb(var on)
+{
+	Verb_setCurrent(verbLookAt);
+	if (on)
+	{
+		
+		Verb_setNameString("Touch");
+		Verb_setPos(VERB_TOUCH_X, VERB_TOUCH_Y);
+	}
+	else
+	{
+		Verb_setNameString("Look at");
+		Verb_setPos(VERB_LOOK_AT_X, VERB_LOOK_AT_Y);
+	}
 }
 
 inline function Inventory_show()

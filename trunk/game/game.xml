@@ -30,6 +30,7 @@
 	<script>Inventory</script>
 	<script>Input</script>
 	<script>Sentence</script>
+	<script>invObjects</script>
 	<script>main</script>
 	<charset>font1</charset>
 	<charset>font2</charset>

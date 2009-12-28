@@ -1,0 +1,71 @@
+function whipInvObject_verb(var objA, var objB)
+{
+	const MAX_RANDOM_LINES = 2;
+	var random;
+
+	action
+	{
+		case verbUse:
+			switch (objB)
+			{
+				case 0:
+					Sentence_setPrepo(PREPO_ON);
+					break;
+				case entranceObject:
+					Actor_talkEgo("There is no point of leaving now.");
+					break;
+				default:
+					Actor_talkEgo("Hmmm no.");
+					break;
+			}
+			break;
+		case verbLookAt:
+			random = Util_getRandomNumber(MAX_RANDOM_LINES);
+			switch (random)
+			{
+				case 0:
+					Actor_talkEgo("That's my whip.");
+					break;
+				case 1:
+					Actor_talkEgo("It can be useful in the right spot.");
+					break;
+				case 2:
+					Actor_talkEgo("It's my favorite piece of equipment.");
+					break;
+			}
+			break;
+	}
+}
+
+function demoMatchesInvObject_verb(var objA, var objB)
+{
+	action
+	{
+		case verbLookAt:
+			Actor_talkEgo("I used them to light the torch...");
+			Script_waitForMessage();
+			Actor_talkEgo("...but unfortunatly they got wet due to the rain outside.");
+			break;
+	}
+}
+
+function demoRingInvObject_verb(var objA, var objB)
+{
+	action
+	{
+		case verbUse:
+			switch (objB)
+			{
+				case 0:
+					Sentence_setPrepo(PREPO_ON);
+					break;
+				default:
+					Actor_talkEgo("That doesn't work!");
+					break;
+			}
+			break;
+		case verbLookAt:
+			Actor_talkEgo("That's a nice golden ring.");
+			break;
+	}
+}

@@ -11,13 +11,10 @@ function tentObject_verb(var objA, var objB)
 				{
 					Actor_talkEgo("Oh, there is ton of stuff in there !");
 					Script_waitForMessage();
-					Actor_talkEgo("We're still in the try block !");
-					Script_waitForMessage();
 				}
 				catch
 				{
-					Util_printDebug("Seb pressed the ESC key !");
-					Script_waitForMessage();
+					Actor_stopTalking();
 				}
 				finally
 				{
@@ -33,40 +30,9 @@ function tentObject_verb(var objA, var objB)
 	}
 }
 
-function setupIndy()
-{
-	// Setup actor, costume, and animations
-	Actor_setCurrent(actorIndy);
-	asm { actorOps actorName .string "Indy" }
-	Actor_setCostume(indyCostume);
-	Actor_setInitAnim(indyCostume_stand);
-	Actor_setStandAnim(indyCostume_stand);
-	Actor_setWalkAnim(indyCostume_walk);
-	Actor_setTalkAnim(indyCostume_talk, indyCostume_stand);
-	Actor_setStepDistance(7, 4);
-	Actor_setAnimSpeed(1);
-	Actor_setWidth(0);
-	Actor_ignoreBoxes(1);
-	Actor_setScale(0xFF);
-	VAR_EGO = actorIndy;
-}
-
-function setupCharset()
-{
-	Interface_setCharset(font2);
-	Actor_printLoadDefault(VAR_EGO);
-	Actor_setTalkColor(COLOR_WHITE);
-	Actor_printCenter();
-	Actor_printOverhead();
-	Actor_printSaveDefault();
-}
-
 function entry()
 {
 	var dialog;
-
-	setupCharset();
-	setupIndy();
 	
 	// Wait a bit then print faked noise text
 	/*Script_delaySeconds(1);
