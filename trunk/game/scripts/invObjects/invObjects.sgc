@@ -69,3 +69,23 @@ function ringInvObject_verb(var objA, var objB)
 			break;
 	}
 }
+
+function unlitTorchInvObject_verb(var objA, var objB)
+{
+	action
+	{
+		case verbUse:
+			if (puzzleLightRoom != PUZZLE_LIGHT_ROOM_SOLVED)
+			{
+				// Update puzzle state and say something
+				puzzleLightRoom = PUZZLE_LIGHT_ROOM_SOLVED;
+				Script_delaySeconds(1);
+				Actor_talkEgo("And then there was light...");
+				Script_waitForMessage();
+			}
+			break;
+		case verbLookAt:
+			Actor_talkEgo("That's a regular torch.");
+			break;
+	}
+}

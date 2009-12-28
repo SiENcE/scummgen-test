@@ -349,10 +349,6 @@ inline function Inventory_show()
 	if (!_inventoryEnabled)
 		return;
 
-	// Set room height
-	Room_setScreen(0, INVENTORY_Y - 1); // TODO: remove later
-	Util_redraw();
-
 	// Hide slots first
 	_Inventory_hideSlots();
 

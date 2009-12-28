@@ -22,6 +22,7 @@ inline function _Input_click()
 	// Indicate to the different UI classes that a click occured
 	Inventory_click();
 	Sentence_click();
+	Dialog_click();
 }
 
 function _Input_handler(var area, var cmd, var btn)

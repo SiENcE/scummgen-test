@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <object>
 	<name>litTorchInvObject</name>
-	<displayName>flintstones</displayName>
+	<displayName>torch</displayName>
 	<imageX>0</imageX>
 	<imageY>0</imageY>
 	<hotspotX>0</hotspotX>

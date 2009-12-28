@@ -1,26 +1,88 @@
+// Global constants
+const VERB_DIALOG_X = 0;
+const VERB_DIALOG_Y = 144;
+const LINE_X = 2;
+const LINE_Y = 152;
+const LINE_STEP = 10;
 const N_DIALOG_LINES = 5;
 
-// Public functions
-inline function Dialog_add(var dialog, var string)
+// Dialog verbs
+verb verbDialog;
+verb verbLine1;
+verb verbLine2;
+verb verbLine3;
+verb verbLine4;
+verb verbLine5;
+
+// Line strings
+var _line1;
+var _line2;
+var _line3;
+var _line4;
+var _line5;
+
+// Global variables
+var _dialogEnabled;
+var _selection;
+
+// Private functions
+inline function _Dialog_addLineVerb(var vrb, var index)
 {
+	// Add verb
+	Verb_setCurrent(vrb);
+	Verb_new();
+	Verb_setColor(areaNormal_start);
+	Verb_setBackColor(areaBack_start);
+	Verb_setDimColor(areaDim_start);
+	Verb_setHiColor(areaHi_start);
+	Verb_setPos(LINE_X, LINE_Y + index * LINE_STEP);
+}
+
+inline function _Dialog_hideLineVerbs()
+{
+	// Hide verbs
 	var i;
+	for (i = 0; i < N_DIALOG_LINES; i++)
+	{
+		Verb_setCurrent(verbLine1 + i);
+		Verb_activate(0);
+		Verb_draw();
+	}
+}
+
+// Public functions
+inline function Dialog_addLine(var dialog, var string)
+{
+	var index;
 
 	// Look for a free spot
-	for (i = 0; i < N_DIALOG_LINES; i++)
-		if (dialog[i] == 0)
+	for (index = 0; index < N_DIALOG_LINES; index++)
+		if (dialog[index] == 0)
 			break;
 
 	// If we reached the maximum number of lines, we quit
-	if (i == N_DIALOG_LINES)
+	if (index == N_DIALOG_LINES)
 	{
 		Util_printDebug("Dialog_add: reached the maximum number of lines !");
 		Util_quit();
 	}
 
-	dialog[i] = Util_copyString(string);
+	// Copy string
+	dialog[index] = Util_copyString(string);
 }
 
-function Dialog_delete(var dialog)
+inline function Dialog_click()
+{
+	// Check if it's the right area
+	if (inputArea != AREA_VERB)
+		return;
+
+	// Get and display selection
+	if (Util_isAnyOf(inputCmd, [verbLine1, verbLine2, verbLine3, verbLine4, verbLine5], 5))
+		_selection = inputCmd - verbLine1;
+}
+
+inline function Dialog_delete(var dialog)
 {
 	var i;
 	for (i = 0; i < N_DIALOG_LINES; i++)
@@ -29,12 +91,70 @@ function Dialog_delete(var dialog)
 	Util_nukeArray(dialog);
 }
 
-function Dialog_hide()
+inline function Dialog_disable()
 {
+	// Hide dialog
+	Dialog_hide();
+
+	// Re-enable inventory
+	Inventory_enable();
+
+	// Dialog is now disabled
+	_dialogEnabled = 0;
+}
+
+inline function Dialog_enable()
+{	
+	// Dialog is now enabled
+	_dialogEnabled = 1;
+
+	// Disable inventory first
+	Inventory_disable();
+
+	// Show dialog
+	Dialog_show(0);
+}
+
+inline function Dialog_hide()
+{
+	var i;
+
+	// If dialog is disabled, return
+	if (!_dialogEnabled)
+		return;
+
+	// Hide dialog background
+	Verb_setCurrent(verbDialog);
+	Verb_activate(0);
+	Verb_draw();
+
+	// Hide dialog lines
+	_Dialog_hideLineVerbs();
 }
 
 function Dialog_init()
 {
+	var i;
+
+	// Setup charset
+	Interface_setCharset(font1);
+	Interface_printTextLoadDefault();
+	Interface_printTextLeft();
+	Interface_printTextColor(areaHi_start);
+	Interface_printTextSaveDefault();
+
+	// Create dialog background
+	Verb_setCurrent(verbDialog);
+	Verb_new();
+	Verb_setImage(dialogObject);
+	Verb_setPos(VERB_DIALOG_X, VERB_DIALOG_Y);
+
+	// Setup line verbs
+	for (i = 0; i < N_DIALOG_LINES; i++)
+		_Dialog_addLineVerb(verbLine1 + i, i);
+
+	// Dialog is disabled by default
+	_dialogEnabled = 0;
 }
 
 inline function Dialog_new()
@@ -47,9 +167,9 @@ inline function Dialog_new()
 	return dialog;
 }
 
-function Dialog_remove(var dialog, var index)
+inline function Dialog_removeLine(var dialog, var index)
 {
-	if (index > N_DIALOG_LINES)
+	if (index >= N_DIALOG_LINES)
 	{
 		Util_printDebug("Dialog_delete: index is invalid !");
 		Util_quit();
@@ -59,58 +179,108 @@ function Dialog_remove(var dialog, var index)
 	dialog[index] = 0;
 }
 
-function Dialog_show(var dialog)
-{
-	const BAND_X = 0;
-	const BAND_Y = 143;
-	const BAND_WIDTH = 320;
-	const BAND_HEIGHT = 57;
-	const BOX_X = 0;
-	const BOX_Y = 150;
-	const BOX_WIDTH = 320;
-	const BOX_HEIGHT = 50;
-	const LINE_STEP = 10;
-	const TEXT_X = 2;
-	const TEXT_Y = 152;
+inline function Dialog_show(var dialog)
+{	
 	var i;
-	var s;
 	var currentLine;
+	var s;
 
-	// Change room height to let space for the dialog frame
-	Room_setScreen(0, BAND_Y);
-	Util_redraw();
+	// If dialog is disabled, return
+	if (!_dialogEnabled)
+		return;
 
-	// Draw a black band first
-	Util_drawBox(BAND_X, BAND_Y, BAND_X + BAND_WIDTH - 1, BAND_Y + BAND_HEIGHT - 1, COLOR_BLACK);
+	// Hide dialog lines first
+	_Dialog_hideLineVerbs();
 
-	// Draw the box around the dialog
-	Util_drawBox(BOX_X, BOX_Y, BOX_X + BOX_WIDTH - 1, BOX_Y + BOX_HEIGHT - 1, COLOR_SCORPION);
+	// Draw dialog background
+	Verb_setCurrent(verbDialog);
+	Verb_activate(1);
+	Verb_draw();
 
-	// Draw a left vertical highlight
-	Util_drawBox(BOX_X, BOX_Y + 1, BOX_X, BOX_Y + BOX_HEIGHT - 1, COLOR_SILVER_CHALICE);
+	// Return if no dialog has been passed as an argument
+	if (dialog == 0)
+		return;
 
-	// Draw horizontal lines between the dialog lines (as well as highlights)
-	for (i = 0; i < N_DIALOG_LINES; i++)
-	{
-		Util_drawBox(BOX_X, BOX_Y + i * LINE_STEP, BOX_X + BOX_WIDTH - 1, BOX_Y + i * LINE_STEP, COLOR_BLACK);
-		Util_drawBox(BOX_X, BOX_Y + 1 + i * LINE_STEP, BOX_X + BOX_WIDTH - 1, BOX_Y + 1 + i * LINE_STEP, COLOR_SILVER_CHALICE);
-	}
-
-	// Setup font
-	Interface_setCharset(font1);
-	Interface_printTextLoadDefault();
-	Interface_printTextLeft();
-	Interface_printTextColor(COLOR_SCREAMIN_GREEN);
-	Interface_printTextSaveDefault();
-
-	// Print dialog lines
+	// Draw dialog lines
 	currentLine = 0;
 	for (i = 0; i < N_DIALOG_LINES; i++)
-		if (dialog[i] != 0)
+	{
+		// Check if line is valid
+		if (dialog[i] == 0)
+			continue;
+
+		// Set current verb
+		Verb_setCurrent(verbLine1 + currentLine);
+
+		// Update line string
+		switch (currentLine)
 		{
-			Interface_printTextAt(TEXT_X, TEXT_Y + currentLine * LINE_STEP);
-			s = dialog[i];
-			Interface_printText("\x05%s{s}"); // Add small arrow in front of the text
-			currentLine++;
+			case 0:
+				_line1 = dialog[i];
+				Verb_setNameString("\x05%s{_line1}");
+				break;
+			case 1:
+				_line2 = dialog[i];
+				Verb_setNameString("\x05%s{_line2}");
+				break;
+			case 2:
+				_line3 = dialog[i];
+				Verb_setNameString("\x05%s{_line3}");
+				break;
+			case 3:
+				_line4 = dialog[i];
+				Verb_setNameString("\x05%s{_line4}");
+				break;
+			case 4:
+				_line5 = dialog[i];
+				Verb_setNameString("\x05%s{_line5}");
+				break;
 		}
+
+		// Draw verb
+		Verb_activate(1);
+		Verb_draw();
+
+		// Update current line
+		currentLine++;
+	}
+}
+
+inline function Dialog_waitForSelection(var dialog)
+{
+	var index;
+	var currentLine;
+
+	// Initialize selection
+	_selection = -1;
+
+	// Wait until a dialog line has been selected
+	while (_selection == -1)
+		Script_break();
+
+	// Clear dialog
+	Dialog_show(0);
+	
+	// Display selected line
+	Actor_talkEgo(_line1 + _selection);
+	Script_waitForMessage();
+
+	// Get selected dialog line
+	currentLine = 0;
+	for (index = 0; index < N_DIALOG_LINES; index++)
+	{
+		// Don't update index if dialog line is not valid
+		if (dialog[index] == 0)
+			continue;
+
+		// We reached our selection
+		if (currentLine == _selection)
+			break;
+
+		// Increment current line
+		currentLine++;
+	}
+
+	// Return dialog index
+	return index;
 }

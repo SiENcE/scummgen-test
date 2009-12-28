@@ -1,3 +1,9 @@
+// Enumerations
+enum { PUZZLE_LIGHT_ROOM_START, PUZZLE_LIGHT_ROOM_GOT_TORCH, PUZZLE_LIGHT_ROOM_SOLVED };
+
+// Global variables
+var puzzleLightRoom;
+
 thread mousePos()
 {
 	// TODO: remove this thread as it's only used for debugging purposes
@@ -38,7 +44,7 @@ function entranceObject_verb(var objA, var objB)
 			Actor_talkEgo("That's way too high to climb.");
 			break;
 		case verbTalkTo:
-			Actor_talkEgo("In the final demo, we will start a dialog.");
+			entranceDialog();
 			break;
 	}
 }
@@ -64,27 +70,108 @@ function wallObject_verb(var objA, var objB)
 	}
 }
 
+function setupObjects()
+{
+	// Set objects classes
+	Object_setClass(entranceObject, classPerson, 1);
+}
+
+function setupPuzzles()
+{
+	// Set default puzzle states
+	puzzleLightRoom = PUZZLE_LIGHT_ROOM_START;
+}
+
 thread changeIntensity()
 {
 	const MIN_INTENSITY = 10;
-    const MAX_INTENSITY = 45;
-	const DELAY = 6;
+    const MEDIUM_INTENSITY = 55;
+	const MAX_INTENSITY = 255;
+	const DELAY = 20;
+	const INTENSITY_STEP = 40;
     var i;
 
-	// Gradually makes the room and its objects brighter
-    for (i = MIN_INTENSITY; i < MAX_INTENSITY; i++)
+	// Gradually make the room and its objects brighter
+    for (i = MIN_INTENSITY; i < MEDIUM_INTENSITY; i++)
     {
 		Room_setIntensity(i, darkArea_start, darkArea_end);
 		Room_setIntensity(i, indyCostumeArea_start, indyCostumeArea_end);
 		Room_setIntensity(i, ringObjectArea_start, ringObjectArea_end);
         Script_delay(DELAY);
     }
+
+	// Wait for the torch puzzle to be solved
+	while (puzzleLightRoom != PUZZLE_LIGHT_ROOM_SOLVED)
+		Script_break();
+
+	// Brighten the room completely
+	for (i = MEDIUM_INTENSITY; i < MAX_INTENSITY; i += INTENSITY_STEP)
+    {
+		Room_setIntensity(i, darkArea_start, darkArea_end);
+		Room_setIntensity(i, indyCostumeArea_start, indyCostumeArea_end);
+		Room_setIntensity(i, ringObjectArea_start, ringObjectArea_end);
+        Script_break();
+    }
+
+	// Disable inventory touch mode
+	Inventory_setTouchVerb(0);
+	Inventory_show();
 }
 
-function setupObjects()
+function entranceDialog()
 {
-	// Set objects classes
-	Object_setClass(entranceObject, classPerson, 1);
+	const LINE_TORCH = 0;
+	const LINE_LEAVE = 1;
+
+	var dialog;
+	var selection;
+
+	// Setup dialogs first
+	dialog = Dialog_new();
+	Dialog_addLine(dialog, "Send me the torch!"); // LINE_TORCH
+	Dialog_addLine(dialog, "I'll talk to you later."); // LINE_LEAVE
+
+	// Remove torch line if necessary
+	if (puzzleLightRoom >= PUZZLE_LIGHT_ROOM_GOT_TORCH)
+		Dialog_removeLine(dialog, LINE_TORCH);
+
+	// Talk to Harald
+	cutscene ()
+	{
+		Actor_talkEgo("Harald?");
+		Script_waitForMessage();
+	}
+
+	// Enable dialog area
+	Dialog_enable();
+
+	// Show our dialog lines
+	Dialog_show(dialog);
+
+	// Wait for a line selection
+	selection = Dialog_waitForSelection(dialog);
+	switch (selection)
+	{
+		case LINE_TORCH:
+			// Get torch
+			Script_delaySeconds(1);
+			Actor_pickup(unlitTorchInvObject);
+			Actor_talkEgo("Thanks!");
+			Script_waitForMessage();
+
+			// Update puzzle state
+			puzzleLightRoom = PUZZLE_LIGHT_ROOM_GOT_TORCH;
+			break;
+		case LINE_LEAVE:
+			Actor_setDirection(ACTOR_DIR_SOUTH);
+			break;
+	}
+
+	// Delete dialog lines
+	Dialog_delete(dialog);
+
+	// Disable dialog area
+	Dialog_disable();
 }
 
 function entry()
@@ -94,12 +181,13 @@ function entry()
 
 	// Change room insensity slowly as soon as we enter the room
 	changeIntensity();
+
+	// Setup logic
+	setupObjects();
+	setupPuzzles();
 	
 	// Set Indy as the default actor
 	VAR_EGO = actorIndy;
-
-	// Setup local objects
-	setupObjects();
 
 	// Position Indy
 	Actor_putAtXY(actorIndy, START_X, START_Y, VAR_ROOM);
@@ -121,7 +209,7 @@ function entry()
 	// Small dialog -> torch falls down
 
 	// Show mouse coordinates
-	mousePos();
+	//mousePos();
 }
 
 function exit()
