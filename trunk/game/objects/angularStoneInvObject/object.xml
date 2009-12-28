@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <object>
-	<name>demoAngularStoneInvObject</name>
+	<name>angularStoneInvObject</name>
 	<displayName>angular stone</displayName>
 	<imageX>0</imageX>
 	<imageY>0</imageY>

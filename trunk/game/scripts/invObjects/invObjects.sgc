@@ -12,7 +12,7 @@ function whipInvObject_verb(var objA, var objB)
 					Sentence_setPrepo(PREPO_ON);
 					break;
 				case entranceObject:
-					Actor_talkEgo("There is no point of leaving now.");
+					Actor_talkEgo("There is no point in leaving now.");
 					break;
 				default:
 					Actor_talkEgo("Hmmm no.");
@@ -37,7 +37,7 @@ function whipInvObject_verb(var objA, var objB)
 	}
 }
 
-function demoMatchesInvObject_verb(var objA, var objB)
+function matchesInvObject_verb(var objA, var objB)
 {
 	action
 	{
@@ -49,7 +49,7 @@ function demoMatchesInvObject_verb(var objA, var objB)
 	}
 }
 
-function demoRingInvObject_verb(var objA, var objB)
+function ringInvObject_verb(var objA, var objB)
 {
 	action
 	{

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <object>
-	<name>demoLitTorchInvObject</name>
+	<name>unlitTorchInvObject</name>
 	<displayName>flintstones</displayName>
 	<imageX>0</imageX>
 	<imageY>0</imageY>

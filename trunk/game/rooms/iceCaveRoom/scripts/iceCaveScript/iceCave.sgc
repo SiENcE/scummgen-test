@@ -19,7 +19,7 @@ function ringObject_verb(var objA, var objB)
 	action
 	{
 		case verbPickUp:
-			Actor_pickup(demoRingInvObject);
+			Actor_pickup(ringInvObject);
 			Object_setState(objA, OBJECT_STATE_DISABLED);
 			break;
 		case verbLookAt:
@@ -107,7 +107,7 @@ function entry()
 
 	// Give default items to Indy
 	Actor_pickup(whipInvObject);
-	Actor_pickup(demoMatchesInvObject);
+	Actor_pickup(matchesInvObject);
 
 	// Set inventory touch mode and enable inventory and input
 	Inventory_setTouchVerb(1);

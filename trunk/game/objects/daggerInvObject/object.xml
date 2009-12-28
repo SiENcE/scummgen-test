@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <object>
-	<name>demoTornRopeInvObject</name>
-	<displayName>torn piece of rope</displayName>
+	<name>daggerInvObject</name>
+	<displayName>dagger</displayName>
 	<imageX>0</imageX>
 	<imageY>0</imageY>
 	<hotspotX>0</hotspotX>
@@ -15,5 +15,5 @@
 	<owner>0</owner>
 	<actorDir>0</actorDir>
 	<classData>0</classData>
-	<image>tornRopeInvImage</image>
+	<image>daggerInvImage</image>
 </object>

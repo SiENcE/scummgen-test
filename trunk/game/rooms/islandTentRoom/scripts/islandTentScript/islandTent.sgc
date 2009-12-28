@@ -19,11 +19,11 @@ function tentObject_verb(var objA, var objB)
 				finally
 				{
 					Actor_pickup(whipInvObject);
-					Actor_pickup(demoBoneInvObject);
-					Actor_pickup(demoDaggerInvObject);
-					Actor_pickup(demoMatchesInvObject);
-					Actor_pickup(demoRuneStoneInvObject);
-					Actor_pickup(demoTornRopeInvObject);
+					Actor_pickup(boneInvObject);
+					Actor_pickup(daggerInvObject);
+					Actor_pickup(matchesInvObject);
+					Actor_pickup(runeStoneInvObject);
+					Actor_pickup(tornRopeInvObject);
 				}
 			}
 			break;

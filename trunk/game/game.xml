@@ -11,18 +11,18 @@
 	<object>cursorObject</object>
 	<object>dialogObject</object>
 	<object>verbsObject</object>
+	<object>angularStoneInvObject</object>
+	<object>boneInvObject</object>
+	<object>daggerInvObject</object>
+	<object>flintstonesInvObject</object>
+	<object>litTorchInvObject</object>
+	<object>matchesInvObject</object>
+	<object>pointyStoneInvObject</object>
+	<object>ringInvObject</object>
+	<object>runeStoneInvObject</object>
+	<object>tornRopeInvObject</object>
+	<object>unlitTorchInvObject</object>
 	<object>whipInvObject</object>
-	<object>demoBoneInvObject</object>
-	<object>demoDaggerInvObject</object>
-	<object>demoMatchesInvObject</object>
-	<object>demoRingInvObject</object>
-	<object>demoRuneStoneInvObject</object>
-	<object>demoTornRopeInvObject</object>
-	<object>demoPointyStoneInvObject</object>
-	<object>demoAngularStoneInvObject</object>
-	<object>demoFlintstonesInvObject</object>
-	<object>demoLitTorchInvObject</object>
-	<object>demoUnlitTorchInvObject</object>
 	<midi>testMidi</midi>
 	<costume>indyCostume</costume>
 	<script>Cutscene</script>
