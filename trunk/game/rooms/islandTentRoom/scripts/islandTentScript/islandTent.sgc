@@ -1,5 +1,3 @@
-actor actorIndy;
-
 function tentObject_verb(var objA, var objB)
 {
 	action

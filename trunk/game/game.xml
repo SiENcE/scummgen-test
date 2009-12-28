@@ -3,11 +3,9 @@
 	<name>tentacle</name>
 	<description>Indiana Jones and the Call of Thunder</description>
 	<key>105</key>
-	<room>creditsRoom</room>
+	<room>logoRoom</room>
 	<room>iceCaveRoom</room>
 	<room>iceCaveMechanismRoom</room>
-	<room>islandTentRoom</room>
-	<room>logoRoom</room>
 	<object>cursorObject</object>
 	<object>dialogObject</object>
 	<object>verbsObject</object>
@@ -23,7 +21,6 @@
 	<object>tornRopeInvObject</object>
 	<object>unlitTorchInvObject</object>
 	<object>whipInvObject</object>
-	<midi>testMidi</midi>
 	<costume>indyCostume</costume>
 	<script>Cutscene</script>
 	<script>Dialog</script>

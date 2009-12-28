@@ -4,6 +4,9 @@ const STEP_DIST_X = 7;
 const STEP_DIST_Y = 4;
 const ANIM_SPEED = 1;
 
+// Actors list
+actor actorIndy;
+
 function setupEngine()
 {
 	// Setup engine variables
@@ -90,6 +93,6 @@ function main(var bootParam)
 	setupEngine();
 	setupGame();
 
-	// Load the ice cave room
-	Room_load(iceCaveRoom);
+	// Load the logo room
+	Room_load(logoRoom);
 }

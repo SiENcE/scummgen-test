@@ -77,7 +77,7 @@ thread changeIntensity()
 		Room_setIntensity(i, darkArea_start, darkArea_end);
 		Room_setIntensity(i, indyCostumeArea_start, indyCostumeArea_end);
 		Room_setIntensity(i, ringObjectArea_start, ringObjectArea_end);
-        Script_delayFrames(DELAY);
+        Script_delay(DELAY);
     }
 }
 

@@ -1,49 +1,44 @@
-function changeIntensity(var a, var b, var minColor, var maxColor, var step)
-{
-	var i;
-
-	Room_setIntensity(a, minColor, maxColor);
-	Script_break();
-
-	if (step > 0)
-		for (i = a; i < b; i += step)
-		{
-			Room_setIntensity(i, minColor, maxColor);
-			Script_break();
-		}
-	else
-		for (i = a; i > b; i += step)
-		{
-			Room_setIntensity(i, minColor, maxColor);
-			Script_break();
-		}
-}
-
 function displayLogo()
 {
+	const MIN_INDEX = 0;
+	const MAX_INDEX = 255;
+	const MIN_INTENSITY = 0;
+	const MAX_INTENSITY = 255;
 	const LOGO_FADE_DELAY = 3;
 	const COLOR_INC = 15;
 	var i;
-	Room_setIntensity(0, 0, 255);
-	for (i = 0; i < 256; i += COLOR_INC)
+
+	Room_setIntensity(MIN_INTENSITY, MIN_INDEX, MAX_INDEX);
+	for (i = MIN_INTENSITY; i <= MAX_INTENSITY; i += COLOR_INC)
 	{
-		Room_setIntensity(i, 0, 255);
+		Room_setIntensity(i, MIN_INDEX, MAX_INDEX);
 		Script_delay(LOGO_FADE_DELAY);
 	}
 }
 
 function entry()
 {
-	Sound_startMusic(testMidi);
+	const SECONDS_DELAY = 3;
+	const FADE_DELAY = 4;
 
-	// Display the team logo
-	displayLogo();
+	// User can skip the logo display
+	try
+	{
+		// Display the team logo
+		displayLogo();
 
-	// Wait a bit, set the transition effects and load the credits screen
-	Script_delaySeconds(3);
-	VAR_FADE_DELAY = 4;
-	Room_fade(ROOM_FADE_TRANSITION_IRIS_EFFECT, ROOM_FADE_TRANSITION_IRIS_EFFECT);
-	Room_load(creditsRoom);
+		// Delay a bit
+		Script_delaySeconds(SECONDS_DELAY);
+	}
+	finally
+	{
+		// Set fading effect
+		VAR_FADE_DELAY = FADE_DELAY;
+		Room_fade(ROOM_FADE_TRANSITION_IRIS_EFFECT, ROOM_FADE_TRANSITION_IRIS_EFFECT);
+
+		// Load the ice cave room
+		Room_load(iceCaveRoom);
+	}
 }
 
 function exit()
