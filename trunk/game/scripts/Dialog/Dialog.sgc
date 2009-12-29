@@ -71,7 +71,7 @@ inline function Dialog_addLine(var dialog, var string)
 	dialog[index] = Util_copyString(string);
 }
 
-inline function Dialog_click()
+function Dialog_click()
 {
 	// Check if it's the right area
 	if (inputArea != AREA_VERB)
@@ -155,6 +155,9 @@ function Dialog_init()
 
 	// Dialog is disabled by default
 	_dialogEnabled = 0;
+
+	// Register our click handler
+	Input_registerClickHandler(Dialog_click);
 }
 
 inline function Dialog_new()

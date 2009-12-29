@@ -325,6 +325,9 @@ function Inventory_init()
 
 	// Tell SCUMM engine which script will be our inventory handler
 	VAR_INVENTORY_SCRIPT = _Inventory_handler;
+
+	// Register our click handler
+	Input_registerClickHandler(Inventory_click);
 }
 
 inline function Inventory_setTouchVerb(var on)

@@ -19,11 +19,11 @@ function setupEngine()
 
 function setupGame()
 {
-	// Initialize GUI "classes"
+	// Initialize "classes"
+	Input_init();
 	Inventory_init();
 	Sentence_init();
 	Dialog_init();
-	Input_init();
 
 	// Setup actors and default charset
 	setupActors();

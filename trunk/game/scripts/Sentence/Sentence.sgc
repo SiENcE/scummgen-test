@@ -306,6 +306,41 @@ inline function _Sentence_select()
 	_selectedObjB = _sentenceObjB;
 }
 
+thread _Sentence_thread()
+{
+	// Loop infinitely
+	while (1)
+	{
+		// Check if sentence if enabled first
+		if (_sentenceEnabled)
+		{
+			// Update verb under mouse
+			_Sentence_updateVerbUnderMouse();
+
+			// Get object underneath the mouse
+			_Sentence_getObject();
+
+			// Reset sentence verb to the selected one if the sentence is not frozen
+			if (!_sentenceFrozen)
+				_sentenceVerb = _selectedVerb;
+
+			// Handle special cases first
+			_Sentence_handleSpecialCases();
+
+			// Update alternate verb
+			_Sentence_updateAlternateVerb();
+
+			// Update sentence elements
+			_Sentence_update();
+
+			// Redraw sentence
+			Sentence_show();
+		}
+
+		Script_break();
+	}
+}
+
 inline function _Sentence_update()
 {
 	// Don't update sentence if sentence is frozen
@@ -417,7 +452,7 @@ inline function _Sentence_verbClick(var vrb)
 }
 
 // Public functions
-inline function Sentence_click()
+function Sentence_click()
 {
 	// Check if sentence if enabled first
 	if (!_sentenceEnabled)
@@ -526,35 +561,12 @@ function Sentence_init()
 
 	// Tell SCUMM engine which script will be our sentence handler
 	VAR_SENTENCE_SCRIPT = _Sentence_handler;
-}
 
-inline function Sentence_mouseMove()
-{
-	// Check if sentence if enabled first
-	if (!_sentenceEnabled)
-		return;
+	// Register our click handler
+	Input_registerClickHandler(Sentence_click);
 
-	// Update verb under mouse
-	_Sentence_updateVerbUnderMouse();
-
-	// Get object underneath the mouse
-	_Sentence_getObject();
-
-	// Reset sentence verb to the selected one if the sentence is not frozen
-	if (!_sentenceFrozen)
-		_sentenceVerb = _selectedVerb;
-
-	// Handle special cases first
-	_Sentence_handleSpecialCases();
-
-	// Update alternate verb
-	_Sentence_updateAlternateVerb();
-
-	// Update sentence elements
-	_Sentence_update();
-
-	// Redraw sentence
-	Sentence_show();
+	// Launch thread
+	_Sentence_thread();
 }
 
 inline function Sentence_setPrepo(var prepo)

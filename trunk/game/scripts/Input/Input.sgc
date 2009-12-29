@@ -3,9 +3,11 @@ const MOUSE_BUTTON_2 = 2;
 const AREA_VERB = 1;
 const AREA_ROOM = 2;
 const AREA_KEYBOARD = 4;
+const MAX_CLICK_HANDLERS = 10;
 
 // Global variables
 var _enabled;
+var _clickHandlers;
 var inputArea;
 var inputCmd;
 var inputBtn;
@@ -15,14 +17,16 @@ var mouseY;
 // Private functions
 inline function _Input_click()
 {
+	var index;
+
 	// Save mouse coordinates
 	mouseX = VAR_MOUSE_X;
 	mouseY = VAR_MOUSE_Y;
 
-	// Indicate to the different UI classes that a click occured
-	Inventory_click();
-	Sentence_click();
-	Dialog_click();
+	// Indicate to the different handlers that a click occurred
+	for (index = 0; index < MAX_CLICK_HANDLERS; index++)
+		if (_clickHandlers[index] != 0)
+			Script_startQuick(_clickHandlers[index], [], 0);
 }
 
 function _Input_handler(var area, var cmd, var btn)
@@ -64,16 +68,6 @@ function _Input_keyPress()
 {
 }
 
-thread _Input_mouseMove()
-{
-	while (_enabled)
-	{
-		// Indicate to the different UI classes that a click occured
-		Sentence_mouseMove();
-		Script_break();
-	}
-}
-
 inline function _Input_setKeys()
 {
 	// As long as these are defined, they are active - we can't control which keys are actually used
@@ -100,13 +94,12 @@ inline function Input_enable()
 	Interface_activateCursor(1);
 	Interface_activateUserput(1);
 	_enabled = 1;
-
-	// Launch mouse move thread
-	_Input_mouseMove();
 }
 
 function Input_init()
 {
+	var i;
+
 	// Input is disabled by default
 	_enabled = 0;
 
@@ -118,4 +111,42 @@ function Input_init()
 
 	// Tell SCUMM engine which script will be our input handler
 	VAR_VERB_SCRIPT = _Input_handler;
+
+	// Setup click handlers
+	_clickHandlers = Util_dimArray(ARRAY_INT, MAX_CLICK_HANDLERS);
+	for (i = 0; i < MAX_CLICK_HANDLERS; i++)
+		_clickHandlers[i] = 0;
+}
+
+inline function Input_registerClickHandler(var handler)
+{
+	var index;
+
+	// Look for a free spot
+	for (index = 0; index < MAX_CLICK_HANDLERS; index++)
+		if (_clickHandlers[index] == 0)
+			break;
+
+	// Check if the maximum number of click handlers has been reached
+	if (index == MAX_CLICK_HANDLERS)
+	{
+		Util_printDebug("Maximum number of click handlers reached.");
+		Util_quit();
+	}
+
+	// Set handler
+	_clickHandlers[index] = handler;
+}
+
+inline function Input_unregisterClickHandler(var handler)
+{
+	var index;
+
+	// Remove click handler
+	for (index = 0; index < MAX_CLICK_HANDLERS; index++)
+		if (_clickHandlers[index] == handler)
+		{
+			_clickHandlers[index] = 0;
+			break;
+		}
 }
