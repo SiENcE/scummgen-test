@@ -51,6 +51,42 @@ class classOpenable;
 class classUsable;
 
 // Private functions
+function _Sentence_click()
+{
+	// Check if sentence if enabled first
+	if (!_sentenceEnabled)
+		return;
+
+	// Stop any running sentence
+	Verb_stopSentence();
+
+	// On a right click, change current verb to the alternate verb
+	// (only applies when objB has not been selected)
+	if ((inputBtn == MOUSE_BUTTON_2) && (_alternateVerb != 0) && (_selectedObjB == 0))
+	{
+		_sentenceVerb = _alternateVerb;
+		_selectedVerb = _alternateVerb;
+	}
+
+	// Treat each area separately
+	switch (inputArea)
+	{
+		case AREA_VERB:
+			if (_Sentence_verbClick(inputCmd))
+				return;
+			break;
+		case AREA_ROOM:
+			_Sentence_roomClick();
+			break;
+	}
+
+	// Select elements of the sentence
+	_Sentence_select();
+
+	// Launch the verb sentence
+	Verb_doSentence(_sentenceVerb, _selectedObjA, _selectedObjB);
+}
+
 inline function _Sentence_getObject()
 {
 	// Object check
@@ -452,42 +488,6 @@ inline function _Sentence_verbClick(var vrb)
 }
 
 // Public functions
-function Sentence_click()
-{
-	// Check if sentence if enabled first
-	if (!_sentenceEnabled)
-		return;
-
-	// Stop any running sentence
-	Verb_stopSentence();
-
-	// On a right click, change current verb to the alternate verb
-	// (only applies when objB has not been selected)
-	if ((inputBtn == MOUSE_BUTTON_2) && (_alternateVerb != 0) && (_selectedObjB == 0))
-	{
-		_sentenceVerb = _alternateVerb;
-		_selectedVerb = _alternateVerb;
-	}
-
-	// Treat each area separately
-	switch (inputArea)
-	{
-		case AREA_VERB:
-			if (_Sentence_verbClick(inputCmd))
-				return;
-			break;
-		case AREA_ROOM:
-			_Sentence_roomClick();
-			break;
-	}
-
-	// Select elements of the sentence
-	_Sentence_select();
-
-	// Launch the verb sentence
-	Verb_doSentence(_sentenceVerb, _selectedObjA, _selectedObjB);
-}
-
 inline function Sentence_disable()
 {
 	// Sentence is now disabled
@@ -563,7 +563,7 @@ function Sentence_init()
 	VAR_SENTENCE_SCRIPT = _Sentence_handler;
 
 	// Register our click handler
-	Input_registerClickHandler(Sentence_click);
+	Input_registerClickHandler(_Sentence_click);
 
 	// Launch thread
 	_Sentence_thread();

@@ -38,6 +38,17 @@ inline function _Dialog_addLineVerb(var vrb, var index)
 	Verb_setPos(LINE_X, LINE_Y + index * LINE_STEP);
 }
 
+function _Dialog_click()
+{
+	// Check if it's the right area
+	if (inputArea != AREA_VERB)
+		return;
+
+	// Get and display selection
+	if (Util_isAnyOf(inputCmd, [verbLine1, verbLine2, verbLine3, verbLine4, verbLine5], 5))
+		_selection = inputCmd - verbLine1;
+}
+
 inline function _Dialog_hideLineVerbs()
 {
 	// Hide verbs
@@ -69,17 +80,6 @@ inline function Dialog_addLine(var dialog, var string)
 
 	// Copy string
 	dialog[index] = Util_copyString(string);
-}
-
-function Dialog_click()
-{
-	// Check if it's the right area
-	if (inputArea != AREA_VERB)
-		return;
-
-	// Get and display selection
-	if (Util_isAnyOf(inputCmd, [verbLine1, verbLine2, verbLine3, verbLine4, verbLine5], 5))
-		_selection = inputCmd - verbLine1;
 }
 
 inline function Dialog_delete(var dialog)
@@ -157,7 +157,7 @@ function Dialog_init()
 	_dialogEnabled = 0;
 
 	// Register our click handler
-	Input_registerClickHandler(Dialog_click);
+	Input_registerClickHandler(_Dialog_click);
 }
 
 inline function Dialog_new()

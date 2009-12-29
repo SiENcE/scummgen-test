@@ -94,6 +94,20 @@ inline function _Inventory_addVerb(var vrb, var string, var posX, var posY)
 	Verb_setPos(posX, posY);
 }
 
+function _Inventory_click()
+{
+	// Check arrows and change the inventory offset accordingly
+	if (inputCmd == verbArrowUp)
+		_lineOffset--;
+	else if (inputCmd == verbArrowDown)
+		_lineOffset++;
+	else
+		return;
+
+	// Redraw inventory
+	Inventory_show();
+}
+
 inline function _Inventory_drawArrows()
 {
 	// Handle up arrow
@@ -161,20 +175,6 @@ inline function _Inventory_hideSlots()
 }
 
 // Public functions
-function Inventory_click()
-{
-	// Check arrows and change the inventory offset accordingly
-	if (inputCmd == verbArrowUp)
-		_lineOffset--;
-	else if (inputCmd == verbArrowDown)
-		_lineOffset++;
-	else
-		return;
-
-	// Redraw inventory
-	Inventory_show();
-}
-
 inline function Inventory_disable()
 {
 	// Hide the inventory
@@ -327,7 +327,7 @@ function Inventory_init()
 	VAR_INVENTORY_SCRIPT = _Inventory_handler;
 
 	// Register our click handler
-	Input_registerClickHandler(Inventory_click);
+	Input_registerClickHandler(_Inventory_click);
 }
 
 inline function Inventory_setTouchVerb(var on)
