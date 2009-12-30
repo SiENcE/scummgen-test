@@ -27,7 +27,7 @@ function setupGame()
 
 	// Setup actors and default charset
 	setupActors();
-	setupCharset();
+	setupCharsets();
 }
 
 function setupActors()
@@ -44,11 +44,11 @@ function setupActors()
 	Actor_setAnimSpeed(ANIM_SPEED);
 }
 
-function setupCharset()
+function setupCharsets()
 {
-	// Setup default charset
+	// Setup Indy charset
 	Interface_setCharset(font2);
-	Actor_printLoadDefault(VAR_EGO);
+	Actor_printLoadDefault(actorIndy);
 	Actor_setTalkColor(COLOR_WHITE);
 	Actor_printCenter();
 	Actor_printOverhead();

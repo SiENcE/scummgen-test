@@ -1,8 +1,44 @@
+thread mechanismThread()
+{
+	// Setup print line charset
+	Interface_setCharset(font2);
+	Interface_printLineLoadDefault();
+	Interface_printLineColor(COLOR_PERSIMMON);
+	Interface_printLineCenter();
+	Interface_printLineOverhead();
+	Interface_printLineSaveDefault();
+
+	// Loop indefinitely
+	while (1)
+	{
+		Interface_printLineAt(VAR_MOUSE_X, VAR_MOUSE_Y);
+     	Interface_printLine("cool isn't it?");
+		Script_break();
+	}
+}
+
+function mechanismClick()
+{
+	// Leave and reload the ice cave room
+	Room_load(iceCaveRoom);
+}
+
 function entry()
 {
+	// Disable inventory first
+	Inventory_disable();
 
+	// Register our click handler
+	Input_registerClickHandler(mechanismClick);
+
+	mechanismThread();
 }
 
 function exit()
 {
+	// Unregister our click handler
+	Input_unregisterClickHandler(mechanismClick);
+
+	// Re-enable inventory
+	Inventory_enable();
 }

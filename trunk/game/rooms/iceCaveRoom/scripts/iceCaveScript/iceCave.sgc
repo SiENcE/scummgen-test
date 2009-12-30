@@ -4,22 +4,6 @@ enum { PUZZLE_LIGHT_ROOM_START, PUZZLE_LIGHT_ROOM_GOT_TORCH, PUZZLE_LIGHT_ROOM_S
 // Global variables
 var puzzleLightRoom;
 
-thread mousePos()
-{
-	// TODO: remove this thread as it's only used for debugging purposes
-   Interface_printTextLoadDefault();
-   while (1)
-   {
-      Util_redraw();
-      Script_break();
-      Interface_printTextAt(220, 5);
-      Interface_printText("X: %i{VAR_MOUSE_X}");
-      Interface_printTextAt(220, 15);
-      Interface_printText("Y: %i{VAR_MOUSE_Y}");
-      Script_break();
-   }
-}
-
 function ringObject_verb(var objA, var objB)
 {
 	action
@@ -54,7 +38,10 @@ function iceObject_verb(var objA, var objB)
 	action
 	{
 		case verbLookAt:
-			Room_load(iceCaveMechanismRoom);
+			if (puzzleLightRoom != PUZZLE_LIGHT_ROOM_SOLVED)
+				Actor_talkEgo("Brrr... it's cold.");
+			else
+				Room_load(iceCaveMechanismRoom);
 			break;
 	}
 }
@@ -207,9 +194,6 @@ function entry()
 	Actor_talkEgo("It's ok.");
 	Script_waitForMessage();
 	// Small dialog -> torch falls down
-
-	// Show mouse coordinates
-	//mousePos();
 }
 
 function exit()
