@@ -89,3 +89,29 @@ function unlitTorchInvObject_verb(var objA, var objB)
 			break;
 	}
 }
+
+function boneInvObject_verb(var objA, var objB)
+{
+	action
+	{
+		case verbUse:
+			switch (objB)
+			{
+				case 0:
+					Sentence_setPrepo(PREPO_ON);
+					break;
+				case tornRopeInvObject:
+					Actor_talkEgo("I'll bind it onto the rope.");
+					Script_waitForMessage();
+					//Actor_pickup
+					break;
+				default:
+					Actor_talkEgo("That doesn't work!");
+					break;
+			}
+			break;
+		case verbLookAt:
+			Actor_talkEgo("That's the left fibula of the skeleton.");
+			break;
+	}
+}

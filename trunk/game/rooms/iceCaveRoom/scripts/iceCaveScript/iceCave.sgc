@@ -4,18 +4,21 @@ enum { PUZZLE_LIGHT_ROOM_START, PUZZLE_LIGHT_ROOM_GOT_TORCH, PUZZLE_LIGHT_ROOM_S
 // Global variables
 var puzzleLightRoom;
 
-function ringObject_verb(var objA, var objB)
+function daggerObject_verb(var objA, var objB)
 {
 	action
 	{
-		case verbPickUp:
-			Actor_pickup(ringInvObject);
-			Object_setState(objA, OBJECT_STATE_DISABLED);
-			break;
 		case verbLookAt:
-			Actor_talkEgo("Hmm, that's probably a ring.");
+			//Actor_animate(actorIndy, );
+			Actor_printEgo("OUCH!");
 			Script_waitForMessage();
-			asm { pushWordVar .word objA setObjectName .string "ring?" }
+			Actor_printEgo("That's a very sharp dagger!");
+			Script_waitForMessage();
+			asm { pushWordVar .word objA setObjectName .string "dagger" }
+			break;
+		case verbPickUp:
+			Actor_pickup(daggerInvObject);
+			Object_setState(objA, OBJECT_STATE_DISABLED);
 			break;
 	}
 }
@@ -42,6 +45,37 @@ function iceObject_verb(var objA, var objB)
 				Actor_talkEgo("Brrr... it's cold.");
 			else
 				Room_load(iceCaveMechanismRoom);
+			break;
+	}
+}
+
+function ringObject_verb(var objA, var objB)
+{
+	action
+	{
+		case verbPickUp:
+			Actor_pickup(ringInvObject);
+			Object_setState(objA, OBJECT_STATE_DISABLED);
+			break;
+		case verbLookAt:
+			Actor_talkEgo("Hmm, that's probably a ring.");
+			Script_waitForMessage();
+			asm { pushWordVar .word objA setObjectName .string "ring?" }
+			break;
+	}
+}
+
+function skeletonObject_verb(var objA, var objB)
+{
+	action
+	{
+		case verbLookAt:
+			Actor_talkEgo("Poor guy. I wonder how long he's been lying here.");
+			break;
+		case verbPickUp:
+			Actor_talkEgo("I think I could use the fibula.");
+			Script_waitForMessage();
+			Actor_pickup(boneInvObject);
 			break;
 	}
 }
@@ -75,6 +109,14 @@ function setupObjects()
 	// Setup icy wall
 	Object_setState(iceObject, OBJECT_STATE_PICKABLE);
 	Object_setOwner(iceObject, OBJECT_OWNER_ROOM);
+	
+	// Setup skeleton
+	Object_setState(skeletonObject, OBJECT_STATE_PICKABLE);
+	Object_setOwner(skeletonObject, OBJECT_OWNER_ROOM);
+	
+	// Setup dagger
+	Object_setState(daggerObject, OBJECT_STATE_PICKABLE);
+	Object_setOwner(daggerObject, OBJECT_OWNER_ROOM);
 }
 
 function setupPuzzles()
@@ -87,7 +129,7 @@ thread changeIntensity()
 {
 	const OMNI_INTENSITY = 255;
 	const OMNI_POS_X = 100;
-	const OMNI_POS_Y = 42;
+	const OMNI_POS_Y = 40;
 	const OMNI_RANGE = 25;
 	const AMBIENT_MIN_INTENSITY = 10;
     const AMBIENT_MEDIUM_INTENSITY = 55;
@@ -136,6 +178,25 @@ thread changeIntensity()
 	// Disable inventory touch mode
 	Inventory_setTouchVerb(0);
 	Inventory_show();
+}
+
+thread mousePos()
+{
+	// Setup print line charset
+	Interface_setCharset(font2);
+	Interface_printLineLoadDefault();
+	Interface_printLineColor(COLOR_PERSIMMON);
+	Interface_printLineCenter();
+	Interface_printLineOverhead();
+	Interface_printLineSaveDefault();
+
+	// Loop indefinitely
+	while (1)
+	{
+		Interface_printLineAt(150, 10);
+     	Interface_printLine("X: %i{VAR_MOUSE_X} Y: %i{VAR_MOUSE_Y}");
+		Script_break();
+	}
 }
 
 function entranceDialog()
@@ -202,6 +263,8 @@ function entry()
 	// Change room insensity slowly as soon as we enter the room
 	changeIntensity();
 
+	//mousePos();
+	
 	// Setup logic
 	setupObjects();
 	setupPuzzles();
