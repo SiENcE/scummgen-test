@@ -24,6 +24,7 @@ function setupGame()
 	Inventory_init();
 	Sentence_init();
 	Dialog_init();
+	Light_init();
 
 	// Setup actors and default charset
 	setupActors();

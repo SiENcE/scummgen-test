@@ -71,32 +71,51 @@ function setupPuzzles()
 
 thread changeIntensity()
 {
-	const MIN_INTENSITY = 10;
-    const MEDIUM_INTENSITY = 55;
-	const MAX_INTENSITY = 255;
+	const OMNI_INTENSITY = 255;
+	const OMNI_POS_X = 100;
+	const OMNI_POS_Y = 42;
+	const OMNI_RANGE = 25;
+	const AMBIENT_MIN_INTENSITY = 10;
+    const AMBIENT_MEDIUM_INTENSITY = 55;
+	const AMBIENT_MAX_INTENSITY = 255;
 	const DELAY = 20;
-	const INTENSITY_STEP = 40;
+	const AMBIENT_INTENSITY_STEP = 40;
     var i;
+	var omniLight;
+	var ambientLight;
 
-	// Gradually make the room and its objects brighter
-    for (i = MIN_INTENSITY; i < MEDIUM_INTENSITY; i++)
-    {
-		Room_setIntensity(i, darkArea_start, darkArea_end);
-		Room_setIntensity(i, indyCostumeArea_start, indyCostumeArea_end);
-		Room_setIntensity(i, ringObjectArea_start, ringObjectArea_end);
-        Script_delay(DELAY);
-    }
+	// Add omni light
+	omniLight = Light_new(LIGHT_TYPE_OMNI);
+	Light_setColor(omniLight, OMNI_INTENSITY, OMNI_INTENSITY, OMNI_INTENSITY);
+	Light_setPos(omniLight, OMNI_POS_X, OMNI_POS_Y);
+	Light_setRange(omniLight, OMNI_RANGE);
+
+	// Add ambient light
+	ambientLight = Light_new(LIGHT_TYPE_AMBIENT);
+
+	// Add areas
+	Light_addArea(0, darkArea_start, darkArea_end);
+	Light_addArea(0, ringObjectArea_start, ringObjectArea_end);
+	Light_addArea(actorIndy, indyCostumeArea_start, indyCostumeArea_end);
+
+	// Gradually brighten the ambient light
+    for (i = AMBIENT_MIN_INTENSITY; i < AMBIENT_MEDIUM_INTENSITY; i++)
+	{
+    	Light_setColor(ambientLight, i, i, i);
+		Script_delay(DELAY);
+	}
 
 	// Wait for the torch puzzle to be solved
 	while (puzzleLightRoom != PUZZLE_LIGHT_ROOM_SOLVED)
 		Script_break();
 
+	// Remove omni light
+	Light_delete(omniLight);
+
 	// Brighten the room completely
-	for (i = MEDIUM_INTENSITY; i < MAX_INTENSITY; i += INTENSITY_STEP)
+	for (i = AMBIENT_MEDIUM_INTENSITY; i < AMBIENT_MAX_INTENSITY; i += AMBIENT_INTENSITY_STEP)
     {
-		Room_setIntensity(i, darkArea_start, darkArea_end);
-		Room_setIntensity(i, indyCostumeArea_start, indyCostumeArea_end);
-		Room_setIntensity(i, ringObjectArea_start, ringObjectArea_end);
+		Light_setColor(ambientLight, i, i, i);
         Script_break();
     }
 

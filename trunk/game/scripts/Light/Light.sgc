@@ -1,0 +1,208 @@
+// Global constants
+const MAX_LIGHTS = 10;
+const MAX_AREAS = 10;
+const N_AMBIENT_LIGHT_PARAMS = 4;
+const N_OMNI_LIGHT_PARAMS = 7;
+const N_AREA_PARAMS = 6;
+
+// Enumerations
+enum { LIGHT_PARAM_TYPE, LIGHT_PARAM_R, LIGHT_PARAM_G, LIGHT_PARAM_B, LIGHT_PARAM_X, LIGHT_PARAM_Y, LIGHT_PARAM_RANGE };
+enum { LIGHT_TYPE_AMBIENT, LIGHT_TYPE_OMNI };
+enum { AREA_PARAM_OBJECT, AREA_PARAM_START, AREA_PARAM_END, AREA_PARAM_R, AREA_PARAM_G, AREA_PARAM_B };
+
+// Global variables
+var _lights;
+var _areas;
+
+// Private functions
+thread _Light_thread()
+{
+	var i;
+	var j;
+	var area;
+	var light;
+	var distance;
+	var r;
+	var g;
+	var b;
+	var range;
+
+	while (1)
+	{			
+		for (i = 0; i < MAX_AREAS; i++)
+		{			
+			// Check if area is valid
+			if (_areas[i] == 0)
+				continue;
+
+			area = _areas[i];
+
+			// Initialize intensity
+			r = 0;
+			g = 0;
+			b = 0;
+
+			for (j = 0; j < MAX_LIGHTS; j++)
+			{
+				// Check if light is active
+				if (_lights[j] == 0)
+					continue;
+
+				light = _lights[j];
+
+				switch (light[LIGHT_PARAM_TYPE])
+				{
+					case LIGHT_TYPE_AMBIENT:
+						// Increment intensity
+						r += light[LIGHT_PARAM_R];
+						g += light[LIGHT_PARAM_G];
+						b += light[LIGHT_PARAM_B];
+						break;
+					case LIGHT_TYPE_OMNI:
+						// Omni lights only affect objects
+						if (area[AREA_PARAM_OBJECT] == 0)
+							break;
+
+						// Calculate distance between object and light
+						distance = Util_getObjToPointDistance(area[AREA_PARAM_OBJECT], light[LIGHT_PARAM_X], light[LIGHT_PARAM_Y]);
+
+						// Check distance first
+						range = light[LIGHT_PARAM_RANGE];
+						if (distance < light[LIGHT_PARAM_RANGE])
+						{
+							// Increment intensity accordingly
+							r += (light[LIGHT_PARAM_R] * (range - distance) * (range - distance)) / (range * range);
+							g += (light[LIGHT_PARAM_G] * (range - distance) * (range - distance)) / (range * range);
+							b += (light[LIGHT_PARAM_B] * (range - distance) * (range - distance)) / (range * range);
+						}
+						break;
+				}
+			}
+
+			// Change area intensity if needed
+			if (r != area[AREA_PARAM_R] || g != area[AREA_PARAM_B] || b != area[AREA_PARAM_B])
+			{
+				// Save area colors
+				area[AREA_PARAM_R] = r;
+				area[AREA_PARAM_G] = g;
+				area[AREA_PARAM_B] = b;
+				Room_setIntensityRGB(r, g, b, area[AREA_PARAM_START], area[AREA_PARAM_END]);
+			}
+		}
+		Script_break();
+	}
+}
+
+// Public functions
+inline function Light_addArea(var obj, var start, var end)
+{
+	var index;
+	var area;
+
+	// Look for a free spot
+	for (index = 0; index < MAX_AREAS; index++)
+		if (_areas[index] == 0)
+			break;
+
+	// Check index
+	if (index == MAX_AREAS)
+	{
+		Util_printDebug("Maximum number of areas reached !");
+		Util_quit();
+	}
+
+	// Reserve our area parameters array
+	_areas[index] = Util_dimArray(ARRAY_INT, N_AREA_PARAMS);
+
+	// Set parameters
+	area = _areas[index];
+	area[AREA_PARAM_OBJECT] = obj;
+	area[AREA_PARAM_START] = start;
+	area[AREA_PARAM_END] = end;
+	area[AREA_PARAM_R] = 0;
+	area[AREA_PARAM_G] = 0;
+	area[AREA_PARAM_B] = 0;
+
+	return index;
+}
+
+inline function Light_delete(var light)
+{
+	Util_nukeArray(_lights[light]);
+	_lights[light] = 0;
+}
+
+function Light_init()
+{
+	var i;
+
+	// Reserve our lights and areas array
+	_lights = Util_dimArray(ARRAY_INT, MAX_LIGHTS);
+	_areas = Util_dimArray(ARRAY_INT, MAX_AREAS);
+
+	// Launch thread
+	_Light_thread();
+}
+
+inline function Light_new(var type)
+{
+	var index;
+	var nParams;
+	var light;
+
+	// Look for a free spot
+	for (index = 0; index < MAX_LIGHTS; index++)
+		if (_lights[index] == 0)
+			break;
+
+	// Check index
+	if (index == MAX_LIGHTS)
+	{
+		Util_printDebug("Maximum number of lights reached !");
+		Util_quit();
+	}
+
+	// Compute number of parameters
+	if (type == LIGHT_TYPE_OMNI)
+		nParams = N_OMNI_LIGHT_PARAMS;
+	else if (type == LIGHT_TYPE_AMBIENT)
+		nParams = N_AMBIENT_LIGHT_PARAMS;
+	else
+	{
+		Util_printDebug("Unknown light type !");
+		Util_quit();
+	}
+
+	// Reserve light parameters array
+	_lights[index] = Util_dimArray(ARRAY_INT, nParams);
+
+	// Setup type
+	light = _lights[index];
+	light[LIGHT_PARAM_TYPE] = type;
+
+	return index;
+}
+
+inline function Light_setColor(var light, var r, var g, var b)
+{
+	var l;
+	l = _lights[light];
+	l[LIGHT_PARAM_R] = r;
+	l[LIGHT_PARAM_G] = g;
+	l[LIGHT_PARAM_B] = b;
+}
+
+inline function Light_setPos(var light, var x, var y)
+{
+	var l;
+	l = _lights[light];
+	l[LIGHT_PARAM_X] = x;
+	l[LIGHT_PARAM_Y] = y;
+}
+
+inline function Light_setRange(var light, var range)
+{
+	var l;
+	l = _lights[light];
+	l[LIGHT_PARAM_RANGE] = range;
+}

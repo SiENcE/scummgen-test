@@ -26,6 +26,7 @@
 	<script>Dialog</script>
 	<script>Inventory</script>
 	<script>Input</script>
+	<script>Light</script>
 	<script>Sentence</script>
 	<script>invObjects</script>
 	<script>main</script>
