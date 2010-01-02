@@ -59,8 +59,22 @@ function wallObject_verb(var objA, var objB)
 
 function setupObjects()
 {
-	// Set objects classes
+	// Setup entrance
 	Object_setClass(entranceObject, classPerson, 1);
+	Object_setState(entranceObject, OBJECT_STATE_PICKABLE);
+	Object_setOwner(entranceObject, OBJECT_OWNER_ROOM);
+
+	// Setup wall
+	Object_setState(wallObject, OBJECT_STATE_PICKABLE);
+	Object_setOwner(wallObject, OBJECT_OWNER_ROOM);
+
+	// Setup ring
+	Object_setState(ringObject, OBJECT_STATE_PICKABLE);
+	Object_setOwner(ringObject, OBJECT_OWNER_ROOM);
+
+	// Setup icy wall
+	Object_setState(iceObject, OBJECT_STATE_PICKABLE);
+	Object_setOwner(iceObject, OBJECT_OWNER_ROOM);
 }
 
 function setupPuzzles()
