@@ -2,18 +2,12 @@
 <object>
 	<name>pointyStoneInvObject</name>
 	<displayName>pointy stone</displayName>
-	<imageX>0</imageX>
-	<imageY>0</imageY>
 	<hotspotX>0</hotspotX>
 	<hotspotY>0</hotspotY>
 	<x>0</x>
 	<y>0</y>
 	<width>32</width>
 	<height>24</height>
-	<flags>0</flags>
-	<parent>0</parent>
-	<owner>0</owner>
-	<actorDir>0</actorDir>
-	<classData>0</classData>
+	<actorDir>south</actorDir>
 	<image>pointyStoneInvImage</image>
 </object>

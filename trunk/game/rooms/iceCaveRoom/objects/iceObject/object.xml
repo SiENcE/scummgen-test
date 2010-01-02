@@ -2,17 +2,11 @@
 <object>
 	<name>iceObject</name>
 	<displayName>ice</displayName>
-	<imageX>0</imageX>
-	<imageY>0</imageY>
 	<hotspotX>280</hotspotX>
 	<hotspotY>88</hotspotY>
 	<x>272</x>
 	<y>24</y>
 	<width>32</width>
 	<height>64</height>
-	<flags>1</flags>
-	<parent>0</parent>
-	<owner>15</owner>
-	<actorDir>2</actorDir>
-	<classData>0</classData>
+	<actorDir>east</actorDir>
 </object>

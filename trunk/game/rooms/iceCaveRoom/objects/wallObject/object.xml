@@ -2,17 +2,11 @@
 <object>
 	<name>wallObject</name>
 	<displayName>wall</displayName>
-	<imageX>0</imageX>
-	<imageY>0</imageY>
 	<hotspotX>49</hotspotX>
 	<hotspotY>92</hotspotY>
 	<x>8</x>
 	<y>16</y>
 	<width>48</width>
 	<height>80</height>
-	<flags>1</flags>
-	<parent>0</parent>
-	<owner>15</owner>
-	<actorDir>0</actorDir>
-	<classData>0</classData>
+	<actorDir>west</actorDir>
 </object>

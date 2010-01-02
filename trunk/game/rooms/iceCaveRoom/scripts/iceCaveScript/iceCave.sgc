@@ -97,7 +97,7 @@ function setupObjects()
 	Object_setClass(entranceObject, classPerson, 1);
 	Object_setState(entranceObject, OBJECT_STATE_PICKABLE);
 	Object_setOwner(entranceObject, OBJECT_OWNER_ROOM);
-
+	
 	// Setup wall
 	Object_setState(wallObject, OBJECT_STATE_PICKABLE);
 	Object_setOwner(wallObject, OBJECT_OWNER_ROOM);
