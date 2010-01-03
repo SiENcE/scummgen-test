@@ -1,3 +1,6 @@
+// Global variables
+var torchIsLit;
+
 function whipInvObject_verb(var objA, var objB)
 {
 	const MAX_RANDOM_LINES = 2;
@@ -59,8 +62,11 @@ function ringInvObject_verb(var objA, var objB)
 				case 0:
 					Sentence_setPrepo(PREPO_ON);
 					break;
+				case iceObject:
+					Actor_talkEgo("Hmmm... I guess we should implement this soon.");
+					break;
 				default:
-					Actor_talkEgo("That doesn't work!");
+					Actor_talkEgo("I don't want to marry that.");
 					break;
 			}
 			break;
@@ -72,15 +78,40 @@ function ringInvObject_verb(var objA, var objB)
 
 function unlitTorchInvObject_verb(var objA, var objB)
 {
+	const AMBIENT_START_INTENSITY = 55;
+    const AMBIENT_END_INTENSITY = 255;
+	const AMBIENT_INTENSITY_STEP = 40;
+
 	action
 	{
 		case verbUse:
-			if (puzzleLightRoom != PUZZLE_LIGHT_ROOM_SOLVED)
+			if (!torchIsLit)
 			{
-				// Update puzzle state and say something
-				puzzleLightRoom = PUZZLE_LIGHT_ROOM_SOLVED;
-				Script_delaySeconds(1);
+				var i;
+
+				// Update torch state
+				torchIsLit = 1;
+
+				// Remove ice cave omni light
+				Light_delete(iceCaveEntranceOmniLight);
+
+				// Brighten the ice cave room completely
+				for (i = AMBIENT_START_INTENSITY; i < AMBIENT_END_INTENSITY; i += AMBIENT_INTENSITY_STEP)
+				{
+					Light_setColor(iceCaveAmbientLight, i, i, i);
+					Script_break();
+				}
+
+				// Disable inventory touch mode
+				Inventory_setTouchVerb(0);
+				Inventory_show();
+
 				Actor_talkEgo("And then there was light...");
+				Script_waitForMessage();
+			}
+			else
+			{
+				Actor_talkEgo("It's already lit.");
 				Script_waitForMessage();
 			}
 			break;

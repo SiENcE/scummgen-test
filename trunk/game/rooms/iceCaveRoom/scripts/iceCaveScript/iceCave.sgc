@@ -1,8 +1,6 @@
-// Enumerations
-enum { PUZZLE_LIGHT_ROOM_START, PUZZLE_LIGHT_ROOM_GOT_TORCH, PUZZLE_LIGHT_ROOM_SOLVED };
-
 // Global variables
-var puzzleLightRoom;
+var iceCaveEntranceOmniLight;
+var iceCaveAmbientLight;
 
 function daggerObject_verb(var objA, var objB)
 {
@@ -41,7 +39,7 @@ function iceObject_verb(var objA, var objB)
 	action
 	{
 		case verbLookAt:
-			if (puzzleLightRoom != PUZZLE_LIGHT_ROOM_SOLVED)
+			if (!torchIsLit)
 				Actor_talkEgo("Brrr... it's cold.");
 			else
 				Room_load(iceCaveMechanismRoom);
@@ -97,7 +95,7 @@ function setupObjects()
 	Object_setClass(entranceObject, classPerson, 1);
 	Object_setState(entranceObject, OBJECT_STATE_PICKABLE);
 	Object_setOwner(entranceObject, OBJECT_OWNER_ROOM);
-	
+
 	// Setup wall
 	Object_setState(wallObject, OBJECT_STATE_PICKABLE);
 	Object_setOwner(wallObject, OBJECT_OWNER_ROOM);
@@ -119,35 +117,25 @@ function setupObjects()
 	Object_setOwner(daggerObject, OBJECT_OWNER_ROOM);
 }
 
-function setupPuzzles()
-{
-	// Set default puzzle states
-	puzzleLightRoom = PUZZLE_LIGHT_ROOM_START;
-}
-
 thread changeIntensity()
 {
 	const OMNI_INTENSITY = 255;
 	const OMNI_POS_X = 100;
 	const OMNI_POS_Y = 40;
 	const OMNI_RANGE = 25;
-	const AMBIENT_MIN_INTENSITY = 10;
-    const AMBIENT_MEDIUM_INTENSITY = 55;
-	const AMBIENT_MAX_INTENSITY = 255;
+	const AMBIENT_START_INTENSITY = 10;
+    const AMBIENT_END_INTENSITY = 55;
 	const DELAY = 20;
-	const AMBIENT_INTENSITY_STEP = 40;
     var i;
-	var omniLight;
-	var ambientLight;
 
 	// Add omni light
-	omniLight = Light_new(LIGHT_TYPE_OMNI);
-	Light_setColor(omniLight, OMNI_INTENSITY, OMNI_INTENSITY, OMNI_INTENSITY);
-	Light_setPos(omniLight, OMNI_POS_X, OMNI_POS_Y);
-	Light_setRange(omniLight, OMNI_RANGE);
+	iceCaveEntranceOmniLight = Light_new(LIGHT_TYPE_OMNI);
+	Light_setColor(iceCaveEntranceOmniLight, OMNI_INTENSITY, OMNI_INTENSITY, OMNI_INTENSITY);
+	Light_setPos(iceCaveEntranceOmniLight, OMNI_POS_X, OMNI_POS_Y);
+	Light_setRange(iceCaveEntranceOmniLight, OMNI_RANGE);
 
 	// Add ambient light
-	ambientLight = Light_new(LIGHT_TYPE_AMBIENT);
+	iceCaveAmbientLight = Light_new(LIGHT_TYPE_AMBIENT);
 
 	// Add areas
 	Light_addArea(0, darkArea_start, darkArea_end);
@@ -155,29 +143,15 @@ thread changeIntensity()
 	Light_addArea(actorIndy, indyCostumeArea_start, indyCostumeArea_end);
 
 	// Gradually brighten the ambient light
-    for (i = AMBIENT_MIN_INTENSITY; i < AMBIENT_MEDIUM_INTENSITY; i++)
+    for (i = AMBIENT_START_INTENSITY; i < AMBIENT_END_INTENSITY; i++)
 	{
-    	Light_setColor(ambientLight, i, i, i);
+		// Terminate the function if torch is lit already
+		if (torchIsLit)
+			return;
+
+    	Light_setColor(iceCaveAmbientLight, i, i, i);
 		Script_delay(DELAY);
 	}
-
-	// Wait for the torch puzzle to be solved
-	while (puzzleLightRoom != PUZZLE_LIGHT_ROOM_SOLVED)
-		Script_break();
-
-	// Remove omni light
-	Light_delete(omniLight);
-
-	// Brighten the room completely
-	for (i = AMBIENT_MEDIUM_INTENSITY; i < AMBIENT_MAX_INTENSITY; i += AMBIENT_INTENSITY_STEP)
-    {
-		Light_setColor(ambientLight, i, i, i);
-        Script_break();
-    }
-
-	// Disable inventory touch mode
-	Inventory_setTouchVerb(0);
-	Inventory_show();
 }
 
 thread mousePos()
@@ -213,7 +187,7 @@ function entranceDialog()
 	Dialog_addLine(dialog, "I'll talk to you later."); // LINE_LEAVE
 
 	// Remove torch line if necessary
-	if (puzzleLightRoom >= PUZZLE_LIGHT_ROOM_GOT_TORCH)
+	if (Object_getOwner(unlitTorchInvObject) == VAR_EGO)
 		Dialog_removeLine(dialog, LINE_TORCH);
 
 	// Talk to Harald
@@ -239,9 +213,6 @@ function entranceDialog()
 			Actor_pickup(unlitTorchInvObject);
 			Actor_talkEgo("Thanks!");
 			Script_waitForMessage();
-
-			// Update puzzle state
-			puzzleLightRoom = PUZZLE_LIGHT_ROOM_GOT_TORCH;
 			break;
 		case LINE_LEAVE:
 			Actor_setDirection(ACTOR_DIR_SOUTH);
@@ -262,12 +233,9 @@ function entry()
 
 	// Change room insensity slowly as soon as we enter the room
 	changeIntensity();
-
-	//mousePos();
 	
-	// Setup logic
+	// Setup object states, classes and owners
 	setupObjects();
-	setupPuzzles();
 	
 	// Set Indy as the default actor
 	VAR_EGO = actorIndy;
