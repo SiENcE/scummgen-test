@@ -8,5 +8,5 @@
 	<y>24</y>
 	<width>32</width>
 	<height>64</height>
-	<actorDir>east</actorDir>
+	<actorDir>north</actorDir>
 </object>

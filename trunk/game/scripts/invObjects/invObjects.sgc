@@ -1,6 +1,43 @@
 // Global variables
 var torchIsLit;
 
+function lightRoom()
+{
+	const AMBIENT_START_INTENSITY = 55;
+    const AMBIENT_END_INTENSITY = 255;
+	const AMBIENT_INTENSITY_STEP = 40;
+	var i;
+
+	// Update torch state
+	torchIsLit = 1;
+
+	// Remove ice cave omni light
+	Light_delete(iceCaveEntranceOmniLight);
+
+	// Brighten the ice cave room completely
+	for (i = AMBIENT_START_INTENSITY; i < AMBIENT_END_INTENSITY; i += AMBIENT_INTENSITY_STEP)
+	{
+		Light_setColor(iceCaveAmbientLight, i, i, i);
+		Script_break();
+	}
+
+	// Change object names
+	Util_printDebug("daggerObject = %i{daggerObject}");
+	Util_printDebug("ringObject = %i{ringObject}");
+	asm { pushWord .word daggerObject setObjectName .string "dagger" }
+	asm { pushWord .word ringObject setObjectName .string "ring" }
+
+	// Disable inventory touch mode
+	Inventory_setTouchVerb(0);
+	Inventory_show();
+
+	// Change unlit torch to lit torch
+	Actor_pickup(litTorchInvObject);
+	Object_setOwner(unlitTorchInvObject, 0);
+	
+	Actor_talkEgo("And then there was light...");
+}
+
 function whipInvObject_verb(var objA, var objB)
 {
 	const MAX_RANDOM_LINES = 2;
@@ -76,53 +113,88 @@ function ringInvObject_verb(var objA, var objB)
 	}
 }
 
-function unlitTorchInvObject_verb(var objA, var objB)
+function daggerInvObject_verb(var objA, var objB)
 {
-	const AMBIENT_START_INTENSITY = 55;
-    const AMBIENT_END_INTENSITY = 255;
-	const AMBIENT_INTENSITY_STEP = 40;
-
+	const DELAY = 40;
 	action
 	{
 		case verbUse:
-			if (!torchIsLit)
+			switch (objB)
 			{
-				var i;
-
-				// Update torch state
-				torchIsLit = 1;
-
-				// Remove ice cave omni light
-				Light_delete(iceCaveEntranceOmniLight);
-
-				// Brighten the ice cave room completely
-				for (i = AMBIENT_START_INTENSITY; i < AMBIENT_END_INTENSITY; i += AMBIENT_INTENSITY_STEP)
-				{
-					Light_setColor(iceCaveAmbientLight, i, i, i);
-					Script_break();
-				}
-
-				// Change object names
-				Util_printDebug("daggerObject = %i{daggerObject}");
-				Util_printDebug("ringObject = %i{ringObject}");
-				asm { pushWord .word daggerObject setObjectName .string "dagger" }
-				asm { pushWord .word ringObject setObjectName .string "ring" }
-
-				// Disable inventory touch mode
-				Inventory_setTouchVerb(0);
-				Inventory_show();
-
-				Actor_talkEgo("And then there was light...");
-				Script_waitForMessage();
+				case 0:
+					Sentence_setPrepo(PREPO_ON);
+					break;
+				case wallObject:
+					cutscene (CUTSCENE_TYPE_KEEP_INVENTORY)
+					{
+						Actor_talkEgo("Hmm. Maybe I can use one of these stones.");
+						Script_waitForMessage();
+						Actor_face(actorIndy, objA);
+						Actor_animate(actorIndy, indyCostume_pickUpLow); 
+						Script_delay(DELAY);
+						Actor_pickup(angularStoneInvObject);
+						Actor_pickup(pointyStoneInvObject);
+						Actor_animate(actorIndy, indyCostume_stand);
+						Actor_talkEgo("Oh, I actually got two stones.");
+					}
+					break;
+				default:
+					Actor_talkEgo("That doesn't work!");
+					break;
 			}
-			else
+			break;
+		case verbLookAt:
+			Actor_talkEgo("It looks like if it has been grinded just a few days ago!");
+			break;
+	}
+}
+
+function unlitTorchInvObject_verb(var objA, var objB)
+{
+	action
+	{
+		case verbUse:		
+			switch (objB)
 			{
-				Actor_talkEgo("It's already lit.");
-				Script_waitForMessage();
+				case 0:
+					Sentence_setPrepo(PREPO_ON);
+					break;
+				case flintstonesInvObject:			
+					lightRoom();			
+					break;
+				default:
+					Actor_talkEgo("That doesn't work!");
+					break;
 			}
 			break;
 		case verbLookAt:
 			Actor_talkEgo("That's a regular torch.");
+			break;
+	}
+}
+
+function litTorchInvObject_verb(var objA, var objB)
+{
+	action
+	{
+		case verbUse:
+			switch (objB)
+			{
+				case 0:
+					Sentence_setPrepo(PREPO_ON);
+					break;
+				case iceObject:
+					Actor_talkEgo("Maybe I can melt the ice with the torch.");
+					Script_waitForMessage();
+					
+					break;
+				default:
+					Actor_talkEgo("I don't wanna burn that!");
+					break;
+			}
+			break;
+		case verbLookAt:
+			Actor_talkEgo("It's burning now.");
 			break;
 	}
 }
@@ -140,7 +212,6 @@ function boneInvObject_verb(var objA, var objB)
 				case tornRopeInvObject:
 					Actor_talkEgo("I'll bind it onto the rope.");
 					Script_waitForMessage();
-					//Actor_pickup
 					break;
 				default:
 					Actor_talkEgo("That doesn't work!");
@@ -149,6 +220,82 @@ function boneInvObject_verb(var objA, var objB)
 			break;
 		case verbLookAt:
 			Actor_talkEgo("That's the left fibula of the skeleton.");
+			break;
+	}
+}
+
+function angularStoneInvObject_verb(var objA, var objB)
+{
+	action
+	{
+		case verbUse:
+			switch (objB)
+			{
+				case 0:
+					Sentence_setPrepo(PREPO_ON);
+					break;
+				case pointyStoneInvObject:
+					Actor_pickup(flintstonesInvObject);
+					Object_setOwner(pointyStoneInvObject, 0);
+					Object_setOwner(angularStoneInvObject, 0);
+					break;
+				default:
+					Actor_talkEgo("That doesn't work!");
+					break;
+			}
+			break;
+		case verbLookAt:
+			Actor_talkEgo("Hey, that's a firestone!");
+			break;
+	}
+}
+
+function pointyStoneInvObject_verb(var objA, var objB)
+{
+	action
+	{
+		case verbUse:
+			switch (objB)
+			{
+				case 0:
+					Sentence_setPrepo(PREPO_ON);
+					break;
+				case angularStoneInvObject:
+					Actor_pickup(flintstonesInvObject);
+					Object_setOwner(angularStoneInvObject, 0);
+					Object_setOwner(pointyStoneInvObject, 0);
+					break;
+				default:
+					Actor_talkEgo("That doesn't work!");
+					break;
+			}
+			break;
+		case verbLookAt:
+			Actor_talkEgo("Hey, that's a firestone!");
+			break;
+	}
+}
+
+function flintstonesInvObject_verb(var objA, var objB)
+{
+	action
+	{
+		case verbUse:		
+			switch (objB)
+			{
+				case 0:
+					Sentence_setPrepo(PREPO_ON);
+					break;
+				case unlitTorchInvObject:			
+					lightRoom();			
+					break;
+				default:
+					Actor_talkEgo("That doesn't work!");
+					break;
+			}
+			break;
+		case verbLookAt:
+			Actor_talkEgo("These are firestones.");
 			break;
 	}
 }

@@ -115,6 +115,7 @@ function skeletonObject_verb(var objA, var objB)
 				cutscene (CUTSCENE_TYPE_KEEP_INVENTORY)
 				{
 					Actor_talkEgo("Hmmm, I guess this bone could come in handy.");
+					Script_waitForMessage();
 					Actor_animate(actorIndy, indyCostume_pickUpLow);
 					Script_delay(DELAY);
 					Actor_pickup(boneInvObject);
@@ -315,10 +316,9 @@ function entry()
 		Input_enable();
 	
 		// TODO: Fall down and stand up animation *OUCH*
-		// Actor from surface: "Everything's alright Indy?"
+		// Actor from surface: "Everything alright Indy?"
 		Actor_talkEgo("It's ok.");
 		Script_waitForMessage();
-		// Small dialog -> torch falls down
 	}
 }
 
