@@ -30,15 +30,14 @@ function entry()
 		// Delay a bit
 		Script_delaySeconds(SECONDS_DELAY);
 	}
-	finally
-	{
-		// Set fading effect
-		VAR_FADE_DELAY = FADE_DELAY;
-		Room_fade(ROOM_FADE_TRANSITION_IRIS_EFFECT, ROOM_FADE_TRANSITION_IRIS_EFFECT);
 
-		// Load the ice cave room
-		Room_load(iceCaveRoom);
-	}
+	// Set fading effect
+	VAR_FADE_DELAY = FADE_DELAY;
+	Room_fade(ROOM_FADE_TRANSITION_IRIS_EFFECT, ROOM_FADE_TRANSITION_IRIS_EFFECT);
+
+	// Load the ice cave room
+	iceCaveEntrance = ICE_CAVE_HOLE_ENTRANCE;
+	Room_load(iceCaveRoom);
 }
 
 function exit()

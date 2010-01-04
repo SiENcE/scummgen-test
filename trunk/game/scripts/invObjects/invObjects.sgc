@@ -102,6 +102,12 @@ function unlitTorchInvObject_verb(var objA, var objB)
 					Script_break();
 				}
 
+				// Change object names
+				Util_printDebug("daggerObject = %i{daggerObject}");
+				Util_printDebug("ringObject = %i{ringObject}");
+				asm { pushWord .word daggerObject setObjectName .string "dagger" }
+				asm { pushWord .word ringObject setObjectName .string "ring" }
+
 				// Disable inventory touch mode
 				Inventory_setTouchVerb(0);
 				Inventory_show();

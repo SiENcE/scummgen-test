@@ -1,6 +1,10 @@
 // Global variables
 var iceCaveEntranceOmniLight;
 var iceCaveAmbientLight;
+var iceCaveEntrance;
+
+// Enumerations
+enum { ICE_CAVE_HOLE_ENTRANCE, ICE_CAVE_MECHANISM_ENTRANCE };
 
 function daggerObject_verb(var objA, var objB)
 {
@@ -61,7 +65,10 @@ function iceObject_verb(var objA, var objB)
 					Actor_talkEgo("Brrr... it's cold.");
 				}
 			else
+			{
+				Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_1);
 				Room_load(iceCaveMechanismRoom);
+			}
 			break;
 	}
 }
@@ -190,13 +197,13 @@ thread changeIntensity()
 	Light_addArea(actorIndy, indyCostumeArea_start, indyCostumeArea_end);
 
 	// Gradually brighten the ambient light
-    for (i = AMBIENT_START_INTENSITY; i < AMBIENT_END_INTENSITY; i++)
+	for (i = AMBIENT_START_INTENSITY; i < AMBIENT_END_INTENSITY; i++)
 	{
 		// Terminate the function if torch is lit already
 		if (torchIsLit)
 			return;
 
-    	Light_setColor(iceCaveAmbientLight, i, i, i);
+		Light_setColor(iceCaveAmbientLight, i, i, i);
 		Script_delay(DELAY);
 	}
 }
@@ -283,33 +290,36 @@ function entry()
 	const START_X = 96;
 	const START_Y = 48;
 
-	// Change room insensity slowly as soon as we enter the room
-	changeIntensity();
+	if (!torchIsLit)
+	{
+		// Change room insensity slowly as soon as we enter the room
+		changeIntensity();
 	
-	// Setup object states, classes and owners
-	setupObjects();
+		// Setup object states, classes and owners
+		setupObjects();
 	
-	// Set Indy as the default actor
-	VAR_EGO = actorIndy;
+		// Set Indy as the default actor
+		VAR_EGO = actorIndy;
 
-	// Position Indy
-	Actor_putAtXY(actorIndy, START_X, START_Y, VAR_ROOM);
-	Actor_setDirection(ACTOR_DIR_SOUTH);
+		// Position Indy
+		Actor_putAtXY(actorIndy, START_X, START_Y, VAR_ROOM);
+		Actor_setDirection(ACTOR_DIR_SOUTH);
 
-	// Give default items to Indy
-	Actor_pickup(whipInvObject);
-	Actor_pickup(matchesInvObject);
+		// Give default items to Indy
+		Actor_pickup(whipInvObject);
+		Actor_pickup(matchesInvObject);
 
-	// Set inventory touch mode and enable inventory and input
-	Inventory_setTouchVerb(1);
-	Inventory_enable();
-	Input_enable();
+		// Set inventory touch mode and enable inventory and input
+		Inventory_setTouchVerb(1);
+		Inventory_enable();
+		Input_enable();
 	
-	// TODO: Fall down and stand up animation *OUCH*
-	// Actor from surface: "Everything's alright Indy?"
-	Actor_talkEgo("It's ok.");
-	Script_waitForMessage();
-	// Small dialog -> torch falls down
+		// TODO: Fall down and stand up animation *OUCH*
+		// Actor from surface: "Everything's alright Indy?"
+		Actor_talkEgo("It's ok.");
+		Script_waitForMessage();
+		// Small dialog -> torch falls down
+	}
 }
 
 function exit()

@@ -20,6 +20,8 @@ thread mechanismThread()
 function mechanismClick()
 {
 	// Leave and reload the ice cave room
+	Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_1);
+	iceCaveEntrance = ICE_CAVE_MECHANISM_ENTRANCE;
 	Room_load(iceCaveRoom);
 }
 
