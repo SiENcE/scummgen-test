@@ -4,19 +4,32 @@ var iceCaveAmbientLight;
 
 function daggerObject_verb(var objA, var objB)
 {
+	const DELAY = 30;
 	action
 	{
 		case verbLookAt:
-			//Actor_animate(actorIndy, );
-			Actor_printEgo("OUCH!");
-			Script_waitForMessage();
-			Actor_printEgo("That's a very sharp dagger!");
-			Script_waitForMessage();
-			asm { pushWordVar .word objA setObjectName .string "dagger" }
+			if (!torchIsLit)
+				cutscene (CUTSCENE_TYPE_KEEP_INVENTORY)
+				{
+					Actor_animate(actorIndy, indyCostume_pickUpLow);
+					Script_delay(DELAY);
+					Actor_talkEgo("OUCH!");
+					Script_waitForMessage();
+					Actor_talkEgo("It feels sharp!");
+					asm { pushWordVar .word objA setObjectName .string "knife?" }
+				}
+			else
+				Actor_talkEgo("That looks like a pretty sharp dagger.");
 			break;
 		case verbPickUp:
-			Actor_pickup(daggerInvObject);
-			Object_setState(objA, OBJECT_STATE_DISABLED);
+			cutscene (CUTSCENE_TYPE_KEEP_INVENTORY)
+			{
+				Actor_animate(actorIndy, indyCostume_pickUpLow);
+				Script_delay(DELAY);
+				Object_setState(objA, OBJECT_STATE_DISABLED);
+				Actor_pickup(daggerInvObject);
+				Actor_animate(actorIndy, indyCostume_stand);
+			}
 			break;
 	}
 }
@@ -36,11 +49,17 @@ function entranceObject_verb(var objA, var objB)
 
 function iceObject_verb(var objA, var objB)
 {
+	const DELAY = 30;
 	action
 	{
 		case verbLookAt:
 			if (!torchIsLit)
-				Actor_talkEgo("Brrr... it's cold.");
+				cutscene (CUTSCENE_TYPE_KEEP_INVENTORY)
+				{
+					Actor_animate(actorIndy, indyCostume_pickUpMedium);
+					Script_delay(DELAY);
+					Actor_talkEgo("Brrr... it's cold.");
+				}
 			else
 				Room_load(iceCaveMechanismRoom);
 			break;
@@ -49,42 +68,70 @@ function iceObject_verb(var objA, var objB)
 
 function ringObject_verb(var objA, var objB)
 {
+	const DELAY = 30;
 	action
 	{
 		case verbPickUp:
-			Actor_pickup(ringInvObject);
-			Object_setState(objA, OBJECT_STATE_DISABLED);
+			cutscene (CUTSCENE_TYPE_KEEP_INVENTORY)
+			{
+				Actor_animate(actorIndy, indyCostume_pickUpLow);
+				Script_delay(DELAY);
+				Object_setState(objA, OBJECT_STATE_DISABLED);
+				Actor_pickup(ringInvObject);
+				Actor_animate(actorIndy, indyCostume_stand);
+			}
 			break;
 		case verbLookAt:
-			Actor_talkEgo("Hmm, that's probably a ring.");
-			Script_waitForMessage();
-			asm { pushWordVar .word objA setObjectName .string "ring?" }
+			if (!torchIsLit)
+			{
+				Actor_talkEgo("Hmm, that's probably a ring.");
+				asm { pushWordVar .word objA setObjectName .string "ring?" }
+			}
+			else
+				Actor_talkEgo("Nice ring.");
 			break;
 	}
 }
 
 function skeletonObject_verb(var objA, var objB)
 {
+	const DELAY = 30;
 	action
 	{
 		case verbLookAt:
 			Actor_talkEgo("Poor guy. I wonder how long he's been lying here.");
 			break;
 		case verbPickUp:
-			Actor_talkEgo("I think I could use the fibula.");
-			Script_waitForMessage();
-			Actor_pickup(boneInvObject);
+			if (Object_getOwner(boneInvObject) == VAR_EGO)
+				Actor_talkEgo("I already found what I needed.");
+			else
+				cutscene (CUTSCENE_TYPE_KEEP_INVENTORY)
+				{
+					Actor_talkEgo("Hmmm, I guess this bone could come in handy.");
+					Actor_animate(actorIndy, indyCostume_pickUpLow);
+					Script_delay(DELAY);
+					Actor_pickup(boneInvObject);
+					Actor_animate(actorIndy, indyCostume_stand);
+				}
 			break;
 	}
 }
 
 function wallObject_verb(var objA, var objB)
 {
+	const DELAY = 30;
 	action
 	{
 		case verbLookAt:
-			//Actor_animate(actorIndy, );
-			Actor_printEgo("It feels loose somehow.");
+			if (!torchIsLit)
+				cutscene (CUTSCENE_TYPE_KEEP_INVENTORY)
+				{
+					Actor_animate(actorIndy, indyCostume_pickUpMedium);
+					Script_delay(DELAY);
+					Actor_talkEgo("It feels loose somehow.");
+				}
+			else
+				Actor_talkEgo("It's loose.");
 			break;
 	}
 }
@@ -191,7 +238,7 @@ function entranceDialog()
 		Dialog_removeLine(dialog, LINE_TORCH);
 
 	// Talk to Harald
-	cutscene ()
+	cutscene (CUTSCENE_TYPE_DISABLE_INVENTORY)
 	{
 		Actor_talkEgo("Harald?");
 		Script_waitForMessage();
@@ -200,24 +247,29 @@ function entranceDialog()
 	// Enable dialog area
 	Dialog_enable();
 
-	// Show our dialog lines
-	Dialog_show(dialog);
-
-	// Wait for a line selection
-	selection = Dialog_waitForSelection(dialog);
-	switch (selection)
+	do
 	{
-		case LINE_TORCH:
-			// Get torch
-			Script_delaySeconds(1);
-			Actor_pickup(unlitTorchInvObject);
-			Actor_talkEgo("Thanks!");
-			Script_waitForMessage();
-			break;
-		case LINE_LEAVE:
-			Actor_setDirection(ACTOR_DIR_SOUTH);
-			break;
+		// Show our dialog lines
+		Dialog_show(dialog);
+
+		// Wait for a line selection
+		selection = Dialog_waitForSelection(dialog);
+		switch (selection)
+		{
+			case LINE_TORCH:
+				// Get torch
+				Script_delaySeconds(1);
+				Actor_pickup(unlitTorchInvObject);
+				Actor_talkEgo("Thanks!");
+				Script_waitForMessage();
+				Dialog_removeLine(dialog, LINE_TORCH);
+				break;
+			case LINE_LEAVE:
+				Actor_setDirection(ACTOR_DIR_SOUTH);
+				break;
+		}
 	}
+	while (selection != LINE_LEAVE);
 
 	// Delete dialog lines
 	Dialog_delete(dialog);

@@ -13,8 +13,6 @@ function setupEngine()
 	VAR_TIMER_NEXT = TIMER_NEXT;
 	VAR_ENTRY_SCRIPT = preEntry;
 	VAR_EXIT_SCRIPT = preExit;
-	VAR_CUTSCENE_START_SCRIPT = cutsceneStart;
-	VAR_CUTSCENE_END_SCRIPT = cutsceneEnd;
 }
 
 function setupGame()
@@ -24,6 +22,7 @@ function setupGame()
 	Inventory_init();
 	Sentence_init();
 	Dialog_init();
+	Cutscene_init();
 	Light_init();
 
 	// Setup actors and default charset
@@ -72,20 +71,6 @@ function preExit()
 {
 	// Hide inventory
 	Inventory_hide();
-}
-
-function cutsceneStart()
-{
-	// Disable input and inventory
-	Input_disable();
-	Inventory_disable();
-}
-
-function cutsceneEnd()
-{
-	// Re-enable inventory and input
-	Inventory_enable();
-	Input_enable();
 }
 
 function main(var bootParam)
