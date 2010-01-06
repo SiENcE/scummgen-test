@@ -214,6 +214,10 @@ inline function Inventory_getObject(var x, var y)
 
 inline function Inventory_hide()
 {
+	// Check if inventory is enabled first
+	if (!_inventoryEnabled)
+		return;
+
 	// Hide verbs
 	Verb_setCurrent(verbGive);
 	Verb_activate(0);
@@ -336,6 +340,10 @@ inline function Inventory_setTouchVerb(var on)
 
 inline function Inventory_show()
 {
+	// Check if inventory is enabled first
+	if (!_inventoryEnabled)
+		return;
+
 	// Hide slots first
 	_Inventory_hideSlots();
 

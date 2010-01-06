@@ -6,10 +6,6 @@ enum { CUTSCENE_TYPE_A, CUTSCENE_TYPE_B};
 // Private functions
 function _Cutscene_start(var type)
 {
-	// Disable input and inventory
-	Input_disable();
-	Inventory_disable();
-
 	switch (type)
 	{
 		case CUTSCENE_TYPE_A:
@@ -18,10 +14,18 @@ function _Cutscene_start(var type)
 			Inventory_hide();
 			break;
 	}
+
+	// Disable input and inventory
+	Input_disable();
+	Inventory_disable();
 }
 
 function _Cutscene_end(var type)
 {
+	// Enable inventory and input
+	Inventory_enable();
+	Input_enable();
+
 	switch (type)
 	{
 		case CUTSCENE_TYPE_A:
@@ -30,10 +34,6 @@ function _Cutscene_end(var type)
 			Inventory_show();
 			break;
 	}
-
-	// Enable inventory and input
-	Inventory_enable();
-	Input_enable();
 }
 
 // Public functions

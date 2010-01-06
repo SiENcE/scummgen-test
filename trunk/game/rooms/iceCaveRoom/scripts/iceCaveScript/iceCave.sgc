@@ -209,6 +209,23 @@ thread changeIntensity()
 	}
 }
 
+thread lightning()
+{
+	var lightningLight;
+	var random;
+
+	lightningLight = Light_new(LIGHT_TYPE_AMBIENT);
+	Light_setColor(lightningLight, 0, 0, 0);
+
+	while (1)
+	{
+		Light_setColor(lightningLight, 0, 0, 0);
+		if (Util_getRandomNumber(50) == 0)
+			Light_setColor(lightningLight, 255, 255, 255);
+		Script_break();
+	}
+}
+
 thread mousePos()
 {
 	// Setup print line charset
@@ -255,6 +272,7 @@ function entranceDialog()
 	// Disable inventory
 	Inventory_hide();
 	Inventory_disable();
+	Script_break();
 
 	// Enable dialog area
 	Dialog_enable();
@@ -303,6 +321,9 @@ function entry()
 	{
 		// Change room insensity slowly as soon as we enter the room
 		changeIntensity();
+
+		// Launch lightning thread
+		lightning();
 	
 		// Setup object states, classes and owners
 		setupObjects();
@@ -321,6 +342,7 @@ function entry()
 		// Set inventory touch mode and enable inventory and input
 		Inventory_setTouchVerb(1);
 		Inventory_enable();
+		Inventory_show();
 		Input_enable();
 	
 		// TODO: Fall down and stand up animation *OUCH*
