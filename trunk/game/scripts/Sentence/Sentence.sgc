@@ -515,10 +515,6 @@ inline function Sentence_enable()
 
 inline function Sentence_hide()
 {
-	// Check if sentence is enabled first
-	if (!_sentenceEnabled)
-		return;
-
 	// Hide sentence line verb
 	Verb_setCurrent(verbSentenceLine);
 	Verb_activate(0);
@@ -604,10 +600,6 @@ inline function Sentence_setPrepo(var prepo)
 
 inline function Sentence_show()
 {
-	// Check if sentence is enabled first
-	if (!_sentenceEnabled)
-		return;
-
 	// Set sentence intensity
 	if (_sentenceFrozen)
 		Room_setIntensity(FROZEN_INTENSITY, COLOR_AQUAMARINE, COLOR_AQUAMARINE);

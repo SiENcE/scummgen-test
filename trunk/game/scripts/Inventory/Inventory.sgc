@@ -69,6 +69,7 @@ verb verbInvSlot10;
 
 // Global variables
 var _inventoryEnabled;
+var _inventoryVisible;
 var _lineOffset;
 var _currentActor;
 
@@ -159,8 +160,9 @@ function _Inventory_handler()
 		_currentActor = VAR_EGO;
 	}
 
-	// Redraw inventory
-	Inventory_show();
+	// Redraw inventory as we just picked up an item (only if the inventory is visible already)
+	if (_inventoryVisible)
+		Inventory_show();
 }
 
 inline function _Inventory_hideSlots()
@@ -214,10 +216,6 @@ inline function Inventory_getObject(var x, var y)
 
 inline function Inventory_hide()
 {
-	// Check if inventory is enabled first
-	if (!_inventoryEnabled)
-		return;
-
 	// Hide verbs
 	Verb_setCurrent(verbGive);
 	Verb_activate(0);
@@ -265,6 +263,9 @@ inline function Inventory_hide()
 
 	// Hide sentence
 	Sentence_hide();
+
+	// Set inventory visibility
+	_inventoryVisible = 0;
 }
 
 function Inventory_init()
@@ -312,8 +313,9 @@ function Inventory_init()
 	_currentActor = VAR_EGO;
 	_lineOffset = 0;
 
-	// Inventory is disabled by default
+	// Inventory is disabled and hidden by default
 	_inventoryEnabled = 0;
+	_inventoryVisible = 0;
 
 	// Tell SCUMM engine which script will be our inventory handler
 	VAR_INVENTORY_SCRIPT = _Inventory_handler;
@@ -340,10 +342,6 @@ inline function Inventory_setTouchVerb(var on)
 
 inline function Inventory_show()
 {
-	// Check if inventory is enabled first
-	if (!_inventoryEnabled)
-		return;
-
 	// Hide slots first
 	_Inventory_hideSlots();
 
@@ -389,4 +387,7 @@ inline function Inventory_show()
 
 	// Draw sentence
 	Sentence_show();
+
+	// Set inventory visibility
+	_inventoryVisible = 1;
 }
