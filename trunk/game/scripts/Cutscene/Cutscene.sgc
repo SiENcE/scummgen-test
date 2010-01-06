@@ -1,17 +1,21 @@
-enum { CUTSCENE_TYPE_KEEP_INVENTORY, CUTSCENE_TYPE_DISABLE_INVENTORY};
+// Cutscene types
+// Type A - Disable input and inventory
+// Type B - Disable input and inventory + Hide inventory
+enum { CUTSCENE_TYPE_A, CUTSCENE_TYPE_B};
 
 // Private functions
 function _Cutscene_start(var type)
 {
-	// Disable input
+	// Disable input and inventory
 	Input_disable();
+	Inventory_disable();
 
 	switch (type)
 	{
-		case CUTSCENE_TYPE_KEEP_INVENTORY:
+		case CUTSCENE_TYPE_A:
 			break;
-		case CUTSCENE_TYPE_DISABLE_INVENTORY:
-			Inventory_disable();
+		case CUTSCENE_TYPE_B:
+			Inventory_hide();
 			break;
 	}
 }
@@ -20,14 +24,15 @@ function _Cutscene_end(var type)
 {
 	switch (type)
 	{
-		case CUTSCENE_TYPE_KEEP_INVENTORY:
+		case CUTSCENE_TYPE_A:
 			break;
-		case CUTSCENE_TYPE_DISABLE_INVENTORY:
-			Inventory_enable();
+		case CUTSCENE_TYPE_B:
+			Inventory_show();
 			break;
 	}
 
-	// Enable input
+	// Enable inventory and input
+	Inventory_enable();
 	Input_enable();
 }
 

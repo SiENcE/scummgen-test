@@ -433,15 +433,18 @@ inline function _Sentence_updateVerbUnderMouse()
 	// Get verb under mouse
 	vrb = Verb_getFromXY(VAR_MOUSE_X, VAR_MOUSE_Y);
 
-	// Get inventory verb from mouse location
-	if (vrb != verbVerbs)
-		vrb = 0;
-	else if ((VAR_MOUSE_X < VERBS_ZONE_START_X) || (VAR_MOUSE_X >= VERBS_ZONE_START_X + VERBS_N_COLUMNS * VERBS_ZONE_WIDTH))
-		vrb = 0;
-	else if ((VAR_MOUSE_Y < VERBS_ZONE_START_Y) || (VAR_MOUSE_Y >= VERBS_ZONE_START_Y + VERBS_N_LINES * VERBS_ZONE_HEIGHT))
-		vrb = 0;
-	else
-		vrb = verbGive + ((VAR_MOUSE_X - VERBS_ZONE_START_X) / VERBS_ZONE_WIDTH) + ((VAR_MOUSE_Y - VERBS_ZONE_START_Y) / VERBS_ZONE_HEIGHT) * VERBS_N_COLUMNS;
+	// Get inventory verb from mouse location if the mouse is not perfectly on the verb's string
+	if (!Util_isAnyOf(vrb, [verbGive, verbPickUp, verbUse, verbOpen, verbTalkTo, verbPush, verbClose, verbLookAt, verbPull], 9))
+	{
+		if (vrb != verbVerbs)
+			vrb = 0;
+		else if ((VAR_MOUSE_X < VERBS_ZONE_START_X) || (VAR_MOUSE_X >= VERBS_ZONE_START_X + VERBS_N_COLUMNS * VERBS_ZONE_WIDTH))
+			vrb = 0;
+		else if ((VAR_MOUSE_Y < VERBS_ZONE_START_Y) || (VAR_MOUSE_Y >= VERBS_ZONE_START_Y + VERBS_N_LINES * VERBS_ZONE_HEIGHT))
+			vrb = 0;
+		else
+			vrb = verbGive + ((VAR_MOUSE_X - VERBS_ZONE_START_X) / VERBS_ZONE_WIDTH) + ((VAR_MOUSE_Y - VERBS_ZONE_START_Y) / VERBS_ZONE_HEIGHT) * VERBS_N_COLUMNS;
+	}
 
 	// Update verb color
 	if (vrb != _verbUnderMouse)
@@ -496,16 +499,22 @@ inline function Sentence_disable()
 
 inline function Sentence_enable()
 {
+	// Reset sentence elements to defaults
+	_sentenceVerb = verbWalk;
+	_selectedVerb = verbWalk;
+	_Sentence_setAlternateVerb(0);
+	_sentenceObjA = 0;
+	_selectedObjA = 0;
+	_sentenceObjB = 0;
+	_selectedObjB = 0;
+	Sentence_setPrepo(PREPO_NONE);
+
 	// Sentence is now enabled
 	_sentenceEnabled = 1;
 }
 
 inline function Sentence_hide()
 {
-	// If sentence is disabled, return
-	if (!_sentenceEnabled)
-		return;
-
 	// Hide sentence line verb
 	Verb_setCurrent(verbSentenceLine);
 	Verb_activate(0);
@@ -525,6 +534,7 @@ function Sentence_init()
 	// Initialize sentence elements
 	_sentenceVerb = verbWalk;
 	_selectedVerb = verbWalk;
+	_alternateVerb = 0;
 	_sentenceObjA = 0;
 	_selectedObjA = 0;
 	_sentenceObjB = 0;
@@ -590,10 +600,6 @@ inline function Sentence_setPrepo(var prepo)
 
 inline function Sentence_show()
 {
-	// If sentence is disabled, return
-	if (!_sentenceEnabled)
-		return;
-
 	// Set sentence intensity
 	if (_sentenceFrozen)
 		Room_setIntensity(FROZEN_INTENSITY, COLOR_AQUAMARINE, COLOR_AQUAMARINE);

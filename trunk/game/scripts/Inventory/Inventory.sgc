@@ -177,9 +177,6 @@ inline function _Inventory_hideSlots()
 // Public functions
 inline function Inventory_disable()
 {
-	// Hide the inventory
-	Inventory_hide();
-
 	// Enable sentence
 	Sentence_disable();
 
@@ -189,14 +186,11 @@ inline function Inventory_disable()
 
 inline function Inventory_enable()
 {
-	// Inventory is now enabled
-	_inventoryEnabled = 1;
-
 	// Enable sentence
 	Sentence_enable();
 
-	// Show the inventory
-	Inventory_show();
+	// Inventory is now enabled
+	_inventoryEnabled = 1;
 }
 
 inline function Inventory_getObject(var x, var y)
@@ -220,12 +214,6 @@ inline function Inventory_getObject(var x, var y)
 
 inline function Inventory_hide()
 {
-	var i;
-
-	// If inventory is disabled, return
-	if (!_inventoryEnabled)
-		return;
-
 	// Hide verbs
 	Verb_setCurrent(verbGive);
 	Verb_activate(0);
@@ -348,10 +336,6 @@ inline function Inventory_setTouchVerb(var on)
 
 inline function Inventory_show()
 {
-	// If inventory is disabled, return
-	if (!_inventoryEnabled)
-		return;
-
 	// Hide slots first
 	_Inventory_hideSlots();
 

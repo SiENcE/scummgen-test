@@ -125,7 +125,7 @@ function daggerInvObject_verb(var objA, var objB)
 					Sentence_setPrepo(PREPO_ON);
 					break;
 				case wallObject:
-					cutscene (CUTSCENE_TYPE_KEEP_INVENTORY)
+					cutscene (CUTSCENE_TYPE_A)
 					{
 						Actor_talkEgo("Hmm. Maybe I can use one of these stones.");
 						Script_waitForMessage();

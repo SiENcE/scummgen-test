@@ -13,7 +13,7 @@ function daggerObject_verb(var objA, var objB)
 	{
 		case verbLookAt:
 			if (!torchIsLit)
-				cutscene (CUTSCENE_TYPE_KEEP_INVENTORY)
+				cutscene (CUTSCENE_TYPE_A)
 				{
 					Actor_animate(actorIndy, indyCostume_pickUpLow);
 					Script_delay(DELAY);
@@ -26,7 +26,7 @@ function daggerObject_verb(var objA, var objB)
 				Actor_talkEgo("That looks like a pretty sharp dagger.");
 			break;
 		case verbPickUp:
-			cutscene (CUTSCENE_TYPE_KEEP_INVENTORY)
+			cutscene (CUTSCENE_TYPE_A)
 			{
 				Actor_animate(actorIndy, indyCostume_pickUpLow);
 				Script_delay(DELAY);
@@ -58,7 +58,7 @@ function iceObject_verb(var objA, var objB)
 	{
 		case verbLookAt:
 			if (!torchIsLit)
-				cutscene (CUTSCENE_TYPE_KEEP_INVENTORY)
+				cutscene (CUTSCENE_TYPE_A)
 				{
 					Actor_animate(actorIndy, indyCostume_pickUpMedium);
 					Script_delay(DELAY);
@@ -79,7 +79,7 @@ function ringObject_verb(var objA, var objB)
 	action
 	{
 		case verbPickUp:
-			cutscene (CUTSCENE_TYPE_KEEP_INVENTORY)
+			cutscene (CUTSCENE_TYPE_A)
 			{
 				Actor_animate(actorIndy, indyCostume_pickUpLow);
 				Script_delay(DELAY);
@@ -112,7 +112,7 @@ function skeletonObject_verb(var objA, var objB)
 			if (Object_getOwner(boneInvObject) == VAR_EGO)
 				Actor_talkEgo("I already found what I needed.");
 			else
-				cutscene (CUTSCENE_TYPE_KEEP_INVENTORY)
+				cutscene (CUTSCENE_TYPE_A)
 				{
 					Actor_talkEgo("Hmmm, I guess this bone could come in handy.");
 					Script_waitForMessage();
@@ -132,7 +132,7 @@ function wallObject_verb(var objA, var objB)
 	{
 		case verbLookAt:
 			if (!torchIsLit)
-				cutscene (CUTSCENE_TYPE_KEEP_INVENTORY)
+				cutscene (CUTSCENE_TYPE_A)
 				{
 					Actor_animate(actorIndy, indyCostume_pickUpMedium);
 					Script_delay(DELAY);
@@ -246,11 +246,15 @@ function entranceDialog()
 		Dialog_removeLine(dialog, LINE_TORCH);
 
 	// Talk to Harald
-	cutscene (CUTSCENE_TYPE_DISABLE_INVENTORY)
+	cutscene (CUTSCENE_TYPE_B)
 	{
 		Actor_talkEgo("Harald?");
 		Script_waitForMessage();
 	}
+
+	// Disable inventory
+	Inventory_hide();
+	Inventory_disable();
 
 	// Enable dialog area
 	Dialog_enable();
@@ -284,6 +288,10 @@ function entranceDialog()
 
 	// Disable dialog area
 	Dialog_disable();
+
+	// Re-enable Inventory
+	Inventory_enable();
+	Inventory_show();
 }
 
 function entry()
