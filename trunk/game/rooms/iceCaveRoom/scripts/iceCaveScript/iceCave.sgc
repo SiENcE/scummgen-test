@@ -221,7 +221,10 @@ thread lightning()
 	{
 		Light_setColor(lightningLight, 0, 0, 0);
 		if (Util_getRandomNumber(50) == 0)
+		{
 			Light_setColor(lightningLight, 255, 255, 255);
+			Util_printDebug("%V{thunderstrike}");
+		}
 		Script_break();
 	}
 }
