@@ -3,6 +3,8 @@ var iceCaveEntranceOmniLight;
 var iceCaveAmbientLight;
 var iceCaveEntrance;
 
+var ambientLightIntensity;
+
 // Enumerations
 enum { ICE_CAVE_HOLE_ENTRANCE, ICE_CAVE_MECHANISM_ENTRANCE };
 
@@ -91,6 +93,8 @@ function ringObject_verb(var objA, var objB)
 		case verbLookAt:
 			if (!torchIsLit)
 			{
+				Actor_animate(actorIndy, indyCostume_pickUpLow);
+				Script_delay(DELAY);
 				Actor_talkEgo("Hmm, that's probably a ring.");
 				asm { pushWordVar .word objA setObjectName .string "ring?" }
 			}
@@ -181,7 +185,6 @@ thread changeIntensity()
 	const AMBIENT_START_INTENSITY = 10;
     const AMBIENT_END_INTENSITY = 55;
 	const DELAY = 20;
-    var i;
 
 	// Add omni light
 	iceCaveEntranceOmniLight = Light_new(LIGHT_TYPE_OMNI);
@@ -198,13 +201,13 @@ thread changeIntensity()
 	Light_addArea(actorIndy, indyCostumeArea_start, indyCostumeArea_end);
 
 	// Gradually brighten the ambient light
-	for (i = AMBIENT_START_INTENSITY; i < AMBIENT_END_INTENSITY; i++)
+	for (ambientLightIntensity = AMBIENT_START_INTENSITY; ambientLightIntensity < AMBIENT_END_INTENSITY; ambientLightIntensity++)
 	{
 		// Terminate the function if torch is lit already
 		if (torchIsLit)
 			return;
 
-		Light_setColor(iceCaveAmbientLight, i, i, i);
+		Light_setColor(iceCaveAmbientLight, ambientLightIntensity, ambientLightIntensity, ambientLightIntensity);
 		Script_delay(DELAY);
 	}
 }
@@ -224,6 +227,7 @@ thread lightning()
 		{
 			Light_setColor(lightningLight, 255, 255, 255);
 			Util_printDebug("%V{thunderstrike}");
+			ambientLightIntensity = 10;
 		}
 		Script_break();
 	}
@@ -320,13 +324,13 @@ function entry()
 	const START_X = 96;
 	const START_Y = 48;
 
+	// Launch lightning thread
+	lightning();
+	
 	if (!torchIsLit)
 	{
 		// Change room insensity slowly as soon as we enter the room
 		changeIntensity();
-
-		// Launch lightning thread
-		lightning();
 	
 		// Setup object states, classes and owners
 		setupObjects();
@@ -349,7 +353,12 @@ function entry()
 		Input_enable();
 	
 		// TODO: Fall down and stand up animation *OUCH*
-		// Actor from surface: "Everything alright Indy?"
+		Interface_printLineLoadDefault();
+		Interface_printLineColor(COLOR_DODGER_BLUE);
+		Interface_printLineAt(20, 3);
+		Interface_printLineLeft();
+		Interface_printLine("Everything alright Indy?");
+		Script_waitForMessage();
 		Actor_talkEgo("It's ok.");
 		Script_waitForMessage();
 	}
