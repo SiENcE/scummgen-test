@@ -3,6 +3,6 @@
 	<name>creditsRoom</name>
 	<background>background</background>
 	<object>titleObject</object>
-	<script>creditsScript</script>
+	<script>script</script>
 	<costume>logoCostume</costume>
 </room>

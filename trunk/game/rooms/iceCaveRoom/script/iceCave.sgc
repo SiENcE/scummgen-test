@@ -319,7 +319,7 @@ function entranceDialog()
 	Inventory_show();
 }
 
-function entry()
+function iceCaveRoom_entry()
 {
 	const START_X = 96;
 	const START_Y = 48;
@@ -362,8 +362,4 @@ function entry()
 		Actor_talkEgo("It's ok.");
 		Script_waitForMessage();
 	}
-}
-
-function exit()
-{
 }

@@ -8,5 +8,5 @@
 	<object>ringObject</object>
 	<object>skeletonObject</object>
 	<object>wallObject</object>
-	<script>iceCaveScript</script>
+	<script>script</script>
 </room>

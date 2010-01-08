@@ -28,7 +28,7 @@ function tentObject_verb(var objA, var objB)
 	}
 }
 
-function entry()
+function islandTentRoom_entry()
 {
 	var dialog;
 	
@@ -80,8 +80,4 @@ function entry()
 	Dialog_add(dialog, "Let me in, you Darwinian nightmare.");
 	Dialog_display(1);
 	Dialog_delete(dialog);*/
-}
-
-function exit()
-{
 }

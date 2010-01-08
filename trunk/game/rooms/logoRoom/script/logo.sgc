@@ -16,7 +16,7 @@ function displayLogo()
 	}
 }
 
-function entry()
+function logoRoom_entry()
 {
 	const SECONDS_DELAY = 3;
 	const FADE_DELAY = 4;
@@ -38,8 +38,4 @@ function entry()
 	// Load the ice cave room
 	iceCaveEntrance = ICE_CAVE_HOLE_ENTRANCE;
 	Room_load(iceCaveRoom);
-}
-
-function exit()
-{
 }

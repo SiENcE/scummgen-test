@@ -25,7 +25,7 @@ function mechanismClick()
 	Room_load(iceCaveRoom);
 }
 
-function entry()
+function iceCaveMechanismRoom_entry()
 {
 	// Disable inventory first
 	Inventory_hide();
@@ -37,7 +37,7 @@ function entry()
 	mechanismThread();
 }
 
-function exit()
+function iceCaveMechanismRoom_exit()
 {
 	// Unregister our click handler
 	Input_unregisterClickHandler(mechanismClick);

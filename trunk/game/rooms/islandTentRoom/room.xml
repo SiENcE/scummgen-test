@@ -3,6 +3,6 @@
 	<name>islandTentRoom</name>
 	<background>background</background>
 	<object>tentObject</object>
-	<script>islandTentScript</script>
+	<script>script</script>
 	<costume>indyClimbingCostume</costume>
 </room>

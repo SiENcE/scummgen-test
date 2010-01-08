@@ -2,5 +2,5 @@
 <room>
 	<name>iceCaveMechanismRoom</name>
 	<background>background</background>
-	<script>iceCaveMechanismScript</script>
+	<script>script</script>
 </room>

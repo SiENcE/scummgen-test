@@ -162,7 +162,7 @@ function displayCredits()
 	Object_setState(titleObject, 0);
 }
 
-function entry()
+function creditsRoom_entry()
 {
 	var previousVarTimerNext;
 
@@ -188,6 +188,6 @@ function entry()
 	Room_load(islandTentRoom);
 }
 
-function exit()
+function creditsRoom_exit()
 {
 }
