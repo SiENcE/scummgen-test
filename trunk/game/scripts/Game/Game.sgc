@@ -41,7 +41,6 @@ function _Game_setupActors()
 function _Game_setupCharsets()
 {
 	// Setup Indy charset
-	Interface_setCharset(font2);
 	Actor_printLoadDefault(actorIndy);
 	Actor_setTalkColor(COLOR_WHITE);
 	Actor_printCenter();
@@ -51,38 +50,18 @@ function _Game_setupCharsets()
 
 function _Game_setupInvObjects()
 {
-	var i;
-	var animatedObject;
 	var frames;
 	var delays;
 
-	// Created animated objects list
-	animatedObjects = Util_dimArray(ARRAY_INT, N_ANIMATED_OBJECTS + 1);
-	for (i = 0; i < N_ANIMATED_OBJECTS; i++)
-		animatedObjects[i] = Util_dimArray(ARRAY_INT, N_ANIMATED_OBJ_PARAMS);
-	animatedObjects[N_ANIMATED_OBJECTS] = 0;
-
 	// Setup torch animation
-	animatedObject = animatedObjects[INV_OBJ_TORCH];
-	animatedObject[ANIMATED_OBJ_ID] = litTorchInvObject;
-	animatedObject[ANIMATED_OBJ_FRAME] = litTorchInvObject;
-	animatedObject[ANIMATED_OBJ_START_DELAY] = 0;
-	animatedObject[ANIMATED_OBJ_N_FRAMES] = INV_OBJ_TORCH_N_FRAMES;
 	frames = [litTorchInvObject, whipInvObject];
-	animatedObject[ANIMATED_OBJ_FRAMES] = frames;
 	delays = [INV_OBJ_TORCH_DELAY1, INV_OBJ_TORCH_DELAY2];
-	animatedObject[ANIMATED_OBJ_DELAYS] = delays;
+	Inventory_addAnimatedObject(INV_OBJ_TORCH, litTorchInvObject, INV_OBJ_TORCH_N_FRAMES, frames, delays);
 
 	// Setup whip animation
-	animatedObject = animatedObjects[INV_OBJ_WHIP];
-	animatedObject[ANIMATED_OBJ_ID] = whipInvObject;
-	animatedObject[ANIMATED_OBJ_FRAME] = whipInvObject;
-	animatedObject[ANIMATED_OBJ_START_DELAY] = 0;
-	animatedObject[ANIMATED_OBJ_N_FRAMES] = INV_OBJ_WHIP_N_FRAMES;
 	frames = [whipInvObject, matchesInvObject, unlitTorchInvObject, daggerInvObject, boneInvObject];
-	animatedObject[ANIMATED_OBJ_FRAMES] = frames;
 	delays = [INV_OBJ_WHIP_DELAY1, INV_OBJ_WHIP_DELAY2, INV_OBJ_WHIP_DELAY3, INV_OBJ_WHIP_DELAY4, INV_OBJ_WHIP_DELAY5];
-	animatedObject[ANIMATED_OBJ_DELAYS] = delays;
+	Inventory_addAnimatedObject(INV_OBJ_WHIP, whipInvObject, INV_OBJ_WHIP_N_FRAMES, frames, delays);
 }
 
 // Public functions
@@ -100,6 +79,9 @@ function Game_init()
 	_Game_setupActors();
 	_Game_setupCharsets();
 	_Game_setupInvObjects();
+
+	// Set actors charset
+	Interface_setCharset(font2);
 }
 
 function Game_roomPreEntry()

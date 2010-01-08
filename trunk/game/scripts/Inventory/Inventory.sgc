@@ -282,6 +282,19 @@ thread _Inventory_thread()
 }
 
 // Public functions
+function Inventory_addAnimatedObject(var index, var objID, var nFrames, var frames, var delays)
+{
+	// Setup animation
+	var animatedObject;
+	animatedObject = animatedObjects[index];
+	animatedObject[ANIMATED_OBJ_ID] = objID;
+	animatedObject[ANIMATED_OBJ_FRAME] = frames[0];
+	animatedObject[ANIMATED_OBJ_START_DELAY] = 0;
+	animatedObject[ANIMATED_OBJ_N_FRAMES] = nFrames;
+	animatedObject[ANIMATED_OBJ_FRAMES] = frames;
+	animatedObject[ANIMATED_OBJ_DELAYS] = delays;
+}
+
 inline function Inventory_disable()
 {
 	// Enable sentence
@@ -375,6 +388,8 @@ inline function Inventory_hide()
 
 function Inventory_init()
 {
+	var i;
+
 	// Initialize charset
 	Interface_setCharset(font1);
 	Interface_printTextLoadDefault();
@@ -428,6 +443,12 @@ function Inventory_init()
 	// Register our click handler
 	Input_registerClickHandler(_Inventory_click);
 
+	// Create our animated objects array
+	animatedObjects = Util_dimArray(ARRAY_INT, N_ANIMATED_OBJECTS + 1);
+	for (i = 0; i < N_ANIMATED_OBJECTS; i++)
+		animatedObjects[i] = Util_dimArray(ARRAY_INT, N_ANIMATED_OBJ_PARAMS);
+	animatedObjects[N_ANIMATED_OBJECTS] = 0;
+
 	// Launch our thread
 	_Inventory_thread();
 }
@@ -437,7 +458,6 @@ inline function Inventory_setTouchVerb(var on)
 	Verb_setCurrent(verbLookAt);
 	if (on)
 	{
-		
 		Verb_setNameString("Touch");
 		Verb_setPos(VERB_TOUCH_X, VERB_TOUCH_Y);
 	}
