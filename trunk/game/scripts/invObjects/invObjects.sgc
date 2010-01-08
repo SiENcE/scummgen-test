@@ -22,8 +22,6 @@ function lightRoom()
 	}
 
 	// Change object names
-	Util_printDebug("daggerObject = %i{daggerObject}");
-	Util_printDebug("ringObject = %i{ringObject}");
 	asm { pushWord .word daggerObject setObjectName .string "dagger" }
 	asm { pushWord .word ringObject setObjectName .string "ring" }
 
@@ -186,10 +184,10 @@ function litTorchInvObject_verb(var objA, var objB)
 				case iceObject:
 					Actor_talkEgo("Maybe I can melt the ice with the torch.");
 					Script_waitForMessage();
-					
+
 					break;
 				default:
-					Actor_talkEgo("I don't wanna burn that!");
+					Actor_talkEgo("I don't want to burn that!");
 					break;
 			}
 			break;

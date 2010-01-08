@@ -1,0 +1,10 @@
+// Global constants
+const TIMER_NEXT = 6;
+
+function Engine_init()
+{
+	// Setup SCUMM engine variables
+	VAR_TIMER_NEXT = TIMER_NEXT;
+	VAR_ENTRY_SCRIPT = Game_roomPreEntry;
+	VAR_EXIT_SCRIPT = Game_roomPreExit;
+}

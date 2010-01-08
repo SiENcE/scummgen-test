@@ -1,0 +1,132 @@
+// Global constants
+const STEP_DIST_X = 7;
+const STEP_DIST_Y = 4;
+const ANIM_SPEED = 1;
+const N_ANIMATED_OBJECTS = 2;
+
+// Actors list
+actor actorIndy;
+
+// Torch animation definitions
+const INV_OBJ_TORCH_N_FRAMES = 2;
+const INV_OBJ_TORCH_DELAY1 = 100;
+const INV_OBJ_TORCH_DELAY2 = 200;
+
+// Whip animation definitions
+const INV_OBJ_WHIP_N_FRAMES = 5;
+const INV_OBJ_WHIP_DELAY1 = 10;
+const INV_OBJ_WHIP_DELAY2 = 20;
+const INV_OBJ_WHIP_DELAY3 = 30;
+const INV_OBJ_WHIP_DELAY4 = 40;
+const INV_OBJ_WHIP_DELAY5 = 50;
+
+// Animated objects enumeration
+enum { INV_OBJ_TORCH, INV_OBJ_WHIP };
+
+// Private functions
+function _Game_setupActors()
+{
+	// Setup Indy
+	Actor_setCurrent(actorIndy);
+	asm { actorOps actorName .string "Indy" }
+	Actor_setCostume(indyCostume);
+	Actor_setInitAnim(indyCostume_stand);
+	Actor_setStandAnim(indyCostume_stand);
+	Actor_setWalkAnim(indyCostume_walk);
+	Actor_setTalkAnim(indyCostume_talk, indyCostume_stand);
+	Actor_setStepDistance(STEP_DIST_X, STEP_DIST_Y);
+	Actor_setAnimSpeed(ANIM_SPEED);
+}
+
+function _Game_setupCharsets()
+{
+	// Setup Indy charset
+	Interface_setCharset(font2);
+	Actor_printLoadDefault(actorIndy);
+	Actor_setTalkColor(COLOR_WHITE);
+	Actor_printCenter();
+	Actor_printOverhead();
+	Actor_printSaveDefault();
+}
+
+function _Game_setupInvObjects()
+{
+	var i;
+	var animatedObject;
+	var frames;
+	var delays;
+
+	// Created animated objects list
+	animatedObjects = Util_dimArray(ARRAY_INT, N_ANIMATED_OBJECTS + 1);
+	for (i = 0; i < N_ANIMATED_OBJECTS; i++)
+		animatedObjects[i] = Util_dimArray(ARRAY_INT, N_ANIMATED_OBJ_PARAMS);
+	animatedObjects[N_ANIMATED_OBJECTS] = 0;
+
+	// Setup torch animation
+	animatedObject = animatedObjects[INV_OBJ_TORCH];
+	animatedObject[ANIMATED_OBJ_ID] = litTorchInvObject;
+	animatedObject[ANIMATED_OBJ_FRAME] = litTorchInvObject;
+	animatedObject[ANIMATED_OBJ_START_DELAY] = 0;
+	animatedObject[ANIMATED_OBJ_N_FRAMES] = INV_OBJ_TORCH_N_FRAMES;
+	frames = [litTorchInvObject, whipInvObject];
+	animatedObject[ANIMATED_OBJ_FRAMES] = frames;
+	delays = [INV_OBJ_TORCH_DELAY1, INV_OBJ_TORCH_DELAY2];
+	animatedObject[ANIMATED_OBJ_DELAYS] = delays;
+
+	// Setup whip animation
+	animatedObject = animatedObjects[INV_OBJ_WHIP];
+	animatedObject[ANIMATED_OBJ_ID] = whipInvObject;
+	animatedObject[ANIMATED_OBJ_FRAME] = whipInvObject;
+	animatedObject[ANIMATED_OBJ_START_DELAY] = 0;
+	animatedObject[ANIMATED_OBJ_N_FRAMES] = INV_OBJ_WHIP_N_FRAMES;
+	frames = [whipInvObject, matchesInvObject, unlitTorchInvObject, daggerInvObject, boneInvObject];
+	animatedObject[ANIMATED_OBJ_FRAMES] = frames;
+	delays = [INV_OBJ_WHIP_DELAY1, INV_OBJ_WHIP_DELAY2, INV_OBJ_WHIP_DELAY3, INV_OBJ_WHIP_DELAY4, INV_OBJ_WHIP_DELAY5];
+	animatedObject[ANIMATED_OBJ_DELAYS] = delays;
+}
+
+// Public functions
+function Game_init()
+{
+	// Initialize game "classes"
+	Input_init();
+	Inventory_init();
+	Sentence_init();
+	Dialog_init();
+	Cutscene_init();
+	Light_init();
+
+	// Setup default game resources
+	_Game_setupActors();
+	_Game_setupCharsets();
+	_Game_setupInvObjects();
+}
+
+function Game_roomPreEntry()
+{
+	var i;
+	var animatedObject;
+
+	// Restart timer 1 and animated inventory object delays
+	VAR_TMR_1 = 0;
+	for (i = 0; i < N_ANIMATED_OBJECTS; i++)
+	{
+		animatedObject = animatedObjects[i];
+		animatedObject[ANIMATED_OBJ_START_DELAY] = 0;
+	}
+
+	// Set room height before entering it
+	Room_setScreen(0, VAR_ROOM_HEIGHT);
+
+	// Show inventory
+	Inventory_show();
+
+	// Build room map
+	Room_createBoxMatrix();
+}
+
+function Game_roomPreExit()
+{
+	// Hide inventory
+	Inventory_hide();
+}

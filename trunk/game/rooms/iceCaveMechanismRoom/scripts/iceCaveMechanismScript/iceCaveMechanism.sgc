@@ -28,6 +28,7 @@ function mechanismClick()
 function entry()
 {
 	// Disable inventory first
+	Inventory_hide();
 	Inventory_disable();
 
 	// Register our click handler

@@ -3,6 +3,7 @@ const INVENTORY_Y = 144;
 const N_INV_SLOTS = 10;
 const N_INV_LINES = 2;
 const N_INV_COLUMNS = 5;
+const N_ANIMATED_OBJ_PARAMS = 6;
 
 // Verb positions
 const VERB_VERBS_X = 0;
@@ -52,6 +53,9 @@ const VERB_INV_SLOT9_Y = 176;
 const VERB_INV_SLOT10_X = 288;
 const VERB_INV_SLOT10_Y = 176;
 
+// Enumerations
+enum { ANIMATED_OBJ_ID, ANIMATED_OBJ_FRAME, ANIMATED_OBJ_START_DELAY, ANIMATED_OBJ_N_FRAMES, ANIMATED_OBJ_FRAMES, ANIMATED_OBJ_DELAYS };
+
 // Verbs
 verb verbVerbs;
 verb verbArrowUp;
@@ -68,6 +72,7 @@ verb verbInvSlot9;
 verb verbInvSlot10;
 
 // Global variables
+var animatedObjects;
 var _inventoryEnabled;
 var _inventoryVisible;
 var _lineOffset;
@@ -143,7 +148,7 @@ inline function _Inventory_drawSlots()
 
 		// Set slot image if an inventory object has been found
 		if (obj != 0)
-			Verb_setImage(obj);
+			Verb_setImage(_Inventory_getObjectImage(obj));
 
 		// Show the slot if an inventory object has been found, otherwise hide it
 		Verb_activate(obj != 0);
@@ -173,6 +178,106 @@ inline function _Inventory_hideSlots()
 		Verb_setCurrent(verbInvSlot1 + i);
 		Verb_activate(0);
 		Verb_draw();
+	}
+}
+
+inline function _Inventory_getObjectImage(var obj)
+{
+	var i;
+	var animatedObject;
+
+	// Check if object is animated
+	i = 0;
+	while (animatedObjects[i])
+	{
+		animatedObject = animatedObjects[i];
+
+		// Return current object frame if we found our object
+		if (animatedObject[ANIMATED_OBJ_ID] == obj)
+			return animatedObject[ANIMATED_OBJ_FRAME];
+
+		i++;
+	}
+
+	// Otherwise return raw object ID
+	return obj;
+}
+
+thread _Inventory_thread()
+{
+	var slotIndex;
+
+	while (1)
+	{
+		Script_break();
+
+		// Nothing to do if inventory is hidden
+		if (!_inventoryVisible)
+			continue;
+
+		// Cycle through inventory slots
+		for (slotIndex = 0; slotIndex < N_INV_SLOTS; slotIndex++)
+		{
+			var obj;
+			var objectIndex;
+
+			// Find inventory object
+			obj = Actor_findInventory(_currentActor, (_lineOffset * N_INV_COLUMNS) + slotIndex + 1);
+			if (obj == 0)
+				break;
+
+			// Change current verb
+			Verb_setCurrent(verbInvSlot1 + slotIndex);
+
+			// Check if object is animated
+			objectIndex = 0;
+			while (animatedObjects[objectIndex])
+			{
+				var animatedObject;
+				animatedObject = animatedObjects[objectIndex];
+
+				// Check if we found our object
+				if (animatedObject[ANIMATED_OBJ_ID] == obj)
+				{
+					var frames;
+					var delays;
+					var frameIndex;
+					frames = animatedObject[ANIMATED_OBJ_FRAMES];
+					delays = animatedObject[ANIMATED_OBJ_DELAYS];
+
+					// Loop through each frame and check current delay
+					for (frameIndex = 0; frameIndex < animatedObject[ANIMATED_OBJ_N_FRAMES]; frameIndex++)
+						if (VAR_TMR_1 - animatedObject[ANIMATED_OBJ_START_DELAY] < delays[frameIndex])
+						{
+							// Change frame if needed
+							if (animatedObject[ANIMATED_OBJ_FRAME] != frames[frameIndex])
+							{
+								animatedObject[ANIMATED_OBJ_FRAME] = frames[frameIndex];
+								Verb_setImage(animatedObject[ANIMATED_OBJ_FRAME]);
+								Verb_draw();
+							}
+
+							// Frame is found
+							break;
+						}
+
+					// If animation is over, restart it
+					if (frameIndex == animatedObject[ANIMATED_OBJ_N_FRAMES])
+					{
+						animatedObject[ANIMATED_OBJ_FRAME] = frames[0];
+						animatedObject[ANIMATED_OBJ_START_DELAY] = VAR_TMR_1;
+						Verb_setImage(animatedObject[ANIMATED_OBJ_FRAME]);
+						Verb_draw();
+					}
+
+					// Object is found
+					break;
+				}
+
+				// Increment our objectIndex
+				objectIndex++;
+			}
+		}
 	}
 }
 
@@ -322,6 +427,9 @@ function Inventory_init()
 
 	// Register our click handler
 	Input_registerClickHandler(_Inventory_click);
+
+	// Launch our thread
+	_Inventory_thread();
 }
 
 inline function Inventory_setTouchVerb(var on)

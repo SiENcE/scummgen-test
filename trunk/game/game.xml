@@ -24,6 +24,8 @@
 	<costume>indyCostume</costume>
 	<script>Cutscene</script>
 	<script>Dialog</script>
+	<script>Engine</script>
+	<script>Game</script>
 	<script>Inventory</script>
 	<script>Input</script>
 	<script>Light</script>
