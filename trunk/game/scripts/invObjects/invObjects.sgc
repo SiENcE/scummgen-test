@@ -1,41 +1,6 @@
 // Global variables
 var torchIsLit;
 
-function lightRoom()
-{
-	const AMBIENT_START_INTENSITY = 55;
-    const AMBIENT_END_INTENSITY = 255;
-	const AMBIENT_INTENSITY_STEP = 40;
-	var i;
-
-	// Update torch state
-	torchIsLit = 1;
-
-	// Remove ice cave omni light
-	Light_delete(iceCaveEntranceOmniLight);
-
-	// Brighten the ice cave room completely
-	for (i = AMBIENT_START_INTENSITY; i < AMBIENT_END_INTENSITY; i += AMBIENT_INTENSITY_STEP)
-	{
-		Light_setColor(iceCaveAmbientLight, i, i, i);
-		Script_break();
-	}
-
-	// Change object names
-	asm { pushWord .word daggerObject setObjectName .string "dagger" }
-	asm { pushWord .word ringObject setObjectName .string "ring" }
-
-	// Disable inventory touch mode
-	Inventory_setTouchVerb(0);
-	Inventory_show();
-
-	// Change unlit torch to lit torch
-	Actor_pickup(litTorchInvObject);
-	Object_setOwner(unlitTorchInvObject, 0);
-	
-	Actor_talkEgo("And then there was light...");
-}
-
 function whipInvObject_verb(var objA, var objB)
 {
 	const MAX_RANDOM_LINES = 2;
@@ -158,7 +123,7 @@ function unlitTorchInvObject_verb(var objA, var objB)
 					Sentence_setPrepo(PREPO_ON);
 					break;
 				case flintstonesInvObject:			
-					lightRoom();			
+					iceCaveRoom_lightRoom();			
 					break;
 				default:
 					Actor_talkEgo("That doesn't work!");
@@ -284,8 +249,8 @@ function flintstonesInvObject_verb(var objA, var objB)
 				case 0:
 					Sentence_setPrepo(PREPO_ON);
 					break;
-				case unlitTorchInvObject:			
-					lightRoom();			
+				case unlitTorchInvObject:
+					iceCaveRoom_lightRoom();
 					break;
 				default:
 					Actor_talkEgo("That doesn't work!");

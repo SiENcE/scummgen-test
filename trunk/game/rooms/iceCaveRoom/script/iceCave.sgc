@@ -8,6 +8,7 @@ var ambientLightIntensity;
 // Enumerations
 enum { ICE_CAVE_HOLE_ENTRANCE, ICE_CAVE_MECHANISM_ENTRANCE };
 
+// Object action functions
 function daggerObject_verb(var objA, var objB)
 {
 	const DELAY = 30;
@@ -48,7 +49,7 @@ function entranceObject_verb(var objA, var objB)
 			Actor_talkEgo("That's way too high to climb.");
 			break;
 		case verbTalkTo:
-			entranceDialog();
+			_iceCaveRoom_entranceDialog();
 			break;
 	}
 }
@@ -148,7 +149,8 @@ function wallObject_verb(var objA, var objB)
 	}
 }
 
-function setupObjects()
+// Private functions
+function _iceCaveRoom_setupObjects()
 {
 	// Setup entrance
 	Object_setClass(entranceObject, classPerson, 1);
@@ -176,7 +178,7 @@ function setupObjects()
 	Object_setOwner(daggerObject, OBJECT_OWNER_ROOM);
 }
 
-thread changeIntensity()
+thread _iceCaveRoom_changeIntensity()
 {
 	const OMNI_INTENSITY = 255;
 	const OMNI_POS_X = 100;
@@ -212,7 +214,7 @@ thread changeIntensity()
 	}
 }
 
-thread lightning()
+thread _iceCaveRoom_lightningThread()
 {
 	var lightningLight;
 	var random;
@@ -233,26 +235,7 @@ thread lightning()
 	}
 }
 
-thread mousePos()
-{
-	// Setup print line charset
-	Interface_setCharset(font2);
-	Interface_printLineLoadDefault();
-	Interface_printLineColor(COLOR_PERSIMMON);
-	Interface_printLineCenter();
-	Interface_printLineOverhead();
-	Interface_printLineSaveDefault();
-
-	// Loop indefinitely
-	while (1)
-	{
-		Interface_printLineAt(150, 10);
-     	Interface_printLine("X: %i{VAR_MOUSE_X} Y: %i{VAR_MOUSE_Y}");
-		Script_break();
-	}
-}
-
-function entranceDialog()
+function _iceCaveRoom_entranceDialog()
 {
 	const LINE_TORCH = 0;
 	const LINE_LEAVE = 1;
@@ -319,21 +302,58 @@ function entranceDialog()
 	Inventory_show();
 }
 
+// Public functions
+function iceCaveRoom_lightRoom()
+{
+	const AMBIENT_START_INTENSITY = 55;
+    const AMBIENT_END_INTENSITY = 255;
+	const AMBIENT_INTENSITY_STEP = 40;
+	var i;
+
+	// Update torch state
+	torchIsLit = 1;
+
+	// Remove ice cave omni light
+	Light_delete(iceCaveEntranceOmniLight);
+
+	// Brighten the ice cave room completely
+	for (i = AMBIENT_START_INTENSITY; i < AMBIENT_END_INTENSITY; i += AMBIENT_INTENSITY_STEP)
+	{
+		Light_setColor(iceCaveAmbientLight, i, i, i);
+		Script_break();
+	}
+
+	// Change object names
+	asm { pushWord .word daggerObject setObjectName .string "dagger" }
+	asm { pushWord .word ringObject setObjectName .string "ring" }
+
+	// Disable inventory touch mode
+	Inventory_setTouchVerb(0);
+	Inventory_show();
+
+	// Change unlit torch to lit torch
+	Actor_pickup(litTorchInvObject);
+	Object_setOwner(unlitTorchInvObject, 0);
+	
+	Actor_talkEgo("And then there was light...");
+}
+
+// Room entry function
 function iceCaveRoom_entry()
 {
 	const START_X = 96;
 	const START_Y = 48;
 
 	// Launch lightning thread
-	lightning();
+	_iceCaveRoom_lightningThread();
 	
 	if (!torchIsLit)
 	{
 		// Change room insensity slowly as soon as we enter the room
-		changeIntensity();
+		_iceCaveRoom_changeIntensity();
 	
 		// Setup object states, classes and owners
-		setupObjects();
+		_iceCaveRoom_setupObjects();
 	
 		// Set Indy as the default actor
 		VAR_EGO = actorIndy;
