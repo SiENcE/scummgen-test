@@ -1,4 +1,5 @@
-thread mechanismThread()
+// Private functions
+thread iceCaveMechanismRoom_thread()
 {
 	// Setup print line charset
 	Interface_setCharset(font2);
@@ -17,7 +18,7 @@ thread mechanismThread()
 	}
 }
 
-function mechanismClick()
+function _iceCaveMechanismRoom_click()
 {
 	// Leave and reload the ice cave room
 	Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_1);
@@ -25,6 +26,7 @@ function mechanismClick()
 	Room_load(iceCaveRoom);
 }
 
+// Entry function
 function iceCaveMechanismRoom_entry()
 {
 	// Disable inventory first
@@ -32,15 +34,16 @@ function iceCaveMechanismRoom_entry()
 	Inventory_disable();
 
 	// Register our click handler
-	Input_registerClickHandler(mechanismClick);
+	Input_registerClickHandler(_iceCaveMechanismRoom_click);
 
-	mechanismThread();
+	iceCaveMechanismRoom_thread();
 }
 
+// Exit function
 function iceCaveMechanismRoom_exit()
 {
 	// Unregister our click handler
-	Input_unregisterClickHandler(mechanismClick);
+	Input_unregisterClickHandler(_iceCaveMechanismRoom_click);
 
 	// Re-enable inventory
 	Inventory_enable();

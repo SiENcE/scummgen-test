@@ -1,3 +1,4 @@
+// Object actions functions
 function tentObject_verb(var objA, var objB)
 {
 	action
@@ -28,6 +29,7 @@ function tentObject_verb(var objA, var objB)
 	}
 }
 
+// Entry function
 function islandTentRoom_entry()
 {
 	var dialog;

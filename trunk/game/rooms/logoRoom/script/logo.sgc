@@ -1,4 +1,5 @@
-function displayLogo()
+// Private functions
+function _logoRoom_displayLogo()
 {
 	const MIN_INDEX = 0;
 	const MAX_INDEX = 255;
@@ -16,6 +17,7 @@ function displayLogo()
 	}
 }
 
+// Entry function
 function logoRoom_entry()
 {
 	const SECONDS_DELAY = 3;
@@ -25,7 +27,7 @@ function logoRoom_entry()
 	try
 	{
 		// Display the team logo
-		displayLogo();
+		_logoRoom_displayLogo();
 
 		// Delay a bit
 		Script_delaySeconds(SECONDS_DELAY);

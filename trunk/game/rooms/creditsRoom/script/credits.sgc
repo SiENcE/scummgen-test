@@ -3,7 +3,8 @@ actor actorLogo;
 var creditsColor1;
 var creditsColor2;
 
-function displayIJLogo()
+// Private functions
+function _creditsRoom_displayIJLogo()
 {
 	const SCALE_FACTOR = 20;
 	const LOGO_X = 161;
@@ -36,7 +37,7 @@ function displayIJLogo()
 	Object_draw(titleObject, 1);
 }
 
-inline function displayTeamFunction(var string)
+inline function _creditsRoom_displayTeamFunction(var string)
 {
 	const TEAM_FUNCTION_X = 160;
 	const TEAM_FUNCTION_Y = 150;
@@ -48,7 +49,7 @@ inline function displayTeamFunction(var string)
 	Interface_printText("%s{string}");
 }
 
-inline function displayTeamMember(var string)
+inline function _creditsRoom_displayTeamMember(var string)
 {
 	const TEAM_MEMBER_X = 160;
 	const TEAM_MEMBER_Y = 165;
@@ -61,7 +62,7 @@ inline function displayTeamMember(var string)
 	Interface_printLine("           %s{string}           ");
 }
 
-function fadeTeamMember(var start, var end, var step)
+function _creditsRoom_fadeTeamMember(var start, var end, var step)
 {
 	var i;
 	for (i = start; i != end; i += step)
@@ -72,7 +73,7 @@ function fadeTeamMember(var start, var end, var step)
 	Room_setIntensity(end, creditsColor2, creditsColor2);
 }
 
-function fadeCredits(var start, var end, var step)
+function _creditsRoom_fadeCredits(var start, var end, var step)
 {
 	var i;
 	for (i = start; i != end; i += step)
@@ -85,7 +86,7 @@ function fadeCredits(var start, var end, var step)
 	Room_setIntensity(end, creditsColor2, creditsColor2);
 }
 
-function displayCredits()
+function _creditsRoom_displayCredits()
 {
 	const CREDITS_LOW_INTENSITY = 55;
 	const CREDITS_HIGH_INTENSITY = 255;
@@ -103,58 +104,58 @@ function displayCredits()
 	// Story and design
 	Room_setIntensity(CREDITS_LOW_INTENSITY, creditsColor1, creditsColor1);
 	Room_setIntensity(CREDITS_LOW_INTENSITY, creditsColor2, creditsColor2);
-	displayTeamFunction("story and design by:");
-	displayTeamMember("DOMINIK HASLINGER");
-	fadeCredits(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
+	_creditsRoom_displayTeamFunction("story and design by:");
+	_creditsRoom_displayTeamMember("DOMINIK HASLINGER");
+	_creditsRoom_fadeCredits(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
 	Script_delaySeconds(2);
-	fadeTeamMember(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
-	displayTeamMember("");
+	_creditsRoom_fadeTeamMember(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
+	_creditsRoom_displayTeamMember("");
 	Script_delaySeconds(1);
 	Room_setIntensity(CREDITS_LOW_INTENSITY, creditsColor2, creditsColor2);
-	displayTeamMember("JENS DOBLIES");
-	fadeTeamMember(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
+	_creditsRoom_displayTeamMember("JENS DOBLIES");
+	_creditsRoom_fadeTeamMember(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
 	Script_delaySeconds(2);
-	fadeTeamMember(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
-	displayTeamMember("");
+	_creditsRoom_fadeTeamMember(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
+	_creditsRoom_displayTeamMember("");
 	Script_delaySeconds(1);
 	Room_setIntensity(CREDITS_LOW_INTENSITY, creditsColor2, creditsColor2);
-	displayTeamMember("SEBASTIEN RONSSE");
-	fadeTeamMember(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
+	_creditsRoom_displayTeamMember("SEBASTIEN RONSSE");
+	_creditsRoom_fadeTeamMember(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
 	Script_delaySeconds(2);
-	fadeCredits(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
+	_creditsRoom_fadeCredits(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
 	Util_redraw();
-	displayTeamMember("");
+	_creditsRoom_displayTeamMember("");
 	Script_delaySeconds(1);
 
 	// Programming
 	Room_setIntensity(CREDITS_LOW_INTENSITY, creditsColor1, creditsColor1);
 	Room_setIntensity(CREDITS_LOW_INTENSITY, creditsColor2, creditsColor2);
-	displayTeamFunction("programmed by:");
-	displayTeamMember("SEBASTIEN RONSSE");
-	fadeCredits(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
+	_creditsRoom_displayTeamFunction("programmed by:");
+	_creditsRoom_displayTeamMember("SEBASTIEN RONSSE");
+	_creditsRoom_fadeCredits(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
 	Script_delaySeconds(2);
-	fadeTeamMember(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
-	displayTeamMember("");
+	_creditsRoom_fadeTeamMember(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
+	_creditsRoom_displayTeamMember("");
 	Script_delaySeconds(1);
 	Room_setIntensity(CREDITS_LOW_INTENSITY, creditsColor2, creditsColor2);
-	displayTeamMember("DOMINIK HASLINGER");
-	fadeTeamMember(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
+	_creditsRoom_displayTeamMember("DOMINIK HASLINGER");
+	_creditsRoom_fadeTeamMember(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
 	Script_delaySeconds(2);
-	fadeCredits(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
+	_creditsRoom_fadeCredits(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
 	Util_redraw();
-	displayTeamMember("");
+	_creditsRoom_displayTeamMember("");
 	Script_delaySeconds(1);
 	
 	// Background art
 	Room_setIntensity(CREDITS_LOW_INTENSITY, creditsColor1, creditsColor1);
 	Room_setIntensity(CREDITS_LOW_INTENSITY, creditsColor2, creditsColor2);
-	displayTeamFunction("background art by:");
-	displayTeamMember("JENS DOBLIES");
-	fadeCredits(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
+	_creditsRoom_displayTeamFunction("background art by:");
+	_creditsRoom_displayTeamMember("JENS DOBLIES");
+	_creditsRoom_fadeCredits(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
 	Script_delaySeconds(2);
-	fadeCredits(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
+	_creditsRoom_fadeCredits(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
 	Util_redraw();
-	displayTeamMember("");
+	_creditsRoom_displayTeamMember("");
 	Script_delaySeconds(1);
 
 	// Hide logo and title
@@ -162,6 +163,7 @@ function displayCredits()
 	Object_setState(titleObject, 0);
 }
 
+// Entry function
 function creditsRoom_entry()
 {
 	var previousVarTimerNext;
@@ -172,11 +174,11 @@ function creditsRoom_entry()
 
 	// Wait and display Indiana Jones logo
 	Script_delaySeconds(1);
-	displayIJLogo();
+	_creditsRoom_displayIJLogo();
 
 	// Wait and display credits
 	Script_delaySeconds(2);
-	displayCredits();
+	_creditsRoom_displayCredits();
 
 	// Restore previous VAR_TIMER_NEXT value
 	VAR_TIMER_NEXT = previousVarTimerNext;
@@ -186,8 +188,4 @@ function creditsRoom_entry()
 	VAR_FADE_DELAY = 1;
 	Room_fade(ROOM_FADE_NO_EFFECT, ROOM_FADE_SCROLL_EFFECT_UP);
 	Room_load(islandTentRoom);
-}
-
-function creditsRoom_exit()
-{
 }
