@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <object>
-	<name>litTorchInvObject</name>
+	<name>litTorchInvObject3</name>
 	<displayName>torch</displayName>
 	<hotspotX>0</hotspotX>
 	<hotspotY>0</hotspotY>
@@ -9,8 +9,5 @@
 	<width>32</width>
 	<height>24</height>
 	<actorDir>south</actorDir>
-	<image>torchInvImage1</image>
-	<image>torchInvImage2</image>
-	<image>torchInvImage3</image>
-	<image>torchInvImage4</image>
+	<image>torchInvImage</image>
 </object>

@@ -13,7 +13,10 @@
 	<object>boneInvObject</object>
 	<object>daggerInvObject</object>
 	<object>flintstonesInvObject</object>
-	<object>litTorchInvObject</object>
+	<object>litTorchInvObject1</object>
+	<object>litTorchInvObject2</object>
+	<object>litTorchInvObject3</object>
+	<object>litTorchInvObject4</object>
 	<object>matchesInvObject</object>
 	<object>pointyStoneInvObject</object>
 	<object>ringInvObject</object>

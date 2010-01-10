@@ -332,7 +332,7 @@ function iceCaveRoom_lightRoom()
 	Inventory_show();
 
 	// Change unlit torch to lit torch
-	Actor_pickup(litTorchInvObject);
+	Actor_pickup(litTorchInvObject1);
 	Object_setOwner(unlitTorchInvObject, 0);
 	
 	Actor_talkEgo("And then there was light...");
