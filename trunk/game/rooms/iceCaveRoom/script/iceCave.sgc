@@ -114,7 +114,7 @@ function skeletonObject_verb(var objA, var objB)
 			Actor_talkEgo("Poor guy. I wonder how long he's been lying here.");
 			break;
 		case verbPickUp:
-			if (Object_getOwner(boneInvObject) == VAR_EGO)
+			if (Object_getOwner(boneInvObject) == actorIndy)
 				Actor_talkEgo("I already found what I needed.");
 			else
 				cutscene (CUTSCENE_TYPE_A)
@@ -137,12 +137,12 @@ function wallObject_verb(var objA, var objB)
 	{
 		case verbLookAt:
 			if (!torchIsLit)
-				cutscene (CUTSCENE_TYPE_A)
-				{
-					Actor_animate(actorIndy, indyCostume_pickUpMedium);
-					Script_delay(DELAY);
-					Actor_talkEgo("It feels loose somehow.");
-				}
+					cutscene (CUTSCENE_TYPE_A)
+					{
+						Actor_animate(actorIndy, indyCostume_pickUpMedium);
+						Script_delay(DELAY);
+						Actor_talkEgo("It feels loose somehow.");
+					}
 			else
 				Actor_talkEgo("It's loose.");
 			break;
@@ -200,6 +200,7 @@ thread _iceCaveRoom_changeIntensity()
 	// Add areas
 	Light_addArea(0, darkArea_start, darkArea_end);
 	Light_addArea(0, ringObjectArea_start, ringObjectArea_end);
+	Light_addArea(0, daggerObjectArea_start, daggerObjectArea_end);
 	Light_addArea(actorIndy, indyCostumeArea_start, indyCostumeArea_end);
 
 	// Gradually brighten the ambient light
@@ -249,7 +250,7 @@ function _iceCaveRoom_entranceDialog()
 	Dialog_addLine(dialog, "I'll talk to you later."); // LINE_LEAVE
 
 	// Remove torch line if necessary
-	if (Object_getOwner(unlitTorchInvObject) == VAR_EGO)
+	if (Object_getOwner(unlitTorchInvObject) == actorIndy)
 		Dialog_removeLine(dialog, LINE_TORCH);
 
 	// Talk to Harald
@@ -307,7 +308,7 @@ function iceCaveRoom_lightRoom()
 {
 	const AMBIENT_START_INTENSITY = 55;
     const AMBIENT_END_INTENSITY = 255;
-	const AMBIENT_INTENSITY_STEP = 40;
+	const AMBIENT_INTENSITY_STEP = 20;
 	var i;
 
 	// Update torch state

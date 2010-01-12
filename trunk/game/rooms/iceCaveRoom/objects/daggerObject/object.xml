@@ -4,9 +4,10 @@
 	<displayName>sharp metallic thing</displayName>
 	<hotspotX>130</hotspotX>
 	<hotspotY>98</hotspotY>
-	<x>136</x>
-	<y>96</y>
-	<width>8</width>
-	<height>8</height>
+	<x>128</x>
+	<y>88</y>
+	<width>16</width>
+	<height>16</height>
 	<actorDir>east</actorDir>
+	<image>daggerImage</image>
 </object>

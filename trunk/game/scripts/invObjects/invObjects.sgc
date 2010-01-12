@@ -88,18 +88,21 @@ function daggerInvObject_verb(var objA, var objB)
 					Sentence_setPrepo(PREPO_ON);
 					break;
 				case wallObject:
-					cutscene (CUTSCENE_TYPE_A)
-					{
-						Actor_talkEgo("Hmm. Maybe I can use one of these stones.");
-						Script_waitForMessage();
-						Actor_face(actorIndy, objA);
-						Actor_animate(actorIndy, indyCostume_pickUpLow); 
-						Script_delay(DELAY);
-						Actor_pickup(angularStoneInvObject);
-						Actor_pickup(pointyStoneInvObject);
-						Actor_animate(actorIndy, indyCostume_stand);
-						Actor_talkEgo("Oh, I actually got two stones.");
-					}
+					if (Object_getOwner(flintstonesInvObject) == actorIndy || Object_getOwner(pointyStoneInvObject) == actorIndy)
+						Actor_talkEgo("I don't need more stones.");
+					else
+						cutscene (CUTSCENE_TYPE_A)
+						{
+							Actor_talkEgo("Hmm. Maybe I can use one of these stones.");
+							Script_waitForMessage();
+							Actor_face(actorIndy, objA);
+							Actor_animate(actorIndy, indyCostume_pickUpLow); 
+							Script_delay(DELAY);
+							Actor_pickup(angularStoneInvObject);
+							Actor_pickup(pointyStoneInvObject);
+							Actor_animate(actorIndy, indyCostume_stand);
+							Actor_talkEgo("Oh, I actually got two stones.");
+						}
 					break;
 				default:
 					Actor_talkEgo("That doesn't work!");
