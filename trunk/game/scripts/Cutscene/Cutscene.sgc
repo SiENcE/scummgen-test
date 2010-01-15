@@ -12,17 +12,20 @@ function _Cutscene_start(var type)
 			break;
 		case CUTSCENE_TYPE_B:
 			Inventory_hide();
+			Sentence_hide();
 			break;
 	}
 
 	// Disable input and inventory
 	Input_disable();
 	Inventory_disable();
+	Sentence_disable();
 }
 
 function _Cutscene_end(var type)
 {
-	// Enable inventory and input
+	// Enable sentence, inventory and input
+	Sentence_enable();
 	Inventory_enable();
 	Input_enable();
 
@@ -31,6 +34,7 @@ function _Cutscene_end(var type)
 		case CUTSCENE_TYPE_A:
 			break;
 		case CUTSCENE_TYPE_B:
+			Sentence_show();
 			Inventory_show();
 			break;
 	}

@@ -260,9 +260,11 @@ function _iceCaveRoom_entranceDialog()
 		Script_waitForMessage();
 	}
 
-	// Disable inventory
+	// Disable inventory and sentence
 	Inventory_hide();
+	Sentence_hide();
 	Inventory_disable();
+	Sentence_disable();
 	Script_break();
 
 	// Enable dialog area
@@ -298,8 +300,10 @@ function _iceCaveRoom_entranceDialog()
 	// Disable dialog area
 	Dialog_disable();
 
-	// Re-enable Inventory
+	// Re-enable sentence and inventory
+	Sentence_enable();
 	Inventory_enable();
+	Sentence_show();
 	Inventory_show();
 }
 
@@ -369,7 +373,9 @@ function iceCaveRoom_entry()
 
 		// Set inventory touch mode and enable inventory and input
 		Inventory_setTouchVerb(1);
+		Sentence_enable();
 		Inventory_enable();
+		Sentence_show();
 		Inventory_show();
 		Input_enable();
 	

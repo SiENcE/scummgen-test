@@ -61,8 +61,8 @@ function _Sentence_click()
 	Verb_stopSentence();
 
 	// On a right click, change current verb to the alternate verb
-	// (only applies when objB has not been selected)
-	if ((inputBtn == MOUSE_BUTTON_2) && (_alternateVerb != 0) && (_selectedObjB == 0))
+	// (only applies when objA has not been selected yet)
+	if ((inputBtn == MOUSE_BUTTON_2) && (_alternateVerb != 0) && (_selectedObjA == 0))
 	{
 		_sentenceVerb = _alternateVerb;
 		_selectedVerb = _alternateVerb;
@@ -83,8 +83,13 @@ function _Sentence_click()
 	// Select elements of the sentence
 	_Sentence_select();
 
-	// Launch the verb sentence
+	// Launch the verb sentence and wait until it ends
 	Verb_doSentence(_sentenceVerb, _selectedObjA, _selectedObjB);
+	Script_waitForSentence();
+
+	// Stop and relaunch our sentence thread
+	Script_stop(_Sentence_thread);
+	_Sentence_thread();
 }
 
 inline function _Sentence_getObject()
@@ -134,9 +139,10 @@ function _Sentence_handler(var vrb, var objA, var objB)
 	entryPt = Verb_getEntryPoint(objA, vrb);
 	if (entryPt != 0)
 	{
-		// Call appropriate object script
-		Script_stopObjectScript(objA);
+		// Call appropriate object script and wait until it ends
 		Script_startObjectScriptQuick(objA, vrb, [objA, objB], 2);
+		while (Script_isRoomScriptRunning(objA))
+			Script_break();
 	}
 	else // Default verb actions
 		switch (vrb)

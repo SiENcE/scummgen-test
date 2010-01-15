@@ -297,18 +297,12 @@ function Inventory_addAnimatedObject(var index, var objID, var nFrames, var fram
 
 inline function Inventory_disable()
 {
-	// Enable sentence
-	Sentence_disable();
-
 	// Inventory is now disabled
 	_inventoryEnabled = 0;
 }
 
 inline function Inventory_enable()
 {
-	// Enable sentence
-	Sentence_enable();
-
 	// Inventory is now enabled
 	_inventoryEnabled = 1;
 }
@@ -378,9 +372,6 @@ inline function Inventory_hide()
 	Verb_setCurrent(verbVerbs);
 	Verb_activate(0);
 	Verb_draw();
-
-	// Hide sentence
-	Sentence_hide();
 
 	// Set inventory visibility
 	_inventoryVisible = 0;
@@ -512,9 +503,6 @@ inline function Inventory_show()
 
 	// Draw slots
 	_Inventory_drawSlots();
-
-	// Draw sentence
-	Sentence_show();
 
 	// Set inventory visibility
 	_inventoryVisible = 1;
