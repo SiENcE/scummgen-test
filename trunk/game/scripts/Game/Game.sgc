@@ -6,6 +6,7 @@ const N_ANIMATED_OBJECTS = 1;
 
 // Actors list
 actor actorIndy;
+actor actorTemp; 
 
 // Torch animation definitions
 const INV_OBJ_TORCH_N_FRAMES = 4;
@@ -91,15 +92,10 @@ function Game_roomPreEntry()
 	// Set room height before entering it
 	Room_setScreen(0, VAR_ROOM_HEIGHT);
 
-	// Show inventory
-	Inventory_show();
-
 	// Build room map
 	Room_createBoxMatrix();
 }
 
 function Game_roomPreExit()
 {
-	// Hide inventory
-	Inventory_hide();
 }

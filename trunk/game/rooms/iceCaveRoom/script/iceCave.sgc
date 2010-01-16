@@ -1,19 +1,23 @@
 // Global constants
+const CREDITS_FADE_DELAY = 3;
 const OMNI_INTENSITY1 = 255;
 const OMNI_INTENSITY2 = 10;
 const OMNI_POS_X = 100;
 const OMNI_POS_Y = 40;
 const OMNI_RANGE = 25;
-const AMBIENT_MIN_INTENSITY = 10;
+const AMBIENT_MIN_INTENSITY = 35;
 const AMBIENT_MEDIUM_INTENSITY = 55;
 const AMBIENT_MAX_INTENSITY = 255;
-const AMBIENT_INTENSITY_STEP = 20;
+const AMBIENT_INTENSITY_STEP = 30;
 const LIGHTNING_MIN_INTENSITY = 0;
 const LIGHTNING_MAX_INTENSITY = 300;
 const LIGHTNING_RANDOM = 200;
 
 // Global variables
 var iceCaveEntrance;
+var actorLogo;
+var _creditsColor1;
+var _creditsColor2;
 var _iceCaveEntranceOmniLight;
 var _iceCaveAmbientLight;
 var _iceCaveLightningLight;
@@ -133,7 +137,7 @@ function skeletonObject_verb(var objA, var objB)
 			Actor_talkEgo("Poor guy. I wonder how long he's been lying here.");
 			break;
 		case verbPickUp:
-			if (Object_getOwner(boneInvObject) == actorIndy)
+			if (Object_getOwner(boneInvObject) == VAR_EGO)
 				Actor_talkEgo("I already found what I needed.");
 			else
 				cutscene (CUTSCENE_TYPE_A)
@@ -211,7 +215,7 @@ function _iceCaveRoom_entranceDialog()
 	Dialog_addLine(dialog, "I'll talk to you later."); // LINE_LEAVE
 
 	// Remove torch line if necessary
-	if (Object_getOwner(unlitTorchInvObject) == actorIndy)
+	if (Object_getOwner(unlitTorchInvObject) == VAR_EGO)
 		Dialog_removeLine(dialog, LINE_TORCH);
 
 	// Talk to Harald
@@ -352,6 +356,192 @@ thread _iceCaveRoom_lightThread()
 	}
 }
 
+inline function _iceCaveRoom_displayIJLogo()
+{
+	const SCALE_FACTOR = 20;
+	const LOGO_X = 161;
+	const LOGO_Y = 57;
+
+	var i;
+	var scale;
+
+	// Create and setup logo actor
+	actorLogo = actorTemp;
+	Actor_setCurrent(actorLogo);
+	Actor_setCostume(logoCostume);
+	Actor_setInitAnim(logoCostume_logoAnim);
+	Actor_ignoreBoxes(1);
+	Actor_putAtXY(actorLogo, LOGO_X, LOGO_Y, VAR_ROOM);
+
+	// Scale Indiana Jones logo gradually
+	scale = 0;
+	i = 0;
+	while (scale < 255)
+	{
+		Actor_setScale(scale);
+		scale += 1 + SCALE_FACTOR * i / 256;
+		Script_break();
+		i++;
+	}
+	Actor_setScale(255);
+
+	// Wait, and then display game title
+	Script_delaySeconds(1);
+	Object_draw(titleObject, 1);
+}
+
+inline function _iceCaveRoom_displayTeamFunction(var string)
+{
+	const TEAM_FUNCTION_X = 160;
+	const TEAM_FUNCTION_Y = 117;
+	Interface_printTextLoadDefault();
+	Interface_printTextColor(_creditsColor1);
+	Interface_printTextAt(TEAM_FUNCTION_X, TEAM_FUNCTION_Y);
+	Interface_printTextCenter();
+	Interface_printTextSaveDefault();
+	Interface_printText("%s{string}");
+}
+
+inline function _iceCaveRoom_displayTeamMember(var string)
+{
+	const TEAM_MEMBER_X = 160;
+	const TEAM_MEMBER_Y = 132;
+	Interface_printLineLoadDefault();
+	Interface_printLineColor(_creditsColor2);
+	Interface_printLineAt(TEAM_MEMBER_X, TEAM_MEMBER_Y);
+	Interface_printLineCenter();
+	Interface_printLineSaveDefault();
+	// We add spaces to force the credits to be printed longer
+	Interface_printLine("           %s{string}           ");
+}
+
+inline function _iceCaveRoom_fadeTeamMember(var start, var end, var step)
+{
+	var i;
+	for (i = start; i != end; i += step)
+	{
+		Room_setIntensity(i, _creditsColor2, _creditsColor2);
+		Script_delay(CREDITS_FADE_DELAY);
+	}
+	Room_setIntensity(end, _creditsColor2, _creditsColor2);
+}
+
+inline function _iceCaveRoom_fadeCredits(var start, var end, var step)
+{
+	var i;
+	for (i = start; i != end; i += step)
+	{
+		Room_setIntensity(i, _creditsColor1, _creditsColor1);
+		Room_setIntensity(i, _creditsColor2, _creditsColor2);
+		Script_delay(CREDITS_FADE_DELAY);
+	}
+	Room_setIntensity(end, _creditsColor1, _creditsColor1);
+	Room_setIntensity(end, _creditsColor2, _creditsColor2);
+}
+
+inline function _iceCaveRoom_displayCredits()
+{
+	const CREDITS_LOW_INTENSITY = 55;
+	const CREDITS_HIGH_INTENSITY = 255;
+	const CREDITS_INTENSITY_STEP_UP = 40;
+	const CREDITS_INTENSITY_STEP_DOWN = 50;
+
+	// Set credits color
+	_creditsColor1 = COLOR_SILVER_CHALICE;
+	_creditsColor2 = COLOR_SCREAMIN_GREEN;
+
+	// Set charset and text speed
+	Interface_setCharset(font3);
+	VAR_CHARINC = 3;
+
+	// Story and design
+	Room_setIntensity(CREDITS_LOW_INTENSITY, _creditsColor1, _creditsColor1);
+	Room_setIntensity(CREDITS_LOW_INTENSITY, _creditsColor2, _creditsColor2);
+	_iceCaveRoom_displayTeamFunction("story and design by:");
+	_iceCaveRoom_displayTeamMember("DOMINIK HASLINGER");
+	_iceCaveRoom_fadeCredits(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
+	Script_delaySeconds(2);
+	_iceCaveRoom_fadeTeamMember(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
+	_iceCaveRoom_displayTeamMember("");
+	Script_delaySeconds(1);
+	Room_setIntensity(CREDITS_LOW_INTENSITY, _creditsColor2, _creditsColor2);
+	_iceCaveRoom_displayTeamMember("JENS DOBLIES");
+	_iceCaveRoom_fadeTeamMember(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
+	Script_delaySeconds(2);
+	_iceCaveRoom_fadeTeamMember(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
+	_iceCaveRoom_displayTeamMember("");
+	Script_delaySeconds(1);
+	Room_setIntensity(CREDITS_LOW_INTENSITY, _creditsColor2, _creditsColor2);
+	_iceCaveRoom_displayTeamMember("SEBASTIEN RONSSE");
+	_iceCaveRoom_fadeTeamMember(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
+	Script_delaySeconds(2);
+	_iceCaveRoom_fadeCredits(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
+	Util_redraw();
+	_iceCaveRoom_displayTeamMember("");
+	Script_delaySeconds(1);
+
+	// Programming
+	Room_setIntensity(CREDITS_LOW_INTENSITY, _creditsColor1, _creditsColor1);
+	Room_setIntensity(CREDITS_LOW_INTENSITY, _creditsColor2, _creditsColor2);
+	_iceCaveRoom_displayTeamFunction("programmed by:");
+	_iceCaveRoom_displayTeamMember("SEBASTIEN RONSSE");
+	_iceCaveRoom_fadeCredits(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
+	Script_delaySeconds(2);
+	_iceCaveRoom_fadeTeamMember(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
+	_iceCaveRoom_displayTeamMember("");
+	Script_delaySeconds(1);
+	Room_setIntensity(CREDITS_LOW_INTENSITY, _creditsColor2, _creditsColor2);
+	_iceCaveRoom_displayTeamMember("DOMINIK HASLINGER");
+	_iceCaveRoom_fadeTeamMember(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
+	Script_delaySeconds(2);
+	_iceCaveRoom_fadeCredits(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
+	Util_redraw();
+	_iceCaveRoom_displayTeamMember("");
+	Script_delaySeconds(1);
+	
+	// Background art
+	Room_setIntensity(CREDITS_LOW_INTENSITY, _creditsColor1, _creditsColor1);
+	Room_setIntensity(CREDITS_LOW_INTENSITY, _creditsColor2, _creditsColor2);
+	_iceCaveRoom_displayTeamFunction("background art by:");
+	_iceCaveRoom_displayTeamMember("JENS DOBLIES");
+	_iceCaveRoom_fadeCredits(CREDITS_LOW_INTENSITY, CREDITS_HIGH_INTENSITY, CREDITS_INTENSITY_STEP_UP);
+	Script_delaySeconds(2);
+	_iceCaveRoom_fadeCredits(CREDITS_HIGH_INTENSITY, CREDITS_LOW_INTENSITY, -CREDITS_INTENSITY_STEP_DOWN);
+	Util_redraw();
+	_iceCaveRoom_displayTeamMember("");
+	Script_delaySeconds(1);
+}
+
+function _iceCaveRoom_intro()
+{
+	var previousVarTimerNext;
+
+	// Save and modify VAR_TIMER_NEXT value
+	previousVarTimerNext = VAR_TIMER_NEXT;
+	VAR_TIMER_NEXT = 1;
+
+	// Wait and display Indiana Jones logo
+	try
+	{
+		Script_delaySeconds(1);
+		_iceCaveRoom_displayIJLogo();
+
+		// Wait and display credits
+		Script_delaySeconds(2);
+		_iceCaveRoom_displayCredits();
+	}
+
+	// Redraw screen in case some text is still displayed
+	Util_redraw();
+
+	// Hide logo and title
+	Actor_hide(actorLogo);
+	Object_setState(titleObject, OBJECT_STATE_DISABLED);
+
+	// Restore previous VAR_TIMER_NEXT value
+	VAR_TIMER_NEXT = previousVarTimerNext;
+}
+
 // Room entry function
 function iceCaveRoom_entry()
 {
@@ -363,12 +553,14 @@ function iceCaveRoom_entry()
 		case  ICE_CAVE_HOLE_ENTRANCE:
 			// Setup lights first
 			_iceCaveRoom_setupLights();
+
+			// Display credits first
+			_iceCaveRoom_intro();
 	
 			// Setup object states, classes and owners
 			_iceCaveRoom_setupObjects();
 
 			// Position Indy
-			Actor_setCurrent(VAR_EGO);
 			Actor_putAtXY(VAR_EGO, START_X, START_Y, VAR_ROOM);
 			Actor_setDirection(ACTOR_DIR_SOUTH);
 
@@ -377,7 +569,14 @@ function iceCaveRoom_entry()
 			Actor_pickup(matchesInvObject);
 
 			// Set inventory touch mode and enable inventory and input
-			Inventory_setTouchVerb(1);		
+			Inventory_setTouchVerb(1);
+
+			// Set default charset
+			Interface_setCharset(font2);
+			Actor_printLoadDefault(actorIndy);
+			Actor_printCenter();
+			Actor_printOverhead();
+			Actor_printSaveDefault();	
 
 			// TODO: Fall down and stand up animation *OUCH*
 			Interface_printLineLoadDefault();
