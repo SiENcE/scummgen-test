@@ -1,9 +1,28 @@
-// Global variables
-var iceCaveEntranceOmniLight;
-var iceCaveAmbientLight;
-var iceCaveEntrance;
+// Global constants
+const OMNI_INTENSITY1 = 255;
+const OMNI_INTENSITY2 = 10;
+const OMNI_POS_X = 100;
+const OMNI_POS_Y = 40;
+const OMNI_RANGE = 25;
+const AMBIENT_MIN_INTENSITY = 10;
+const AMBIENT_MEDIUM_INTENSITY = 55;
+const AMBIENT_MAX_INTENSITY = 255;
+const AMBIENT_INTENSITY_STEP = 20;
+const LIGHTNING_MIN_INTENSITY = 0;
+const LIGHTNING_MAX_INTENSITY = 300;
+const LIGHTNING_RANDOM = 200;
 
-var ambientLightIntensity;
+// Global variables
+var iceCaveEntrance;
+var _iceCaveEntranceOmniLight;
+var _iceCaveAmbientLight;
+var _iceCaveLightningLight;
+var _iceCaveDarkArea;
+var _iceCaveRingObjectArea;
+var _iceCaveDaggerObjectArea;
+var _iceCaveindyCostumeArea;
+var _iceCaveAmbientLightIntensity;
+var _iceCaveEntranceOmniLightIntensity;
 
 // Enumerations
 enum { ICE_CAVE_HOLE_ENTRANCE, ICE_CAVE_MECHANISM_ENTRANCE };
@@ -15,7 +34,7 @@ function daggerObject_verb(var objA, var objB)
 	action
 	{
 		case verbLookAt:
-			if (!torchIsLit)
+			if (Object_getOwner(litTorchInvObject1) != VAR_EGO)
 				cutscene (CUTSCENE_TYPE_A)
 				{
 					Actor_animate(actorIndy, indyCostume_pickUpLow);
@@ -60,7 +79,7 @@ function iceObject_verb(var objA, var objB)
 	action
 	{
 		case verbLookAt:
-			if (!torchIsLit)
+			if (Object_getOwner(litTorchInvObject1) != VAR_EGO)
 				cutscene (CUTSCENE_TYPE_A)
 				{
 					Actor_animate(actorIndy, indyCostume_pickUpMedium);
@@ -92,7 +111,7 @@ function ringObject_verb(var objA, var objB)
 			}
 			break;
 		case verbLookAt:
-			if (!torchIsLit)
+			if (Object_getOwner(litTorchInvObject1) != VAR_EGO)
 			{
 				Actor_animate(actorIndy, indyCostume_pickUpLow);
 				Script_delay(DELAY);
@@ -136,7 +155,7 @@ function wallObject_verb(var objA, var objB)
 	action
 	{
 		case verbLookAt:
-			if (!torchIsLit)
+			if (Object_getOwner(litTorchInvObject1) != VAR_EGO)
 					cutscene (CUTSCENE_TYPE_A)
 					{
 						Actor_animate(actorIndy, indyCostume_pickUpMedium);
@@ -176,64 +195,6 @@ function _iceCaveRoom_setupObjects()
 	// Setup dagger
 	Object_setState(daggerObject, OBJECT_STATE_PICKABLE);
 	Object_setOwner(daggerObject, OBJECT_OWNER_ROOM);
-}
-
-thread _iceCaveRoom_changeIntensity()
-{
-	const OMNI_INTENSITY = 255;
-	const OMNI_POS_X = 100;
-	const OMNI_POS_Y = 40;
-	const OMNI_RANGE = 25;
-	const AMBIENT_START_INTENSITY = 10;
-    const AMBIENT_END_INTENSITY = 55;
-	const DELAY = 20;
-
-	// Add omni light
-	iceCaveEntranceOmniLight = Light_new(LIGHT_TYPE_OMNI);
-	Light_setColor(iceCaveEntranceOmniLight, OMNI_INTENSITY, OMNI_INTENSITY, OMNI_INTENSITY);
-	Light_setPos(iceCaveEntranceOmniLight, OMNI_POS_X, OMNI_POS_Y);
-	Light_setRange(iceCaveEntranceOmniLight, OMNI_RANGE);
-
-	// Add ambient light
-	iceCaveAmbientLight = Light_new(LIGHT_TYPE_AMBIENT);
-
-	// Add areas
-	Light_addArea(0, darkArea_start, darkArea_end);
-	Light_addArea(0, ringObjectArea_start, ringObjectArea_end);
-	Light_addArea(0, daggerObjectArea_start, daggerObjectArea_end);
-	Light_addArea(actorIndy, indyCostumeArea_start, indyCostumeArea_end);
-
-	// Gradually brighten the ambient light
-	for (ambientLightIntensity = AMBIENT_START_INTENSITY; ambientLightIntensity < AMBIENT_END_INTENSITY; ambientLightIntensity++)
-	{
-		// Terminate the function if torch is lit already
-		if (torchIsLit)
-			return;
-
-		Light_setColor(iceCaveAmbientLight, ambientLightIntensity, ambientLightIntensity, ambientLightIntensity);
-		Script_delay(DELAY);
-	}
-}
-
-thread _iceCaveRoom_lightningThread()
-{
-	var lightningLight;
-	var random;
-
-	lightningLight = Light_new(LIGHT_TYPE_AMBIENT);
-	Light_setColor(lightningLight, 0, 0, 0);
-
-	while (1)
-	{
-		Light_setColor(lightningLight, 0, 0, 0);
-		if (Util_getRandomNumber(50) == 0)
-		{
-			Light_setColor(lightningLight, 255, 255, 255);
-			Util_printDebug("%V{thunderstrike}");
-			ambientLightIntensity = 10;
-		}
-		Script_break();
-	}
 }
 
 function _iceCaveRoom_entranceDialog()
@@ -307,40 +268,88 @@ function _iceCaveRoom_entranceDialog()
 	Inventory_show();
 }
 
-// Public functions
-function iceCaveRoom_lightRoom()
+inline function _iceCaveRoom_setupLights()
 {
-	const AMBIENT_START_INTENSITY = 55;
-    const AMBIENT_END_INTENSITY = 255;
-	const AMBIENT_INTENSITY_STEP = 20;
+	// Add omni light
+	_iceCaveEntranceOmniLight = Light_new(LIGHT_TYPE_OMNI);
+	Light_setColor(_iceCaveEntranceOmniLight, OMNI_INTENSITY1, OMNI_INTENSITY1, OMNI_INTENSITY1);
+	Light_setPos(_iceCaveEntranceOmniLight, OMNI_POS_X, OMNI_POS_Y);
+	Light_setRange(_iceCaveEntranceOmniLight, OMNI_RANGE);
+
+	// Add ambient light
+	_iceCaveAmbientLight = Light_new(LIGHT_TYPE_AMBIENT);
+	Light_setColor(_iceCaveAmbientLight, AMBIENT_MIN_INTENSITY, AMBIENT_MIN_INTENSITY, AMBIENT_MIN_INTENSITY);
+
+	// Add lightning light
+	_iceCaveLightningLight = Light_new(LIGHT_TYPE_AMBIENT);
+	Light_setColor(_iceCaveLightningLight, LIGHTNING_MIN_INTENSITY, LIGHTNING_MIN_INTENSITY, LIGHTNING_MIN_INTENSITY);
+
+	// Add areas
+	_iceCaveDarkArea = Light_addArea(0, darkArea_start, darkArea_end);
+	_iceCaveRingObjectArea = Light_addArea(0, ringObjectArea_start, ringObjectArea_end);
+	_iceCaveDaggerObjectArea = Light_addArea(0, daggerObjectArea_start, daggerObjectArea_end);
+	_iceCaveindyCostumeArea = Light_addArea(actorIndy, indyCostumeArea_start, indyCostumeArea_end);
+}
+
+thread _iceCaveRoom_lightThread()
+{
 	var i;
+	var torchLit;
+	var ambientLightIntensity;
 
-	// Update torch state
-	torchIsLit = 1;
+	// Initialize torch state
+	torchLit = (Object_getOwner(litTorchInvObject1) == VAR_EGO);
 
-	// Remove ice cave omni light
-	Light_delete(iceCaveEntranceOmniLight);
-
-	// Brighten the ice cave room completely
-	for (i = AMBIENT_START_INTENSITY; i < AMBIENT_END_INTENSITY; i += AMBIENT_INTENSITY_STEP)
+	// Loop and change intensity of the room
+	while (1)
 	{
-		Light_setColor(iceCaveAmbientLight, i, i, i);
+		// Increase the room intensity
+		if (ambientLightIntensity < AMBIENT_MEDIUM_INTENSITY)
+		{
+			Light_setColor(_iceCaveAmbientLight, ambientLightIntensity, ambientLightIntensity, ambientLightIntensity);
+			ambientLightIntensity++;
+		}
+
+		// Thunder strike
+		Light_setColor(_iceCaveLightningLight, LIGHTNING_MIN_INTENSITY, LIGHTNING_MIN_INTENSITY, LIGHTNING_MIN_INTENSITY);
+		if (Util_getRandomNumber(LIGHTNING_RANDOM) == 0)
+		{
+			Light_setColor(_iceCaveLightningLight, LIGHTNING_MAX_INTENSITY, LIGHTNING_MAX_INTENSITY, LIGHTNING_MAX_INTENSITY);
+			Util_printDebug("%V{thunderstrike}");
+			if (!torchLit)
+				ambientLightIntensity = AMBIENT_MIN_INTENSITY;
+		}
+
+		// Check if we just got the torch
+		if (!torchLit && (Object_getOwner(litTorchInvObject1) == VAR_EGO))
+		{
+			// Brighten the ice cave room completely
+			for (i = AMBIENT_MEDIUM_INTENSITY; i < AMBIENT_MAX_INTENSITY; i += AMBIENT_INTENSITY_STEP)
+			{
+				ambientLightIntensity = i;
+				Light_setColor(_iceCaveAmbientLight, ambientLightIntensity, ambientLightIntensity, ambientLightIntensity);
+				Script_break();
+			}
+
+			// Change omni light intensity
+			Light_setColor(_iceCaveEntranceOmniLight, OMNI_INTENSITY2, OMNI_INTENSITY2, OMNI_INTENSITY2);
+
+			// Change room object names
+			asm { pushWord .word daggerObject setObjectName .string "dagger" }
+			asm { pushWord .word ringObject setObjectName .string "ring" }
+
+			// Disable inventory touch mode
+			Inventory_setTouchVerb(0);
+			Inventory_show();
+	
+			Actor_talkEgo("And then there was light...");
+
+			// Set torch state
+			torchLit = 1;
+		}
+
 		Script_break();
 	}
-
-	// Change object names
-	asm { pushWord .word daggerObject setObjectName .string "dagger" }
-	asm { pushWord .word ringObject setObjectName .string "ring" }
-
-	// Disable inventory touch mode
-	Inventory_setTouchVerb(0);
-	Inventory_show();
-
-	// Change unlit torch to lit torch
-	Actor_pickup(litTorchInvObject1);
-	Object_setOwner(unlitTorchInvObject, 0);
-	
-	Actor_talkEgo("And then there was light...");
 }
 
 // Room entry function
@@ -349,22 +358,17 @@ function iceCaveRoom_entry()
 	const START_X = 96;
 	const START_Y = 48;
 
-	// Launch lightning thread
-	_iceCaveRoom_lightningThread();
-	
-	if (!torchIsLit)
+	if (iceCaveEntrance == ICE_CAVE_HOLE_ENTRANCE)
 	{
-		// Change room insensity slowly as soon as we enter the room
-		_iceCaveRoom_changeIntensity();
+		// Setup lights first
+		_iceCaveRoom_setupLights();
 	
 		// Setup object states, classes and owners
 		_iceCaveRoom_setupObjects();
-	
-		// Set Indy as the default actor
-		VAR_EGO = actorIndy;
 
 		// Position Indy
-		Actor_putAtXY(actorIndy, START_X, START_Y, VAR_ROOM);
+		Actor_setCurrent(VAR_EGO);
+		Actor_putAtXY(VAR_EGO, START_X, START_Y, VAR_ROOM);
 		Actor_setDirection(ACTOR_DIR_SOUTH);
 
 		// Give default items to Indy
@@ -378,7 +382,7 @@ function iceCaveRoom_entry()
 		Sentence_show();
 		Inventory_show();
 		Input_enable();
-	
+
 		// TODO: Fall down and stand up animation *OUCH*
 		Interface_printLineLoadDefault();
 		Interface_printLineColor(COLOR_DODGER_BLUE);
@@ -388,5 +392,23 @@ function iceCaveRoom_entry()
 		Script_waitForMessage();
 		Actor_talkEgo("It's ok.");
 		Script_waitForMessage();
+
+		// Launch lightning thread
+		_iceCaveRoom_lightThread();
 	}
+}
+
+// Room exit function
+function iceCaveRoom_exit()
+{
+	// Delete lights
+	Light_delete(_iceCaveEntranceOmniLight);
+	Light_delete(_iceCaveAmbientLight);
+	Light_delete(_iceCaveLightningLight);
+
+	// Remove areas
+	Light_removeArea(_iceCaveDarkArea);
+	Light_removeArea(_iceCaveRingObjectArea);
+	Light_removeArea(_iceCaveDaggerObjectArea);
+	Light_removeArea(_iceCaveindyCostumeArea);
 }

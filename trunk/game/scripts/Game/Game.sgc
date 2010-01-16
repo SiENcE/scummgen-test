@@ -30,13 +30,14 @@ function _Game_setupActors()
 	Actor_setTalkAnim(indyCostume_talk, indyCostume_stand);
 	Actor_setStepDistance(STEP_DIST_X, STEP_DIST_Y);
 	Actor_setAnimSpeed(ANIM_SPEED);
+	Actor_setTalkColor(COLOR_WHITE);
+	VAR_EGO = actorIndy;
 }
 
 function _Game_setupCharsets()
 {
 	// Setup Indy charset
 	Actor_printLoadDefault(actorIndy);
-	Actor_setTalkColor(COLOR_WHITE);
 	Actor_printCenter();
 	Actor_printOverhead();
 	Actor_printSaveDefault();

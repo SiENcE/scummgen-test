@@ -29,9 +29,11 @@ function _iceCaveMechanismRoom_click()
 // Entry function
 function iceCaveMechanismRoom_entry()
 {
-	// Disable inventory first
+	// Disable inventory and sentence first
 	Inventory_hide();
+	Sentence_hide();
 	Inventory_disable();
+	Sentence_disable();
 
 	// Register our click handler
 	Input_registerClickHandler(_iceCaveMechanismRoom_click);
@@ -44,7 +46,4 @@ function iceCaveMechanismRoom_exit()
 {
 	// Unregister our click handler
 	Input_unregisterClickHandler(_iceCaveMechanismRoom_click);
-
-	// Re-enable inventory
-	Inventory_enable();
 }

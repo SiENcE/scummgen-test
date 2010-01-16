@@ -183,6 +183,12 @@ inline function Light_new(var type)
 	return index;
 }
 
+inline function Light_removeArea(var area)
+{
+	Util_nukeArray(_areas[area]);
+	_areas[area] = 0;
+}
+
 inline function Light_setColor(var light, var r, var g, var b)
 {
 	var l;

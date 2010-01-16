@@ -126,7 +126,9 @@ function unlitTorchInvObject_verb(var objA, var objB)
 					Sentence_setPrepo(PREPO_ON);
 					break;
 				case flintstonesInvObject:			
-					iceCaveRoom_lightRoom();			
+					// Change unlit torch to lit torch
+					Actor_pickup(litTorchInvObject1);
+					Object_setOwner(unlitTorchInvObject, 0);
 					break;
 				default:
 					Actor_talkEgo("That doesn't work!");
@@ -253,7 +255,9 @@ function flintstonesInvObject_verb(var objA, var objB)
 					Sentence_setPrepo(PREPO_ON);
 					break;
 				case unlitTorchInvObject:
-					iceCaveRoom_lightRoom();
+					// Change unlit torch to lit torch
+					Actor_pickup(litTorchInvObject1);
+					Object_setOwner(unlitTorchInvObject, 0);
 					break;
 				default:
 					Actor_talkEgo("That doesn't work!");
