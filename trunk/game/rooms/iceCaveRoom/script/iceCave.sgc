@@ -358,44 +358,52 @@ function iceCaveRoom_entry()
 	const START_X = 96;
 	const START_Y = 48;
 
-	if (iceCaveEntrance == ICE_CAVE_HOLE_ENTRANCE)
+	switch (iceCaveEntrance)
 	{
-		// Setup lights first
-		_iceCaveRoom_setupLights();
+		case  ICE_CAVE_HOLE_ENTRANCE:
+			// Setup lights first
+			_iceCaveRoom_setupLights();
 	
-		// Setup object states, classes and owners
-		_iceCaveRoom_setupObjects();
+			// Setup object states, classes and owners
+			_iceCaveRoom_setupObjects();
 
-		// Position Indy
-		Actor_setCurrent(VAR_EGO);
-		Actor_putAtXY(VAR_EGO, START_X, START_Y, VAR_ROOM);
-		Actor_setDirection(ACTOR_DIR_SOUTH);
+			// Position Indy
+			Actor_setCurrent(VAR_EGO);
+			Actor_putAtXY(VAR_EGO, START_X, START_Y, VAR_ROOM);
+			Actor_setDirection(ACTOR_DIR_SOUTH);
 
-		// Give default items to Indy
-		Actor_pickup(whipInvObject);
-		Actor_pickup(matchesInvObject);
+			// Give default items to Indy
+			Actor_pickup(whipInvObject);
+			Actor_pickup(matchesInvObject);
 
-		// Set inventory touch mode and enable inventory and input
-		Inventory_setTouchVerb(1);
-		Sentence_enable();
-		Inventory_enable();
-		Sentence_show();
-		Inventory_show();
-		Input_enable();
+			// Set inventory touch mode and enable inventory and input
+			Inventory_setTouchVerb(1);		
 
-		// TODO: Fall down and stand up animation *OUCH*
-		Interface_printLineLoadDefault();
-		Interface_printLineColor(COLOR_DODGER_BLUE);
-		Interface_printLineAt(20, 3);
-		Interface_printLineLeft();
-		Interface_printLine("Everything alright Indy?");
-		Script_waitForMessage();
-		Actor_talkEgo("It's ok.");
-		Script_waitForMessage();
+			// TODO: Fall down and stand up animation *OUCH*
+			Interface_printLineLoadDefault();
+			Interface_printLineColor(COLOR_DODGER_BLUE);
+			Interface_printLineAt(20, 3);
+			Interface_printLineLeft();
+			Interface_printLine("Everything alright Indy?");
+			Script_waitForMessage();
+			Actor_talkEgo("It's ok.");
+			Script_waitForMessage();
 
-		// Launch lightning thread
-		_iceCaveRoom_lightThread();
+			// Launch lightning thread
+			_iceCaveRoom_lightThread();
+			break;
+
+		case ICE_CAVE_MECHANISM_ENTRANCE:
+			Actor_setDirection(ACTOR_DIR_SOUTH);
+			break;
 	}
+
+	// Enable sentence and inventory
+	Sentence_enable();
+	Inventory_enable();
+	Sentence_show();
+	Inventory_show();
+	Input_enable();
 }
 
 // Room exit function
