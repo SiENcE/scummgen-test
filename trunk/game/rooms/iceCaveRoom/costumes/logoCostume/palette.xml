@@ -1,3 +1,10 @@
 <palette>
 	<transparent>false</transparent>
+	<cycle>
+		<name>logoCycle</name>
+		<start>3</start>
+		<end>26</end>
+		<delay>6</delay>
+		<forward>true</forward>
+	</cycle>
 </palette>

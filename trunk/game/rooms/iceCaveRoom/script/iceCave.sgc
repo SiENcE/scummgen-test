@@ -447,8 +447,8 @@ inline function _iceCaveRoom_displayCredits()
 	const CREDITS_INTENSITY_STEP_DOWN = 50;
 
 	// Set credits color
-	_creditsColor1 = COLOR_SILVER_CHALICE;
-	_creditsColor2 = COLOR_SCREAMIN_GREEN;
+	_creditsColor1 = COLOR_PINK_FLAMINGO;
+	_creditsColor2 = COLOR_AQUAMARINE;
 
 	// Set charset and text speed
 	Interface_setCharset(font3);
