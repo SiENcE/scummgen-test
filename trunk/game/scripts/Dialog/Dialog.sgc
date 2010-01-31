@@ -4,7 +4,10 @@ const VERB_DIALOG_Y = 144;
 const LINE_X = 2;
 const LINE_Y = 152;
 const LINE_STEP = 10;
-const N_DIALOG_LINES = 5;
+const N_TOPIC_LINES = 5;
+
+// Enumerations
+enum { TOPIC_PARAM_CALLBACK, TOPIC_PARAM_LINES, N_TOPIC_PARAMS };
 
 // Dialog verbs
 verb verbDialog;
@@ -23,7 +26,10 @@ var _line5;
 
 // Global variables
 var _dialogEnabled;
-var _selection;
+var _currentDialog;
+var _currentTopicIndex;
+var _tmpTopic;
+var _tmpLines;
 
 // Private functions
 inline function _Dialog_addLineVerb(var vrb, var index)
@@ -40,20 +46,66 @@ inline function _Dialog_addLineVerb(var vrb, var index)
 
 function _Dialog_click()
 {
+	var selection;
+	var currentLine;
+	var i;
+
+	// Check if dialog is enabled
+	if (!_dialogEnabled)
+		return;
+
 	// Check if it's the right area
 	if (inputArea != AREA_VERB)
 		return;
 
-	// Get and display selection
-	if (Util_isAnyOf(inputCmd, [verbLine1, verbLine2, verbLine3, verbLine4, verbLine5], 5))
-		_selection = inputCmd - verbLine1;
+	// Check selected verb
+	if (!Util_isAnyOf(inputCmd, [verbLine1, verbLine2, verbLine3, verbLine4, verbLine5], N_TOPIC_LINES))
+		return;
+
+	// Hide dialog lines
+	_Dialog_hideLineVerbs();
+
+	// Get topic, lines and callback
+	_tmpTopic = _currentDialog[_currentTopicIndex];
+	_tmpLines = _tmpTopic[TOPIC_PARAM_LINES];
+
+	// Set selection
+	selection = -1;
+	currentLine = 0;
+	for (i = 0; i < N_TOPIC_LINES; i++)
+	{
+		// Check if line is valid
+		if (_tmpLines[i] == 0)
+			continue;
+
+		// Check if correct selection has been found
+		if (currentLine == (inputCmd - verbLine1))
+		{
+			selection = i;
+			break;
+		}
+
+		// Increment current line
+		currentLine++;
+	}
+	
+	// Continue only if a line has been selected
+	if (selection == -1)
+		return;
+
+	// Display selected line
+	Actor_talkEgo(_tmpLines[selection]);
+	Script_waitForMessage();
+
+	// Execute callback
+	Script_startQuick(_tmpTopic[TOPIC_PARAM_CALLBACK], [selection], 1);
 }
 
 inline function _Dialog_hideLineVerbs()
 {
 	// Hide verbs
 	var i;
-	for (i = 0; i < N_DIALOG_LINES; i++)
+	for (i = 0; i < N_TOPIC_LINES; i++)
 	{
 		Verb_setCurrent(verbLine1 + i);
 		Verb_activate(0);
@@ -62,66 +114,31 @@ inline function _Dialog_hideLineVerbs()
 }
 
 // Public functions
-inline function Dialog_addLine(var dialog, var string)
+inline function Dialog_addLine(var dialog, var topicIndex, var lineIndex, var string)
 {
-	var index;
-
-	// Look for a free spot
-	for (index = 0; index < N_DIALOG_LINES; index++)
-		if (dialog[index] == 0)
-			break;
-
-	// If we reached the maximum number of lines, we quit
-	if (index == N_DIALOG_LINES)
-	{
-		Util_printDebug("Dialog_add: reached the maximum number of lines !");
-		Util_quit();
-	}
-
-	// Copy string
-	dialog[index] = Util_copyString(string);
+	// Get topic lines
+	_tmpTopic = dialog[topicIndex];
+	_tmpLines = _tmpTopic[TOPIC_PARAM_LINES];
+	
+	// Set line
+	_tmpLines[lineIndex] = Util_copyString(string);
 }
 
-inline function Dialog_delete(var dialog)
+inline function Dialog_addTopic(var dialog, var topicIndex, var callback)
 {
-	var i;
-	for (i = 0; i < N_DIALOG_LINES; i++)
-		if (dialog[i] != 0)
-			Util_nukeArray(dialog[0]);
-	Util_nukeArray(dialog);
-}
-
-inline function Dialog_disable()
-{
-	// Hide dialog
-	Dialog_hide();
-
-	// Re-enable inventory
-	Inventory_enable();
-
-	// Dialog is now disabled
-	_dialogEnabled = 0;
-}
-
-inline function Dialog_enable()
-{	
-	// Dialog is now enabled
-	_dialogEnabled = 1;
-
-	// Disable inventory first
-	Inventory_disable();
-
-	// Show dialog
-	Dialog_show(0);
+	const N_CALLBACK_PARAMS = 3;
+	var topic;
+	
+	// Create topic and link it to the dialog instance
+	topic = Util_dimArray(ARRAY_INT, N_TOPIC_PARAMS);
+	topic[TOPIC_PARAM_CALLBACK] = callback;
+	topic[TOPIC_PARAM_LINES] = Util_dimArray(ARRAY_INT, N_TOPIC_LINES);
+	dialog[topicIndex] = topic;
 }
 
 inline function Dialog_hide()
 {
 	var i;
-
-	// If dialog is disabled, return
-	if (!_dialogEnabled)
-		return;
 
 	// Hide dialog background
 	Verb_setCurrent(verbDialog);
@@ -130,6 +147,15 @@ inline function Dialog_hide()
 
 	// Hide dialog lines
 	_Dialog_hideLineVerbs();
+
+	// Disable dialog
+	_dialogEnabled = 0;
+
+	// Enable and show sentence and inventory
+	Inventory_enable();
+	Sentence_enable();
+	Inventory_show();
+	Sentence_show();
 }
 
 function Dialog_init()
@@ -150,7 +176,7 @@ function Dialog_init()
 	Verb_setPos(VERB_DIALOG_X, VERB_DIALOG_Y);
 
 	// Setup line verbs
-	for (i = 0; i < N_DIALOG_LINES; i++)
+	for (i = 0; i < N_TOPIC_LINES; i++)
 		_Dialog_addLineVerb(verbLine1 + i, i);
 
 	// Dialog is disabled by default
@@ -160,37 +186,43 @@ function Dialog_init()
 	Input_registerClickHandler(_Dialog_click);
 }
 
-inline function Dialog_new()
+inline function Dialog_new(var nTopics)
 {
 	var dialog;
-	var i;
-	dialog = Util_dimArray(ARRAY_INT, N_DIALOG_LINES);
-	for (i = 0; i < N_DIALOG_LINES; i++)
-		dialog[i] = 0;
+	dialog = Util_dimArray(ARRAY_INT, nTopics);
 	return dialog;
 }
 
-inline function Dialog_removeLine(var dialog, var index)
+inline function Dialog_removeLine(var dialog, var topicIndex, var lineIndex)
 {
-	if (index >= N_DIALOG_LINES)
-	{
-		Util_printDebug("Dialog_delete: index is invalid !");
-		Util_quit();
-	}
+	// Get topic lines
+	_tmpTopic = dialog[topicIndex];
+	_tmpLines = _tmpTopic[TOPIC_PARAM_LINES];
 
-	Util_nukeArray(dialog[index]);
-	dialog[index] = 0;
+	// Delete line
+	Util_nukeArray(_tmpLines[lineIndex]);
+	_tmpLines[lineIndex] = 0;
 }
 
-inline function Dialog_show(var dialog)
-{	
-	var i;
-	var currentLine;
-	var s;
+inline function Dialog_setTopic(var dialog, var topicIndex)
+{
+	// Set current dialog and topic
+	_currentDialog = dialog;
+	_currentTopicIndex = topicIndex;
+}
 
-	// If dialog is disabled, return
-	if (!_dialogEnabled)
-		return;
+inline function Dialog_show()
+{
+	var t;
+	var lines;
+	var currentLine;
+	var i;
+
+	// Hide and disable sentence and inventory
+	Inventory_hide();
+	Sentence_hide();
+	Inventory_disable();
+	Sentence_disable();
 
 	// Hide dialog lines first
 	_Dialog_hideLineVerbs();
@@ -199,17 +231,17 @@ inline function Dialog_show(var dialog)
 	Verb_setCurrent(verbDialog);
 	Verb_activate(1);
 	Verb_draw();
-
-	// Return if no dialog has been passed as an argument
-	if (dialog == 0)
-		return;
+	
+	// Get topic lines
+	t = _currentDialog[_currentTopicIndex];
+	lines = t[TOPIC_PARAM_LINES];
 
 	// Draw dialog lines
 	currentLine = 0;
-	for (i = 0; i < N_DIALOG_LINES; i++)
+	for (i = 0; i < N_TOPIC_LINES; i++)
 	{
 		// Check if line is valid
-		if (dialog[i] == 0)
+		if (lines[i] == 0)
 			continue;
 
 		// Set current verb
@@ -219,23 +251,23 @@ inline function Dialog_show(var dialog)
 		switch (currentLine)
 		{
 			case 0:
-				_line1 = dialog[i];
+				_line1 = lines[i];
 				Verb_setNameString("\x05%s{_line1}");
 				break;
 			case 1:
-				_line2 = dialog[i];
+				_line2 = lines[i];
 				Verb_setNameString("\x05%s{_line2}");
 				break;
 			case 2:
-				_line3 = dialog[i];
+				_line3 = lines[i];
 				Verb_setNameString("\x05%s{_line3}");
 				break;
 			case 3:
-				_line4 = dialog[i];
+				_line4 = lines[i];
 				Verb_setNameString("\x05%s{_line4}");
 				break;
 			case 4:
-				_line5 = dialog[i];
+				_line5 = lines[i];
 				Verb_setNameString("\x05%s{_line5}");
 				break;
 		}
@@ -247,43 +279,7 @@ inline function Dialog_show(var dialog)
 		// Update current line
 		currentLine++;
 	}
-}
 
-inline function Dialog_waitForSelection(var dialog)
-{
-	var index;
-	var currentLine;
-
-	// Initialize selection
-	_selection = -1;
-
-	// Wait until a dialog line has been selected
-	while (_selection == -1)
-		Script_break();
-
-	// Clear dialog
-	Dialog_show(0);
-	
-	// Display selected line
-	Actor_talkEgo(_line1 + _selection);
-	Script_waitForMessage();
-
-	// Get selected dialog line
-	currentLine = 0;
-	for (index = 0; index < N_DIALOG_LINES; index++)
-	{
-		// Don't update index if dialog line is not valid
-		if (dialog[index] == 0)
-			continue;
-
-		// We reached our selection
-		if (currentLine == _selection)
-			break;
-
-		// Increment current line
-		currentLine++;
-	}
-
-	// Return dialog index
-	return index;
+	// Enable dialog
+	_dialogEnabled = 1;
 }

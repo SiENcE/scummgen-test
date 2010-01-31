@@ -3,10 +3,11 @@ const STEP_DIST_X = 7;
 const STEP_DIST_Y = 4;
 const ANIM_SPEED = 1;
 const N_ANIMATED_OBJECTS = 1;
+const PICK_UP_DELAY = 30;
 
 // Actors list
 actor actorIndy;
-actor actorTemp; 
+actor actorTemp;
 
 // Torch animation definitions
 const INV_OBJ_TORCH_N_FRAMES = 4;
@@ -19,6 +20,11 @@ const INV_OBJ_TORCH_DELAY4 = 20;
 enum { INV_OBJ_TORCH };
 
 // Private functions
+function _Game_setupRooms()
+{
+	iceCaveRoom_init();
+}
+
 function _Game_setupActors()
 {
 	// Setup Indy
@@ -35,15 +41,6 @@ function _Game_setupActors()
 	VAR_EGO = actorIndy;
 }
 
-function _Game_setupCharsets()
-{
-	// Setup Indy charset
-	Actor_printLoadDefault(actorIndy);
-	Actor_printCenter();
-	Actor_printOverhead();
-	Actor_printSaveDefault();
-}
-
 function _Game_setupInvObjects()
 {
 	var frames;
@@ -53,7 +50,6 @@ function _Game_setupInvObjects()
 	frames = [litTorchInvObject1, litTorchInvObject2, litTorchInvObject3, litTorchInvObject4];
 	delays = [INV_OBJ_TORCH_DELAY1, INV_OBJ_TORCH_DELAY2, INV_OBJ_TORCH_DELAY3, INV_OBJ_TORCH_DELAY4];
 	Inventory_addAnimatedObject(INV_OBJ_TORCH, litTorchInvObject1, INV_OBJ_TORCH_N_FRAMES, frames, delays);
-
 }
 
 // Public functions
@@ -68,8 +64,8 @@ function Game_init()
 	Light_init();
 
 	// Setup default game resources
+	_Game_setupRooms();
 	_Game_setupActors();
-	_Game_setupCharsets();
 	_Game_setupInvObjects();
 
 	// Set actors charset

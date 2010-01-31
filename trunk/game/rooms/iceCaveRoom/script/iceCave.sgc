@@ -27,14 +27,16 @@ var _iceCaveDaggerObjectArea;
 var _iceCaveindyCostumeArea;
 var _iceCaveAmbientLightIntensity;
 var _iceCaveEntranceOmniLightIntensity;
+var _haraldDialog;
 
 // Enumerations
 enum { ICE_CAVE_HOLE_ENTRANCE, ICE_CAVE_MECHANISM_ENTRANCE };
+enum { HARALD_TOPIC_ROOT, HARALD_TOPIC_QUESTIONS, N_HARALD_TOPICS };
+enum { HARALD_LINE_TORCH, HARALD_LINE_LEAVE };
 
 // Object action functions
 function daggerObject_verb(var objA, var objB)
 {
-	const DELAY = 30;
 	action
 	{
 		case verbLookAt:
@@ -42,7 +44,7 @@ function daggerObject_verb(var objA, var objB)
 				cutscene (CUTSCENE_TYPE_A)
 				{
 					Actor_animate(actorIndy, indyCostume_pickUpLow);
-					Script_delay(DELAY);
+					Script_delay(PICK_UP_DELAY);
 					Actor_talkEgo("OUCH!");
 					Script_waitForMessage();
 					Actor_talkEgo("It feels sharp!");
@@ -55,7 +57,7 @@ function daggerObject_verb(var objA, var objB)
 			cutscene (CUTSCENE_TYPE_A)
 			{
 				Actor_animate(actorIndy, indyCostume_pickUpLow);
-				Script_delay(DELAY);
+				Script_delay(PICK_UP_DELAY);
 				Object_setState(objA, OBJECT_STATE_DISABLED);
 				Actor_pickup(daggerInvObject);
 				Actor_animate(actorIndy, indyCostume_stand);
@@ -72,14 +74,20 @@ function entranceObject_verb(var objA, var objB)
 			Actor_talkEgo("That's way too high to climb.");
 			break;
 		case verbTalkTo:
-			_iceCaveRoom_entranceDialog();
+			// Talk to Harald
+			cutscene (CUTSCENE_TYPE_B)
+			{
+				Actor_talkEgo("Harald?");
+				Script_waitForMessage();
+			}
+			Dialog_setTopic(_haraldDialog, HARALD_TOPIC_ROOT);
+			Dialog_show();
 			break;
 	}
 }
 
 function iceObject_verb(var objA, var objB)
 {
-	const DELAY = 30;
 	action
 	{
 		case verbLookAt:
@@ -87,7 +95,7 @@ function iceObject_verb(var objA, var objB)
 				cutscene (CUTSCENE_TYPE_A)
 				{
 					Actor_animate(actorIndy, indyCostume_pickUpMedium);
-					Script_delay(DELAY);
+					Script_delay(PICK_UP_DELAY);
 					Actor_talkEgo("Brrr... it's cold.");
 				}
 			else
@@ -101,14 +109,13 @@ function iceObject_verb(var objA, var objB)
 
 function ringObject_verb(var objA, var objB)
 {
-	const DELAY = 30;
 	action
 	{
 		case verbPickUp:
 			cutscene (CUTSCENE_TYPE_A)
 			{
 				Actor_animate(actorIndy, indyCostume_pickUpLow);
-				Script_delay(DELAY);
+				Script_delay(PICK_UP_DELAY);
 				Object_setState(objA, OBJECT_STATE_DISABLED);
 				Actor_pickup(ringInvObject);
 				Actor_animate(actorIndy, indyCostume_stand);
@@ -118,7 +125,7 @@ function ringObject_verb(var objA, var objB)
 			if (Object_getOwner(litTorchInvObject1) != VAR_EGO)
 			{
 				Actor_animate(actorIndy, indyCostume_pickUpLow);
-				Script_delay(DELAY);
+				Script_delay(PICK_UP_DELAY);
 				Actor_talkEgo("Hmm, that's probably a ring.");
 				asm { pushWordVar .word objA setObjectName .string "ring?" }
 			}
@@ -130,7 +137,6 @@ function ringObject_verb(var objA, var objB)
 
 function skeletonObject_verb(var objA, var objB)
 {
-	const DELAY = 30;
 	action
 	{
 		case verbLookAt:
@@ -145,7 +151,7 @@ function skeletonObject_verb(var objA, var objB)
 					Actor_talkEgo("Hmmm, I guess this bone could come in handy.");
 					Script_waitForMessage();
 					Actor_animate(actorIndy, indyCostume_pickUpLow);
-					Script_delay(DELAY);
+					Script_delay(PICK_UP_DELAY);
 					Actor_pickup(boneInvObject);
 					Actor_animate(actorIndy, indyCostume_stand);
 				}
@@ -155,7 +161,6 @@ function skeletonObject_verb(var objA, var objB)
 
 function wallObject_verb(var objA, var objB)
 {
-	const DELAY = 30;
 	action
 	{
 		case verbLookAt:
@@ -163,7 +168,7 @@ function wallObject_verb(var objA, var objB)
 					cutscene (CUTSCENE_TYPE_A)
 					{
 						Actor_animate(actorIndy, indyCostume_pickUpMedium);
-						Script_delay(DELAY);
+						Script_delay(PICK_UP_DELAY);
 						Actor_talkEgo("It feels loose somehow.");
 					}
 			else
@@ -173,272 +178,6 @@ function wallObject_verb(var objA, var objB)
 }
 
 // Private functions
-function _iceCaveRoom_setupObjects()
-{
-	// Setup entrance
-	Object_setClass(entranceObject, classPerson, 1);
-	Object_setState(entranceObject, OBJECT_STATE_PICKABLE);
-	Object_setOwner(entranceObject, OBJECT_OWNER_ROOM);
-
-	// Setup wall
-	Object_setState(wallObject, OBJECT_STATE_PICKABLE);
-	Object_setOwner(wallObject, OBJECT_OWNER_ROOM);
-
-	// Setup ring
-	Object_setState(ringObject, OBJECT_STATE_PICKABLE);
-	Object_setOwner(ringObject, OBJECT_OWNER_ROOM);
-
-	// Setup icy wall
-	Object_setState(iceObject, OBJECT_STATE_PICKABLE);
-	Object_setOwner(iceObject, OBJECT_OWNER_ROOM);
-	
-	// Setup skeleton
-	Object_setState(skeletonObject, OBJECT_STATE_PICKABLE);
-	Object_setOwner(skeletonObject, OBJECT_OWNER_ROOM);
-	
-	// Setup dagger
-	Object_setState(daggerObject, OBJECT_STATE_PICKABLE);
-	Object_setOwner(daggerObject, OBJECT_OWNER_ROOM);
-}
-
-function _iceCaveRoom_entranceDialog()
-{
-	const LINE_TORCH = 0;
-	const LINE_LEAVE = 1;
-
-	var dialog;
-	var selection;
-
-	// Setup dialogs first
-	dialog = Dialog_new();
-	Dialog_addLine(dialog, "Send me the torch!"); // LINE_TORCH
-	Dialog_addLine(dialog, "I'll talk to you later."); // LINE_LEAVE
-
-	// Remove torch line if necessary
-	if (Object_getOwner(unlitTorchInvObject) == VAR_EGO)
-		Dialog_removeLine(dialog, LINE_TORCH);
-
-	// Talk to Harald
-	cutscene (CUTSCENE_TYPE_B)
-	{
-		Actor_talkEgo("Harald?");
-		Script_waitForMessage();
-	}
-
-	// Disable inventory and sentence
-	Inventory_hide();
-	Sentence_hide();
-	Inventory_disable();
-	Sentence_disable();
-	Script_break();
-
-	// Enable dialog area
-	Dialog_enable();
-
-	do
-	{
-		// Show our dialog lines
-		Dialog_show(dialog);
-
-		// Wait for a line selection
-		selection = Dialog_waitForSelection(dialog);
-		switch (selection)
-		{
-			case LINE_TORCH:
-				// Get torch
-				Script_delaySeconds(1);
-				Actor_pickup(unlitTorchInvObject);
-				Actor_talkEgo("Thanks!");
-				Script_waitForMessage();
-				Dialog_removeLine(dialog, LINE_TORCH);
-				break;
-			case LINE_LEAVE:
-				Actor_setDirection(ACTOR_DIR_SOUTH);
-				break;
-		}
-	}
-	while (selection != LINE_LEAVE);
-
-	// Delete dialog lines
-	Dialog_delete(dialog);
-
-	// Disable dialog area
-	Dialog_disable();
-
-	// Re-enable sentence and inventory
-	Sentence_enable();
-	Inventory_enable();
-	Sentence_show();
-	Inventory_show();
-}
-
-inline function _iceCaveRoom_setupLights()
-{
-	// Add omni light
-	_iceCaveEntranceOmniLight = Light_new(LIGHT_TYPE_OMNI);
-	Light_setColor(_iceCaveEntranceOmniLight, OMNI_INTENSITY1, OMNI_INTENSITY1, OMNI_INTENSITY1);
-	Light_setPos(_iceCaveEntranceOmniLight, OMNI_POS_X, OMNI_POS_Y);
-	Light_setRange(_iceCaveEntranceOmniLight, OMNI_RANGE);
-
-	// Add ambient light
-	_iceCaveAmbientLight = Light_new(LIGHT_TYPE_AMBIENT);
-	Light_setColor(_iceCaveAmbientLight, AMBIENT_MIN_INTENSITY, AMBIENT_MIN_INTENSITY, AMBIENT_MIN_INTENSITY);
-
-	// Add lightning light
-	_iceCaveLightningLight = Light_new(LIGHT_TYPE_AMBIENT);
-	Light_setColor(_iceCaveLightningLight, LIGHTNING_MIN_INTENSITY, LIGHTNING_MIN_INTENSITY, LIGHTNING_MIN_INTENSITY);
-
-	// Add areas
-	_iceCaveDarkArea = Light_addArea(0, darkArea_start, darkArea_end);
-	_iceCaveRingObjectArea = Light_addArea(0, ringObjectArea_start, ringObjectArea_end);
-	_iceCaveDaggerObjectArea = Light_addArea(0, daggerObjectArea_start, daggerObjectArea_end);
-	_iceCaveindyCostumeArea = Light_addArea(actorIndy, indyCostumeArea_start, indyCostumeArea_end);
-}
-
-thread _iceCaveRoom_lightThread()
-{
-	var i;
-	var torchLit;
-	var ambientLightIntensity;
-
-	// Initialize torch state
-	torchLit = (Object_getOwner(litTorchInvObject1) == VAR_EGO);
-
-	// Loop and change intensity of the room
-	while (1)
-	{
-		// Increase the room intensity
-		if (ambientLightIntensity < AMBIENT_MEDIUM_INTENSITY)
-		{
-			Light_setColor(_iceCaveAmbientLight, ambientLightIntensity, ambientLightIntensity, ambientLightIntensity);
-			ambientLightIntensity++;
-		}
-
-		// Thunder strike
-		Light_setColor(_iceCaveLightningLight, LIGHTNING_MIN_INTENSITY, LIGHTNING_MIN_INTENSITY, LIGHTNING_MIN_INTENSITY);
-		if (Util_getRandomNumber(LIGHTNING_RANDOM) == 0)
-		{
-			Light_setColor(_iceCaveLightningLight, LIGHTNING_MAX_INTENSITY, LIGHTNING_MAX_INTENSITY, LIGHTNING_MAX_INTENSITY);
-			Util_printDebug("%V{thunderstrike}");
-			if (!torchLit)
-				ambientLightIntensity = AMBIENT_MIN_INTENSITY;
-		}
-
-		// Check if we just got the torch
-		if (!torchLit && (Object_getOwner(litTorchInvObject1) == VAR_EGO))
-		{
-			// Brighten the ice cave room completely
-			for (i = AMBIENT_MEDIUM_INTENSITY; i < AMBIENT_MAX_INTENSITY; i += AMBIENT_INTENSITY_STEP)
-			{
-				ambientLightIntensity = i;
-				Light_setColor(_iceCaveAmbientLight, ambientLightIntensity, ambientLightIntensity, ambientLightIntensity);
-				Script_break();
-			}
-
-			// Change omni light intensity
-			Light_setColor(_iceCaveEntranceOmniLight, OMNI_INTENSITY2, OMNI_INTENSITY2, OMNI_INTENSITY2);
-
-			// Change room object names
-			asm { pushWord .word daggerObject setObjectName .string "dagger" }
-			asm { pushWord .word ringObject setObjectName .string "ring" }
-
-			// Disable inventory touch mode
-			Inventory_setTouchVerb(0);
-			Inventory_show();
-	
-			Actor_talkEgo("And then there was light...");
-
-			// Set torch state
-			torchLit = 1;
-		}
-
-		Script_break();
-	}
-}
-
-inline function _iceCaveRoom_displayIJLogo()
-{
-	const SCALE_FACTOR = 20;
-	const LOGO_X = 161;
-	const LOGO_Y = 57;
-
-	var i;
-	var scale;
-
-	// Create and setup logo actor
-	actorLogo = actorTemp;
-	Actor_setCurrent(actorLogo);
-	Actor_setCostume(logoCostume);
-	Actor_setInitAnim(logoCostume_logoAnim);
-	Actor_ignoreBoxes(1);
-	Actor_putAtXY(actorLogo, LOGO_X, LOGO_Y, VAR_ROOM);
-
-	// Scale Indiana Jones logo gradually
-	scale = 0;
-	i = 0;
-	while (scale < 255)
-	{
-		Actor_setScale(scale);
-		scale += 1 + SCALE_FACTOR * i / 256;
-		Script_break();
-		i++;
-	}
-	Actor_setScale(255);
-
-	// Wait, and then display game title
-	Script_delaySeconds(1);
-	Object_draw(titleObject, 1);
-}
-
-inline function _iceCaveRoom_displayTeamFunction(var string)
-{
-	const TEAM_FUNCTION_X = 160;
-	const TEAM_FUNCTION_Y = 117;
-	Interface_printTextLoadDefault();
-	Interface_printTextColor(_creditsColor1);
-	Interface_printTextAt(TEAM_FUNCTION_X, TEAM_FUNCTION_Y);
-	Interface_printTextCenter();
-	Interface_printTextSaveDefault();
-	Interface_printText("%s{string}");
-}
-
-inline function _iceCaveRoom_displayTeamMember(var string)
-{
-	const TEAM_MEMBER_X = 160;
-	const TEAM_MEMBER_Y = 132;
-	Interface_printLineLoadDefault();
-	Interface_printLineColor(_creditsColor2);
-	Interface_printLineAt(TEAM_MEMBER_X, TEAM_MEMBER_Y);
-	Interface_printLineCenter();
-	Interface_printLineSaveDefault();
-	// We add spaces to force the credits to be printed longer
-	Interface_printLine("           %s{string}           ");
-}
-
-inline function _iceCaveRoom_fadeTeamMember(var start, var end, var step)
-{
-	var i;
-	for (i = start; i != end; i += step)
-	{
-		Room_setIntensity(i, _creditsColor2, _creditsColor2);
-		Script_delay(CREDITS_FADE_DELAY);
-	}
-	Room_setIntensity(end, _creditsColor2, _creditsColor2);
-}
-
-inline function _iceCaveRoom_fadeCredits(var start, var end, var step)
-{
-	var i;
-	for (i = start; i != end; i += step)
-	{
-		Room_setIntensity(i, _creditsColor1, _creditsColor1);
-		Room_setIntensity(i, _creditsColor2, _creditsColor2);
-		Script_delay(CREDITS_FADE_DELAY);
-	}
-	Room_setIntensity(end, _creditsColor1, _creditsColor1);
-	Room_setIntensity(end, _creditsColor2, _creditsColor2);
-}
-
 inline function _iceCaveRoom_displayCredits()
 {
 	const CREDITS_LOW_INTENSITY = 55;
@@ -512,6 +251,109 @@ inline function _iceCaveRoom_displayCredits()
 	Script_delaySeconds(1);
 }
 
+inline function _iceCaveRoom_displayIJLogo()
+{
+	const SCALE_FACTOR = 20;
+	const LOGO_X = 161;
+	const LOGO_Y = 57;
+
+	var i;
+	var scale;
+
+	// Create and setup logo actor
+	actorLogo = actorTemp;
+	Actor_setCurrent(actorLogo);
+	Actor_setCostume(logoCostume);
+	Actor_setInitAnim(logoCostume_logoAnim);
+	Actor_ignoreBoxes(1);
+	Actor_putAtXY(actorLogo, LOGO_X, LOGO_Y, VAR_ROOM);
+
+	// Scale Indiana Jones logo gradually
+	scale = 0;
+	i = 0;
+	while (scale < 255)
+	{
+		Actor_setScale(scale);
+		scale += 1 + SCALE_FACTOR * i / 256;
+		Script_break();
+		i++;
+	}
+	Actor_setScale(255);
+
+	// Wait, and then display game title
+	Script_delaySeconds(1);
+	Object_draw(titleObject, 1);
+}
+
+inline function _iceCaveRoom_displayTeamFunction(var string)
+{
+	const TEAM_FUNCTION_X = 160;
+	const TEAM_FUNCTION_Y = 117;
+	Interface_printTextLoadDefault();
+	Interface_printTextColor(_creditsColor1);
+	Interface_printTextAt(TEAM_FUNCTION_X, TEAM_FUNCTION_Y);
+	Interface_printTextCenter();
+	Interface_printTextSaveDefault();
+	Interface_printText("%s{string}");
+}
+
+inline function _iceCaveRoom_displayTeamMember(var string)
+{
+	const TEAM_MEMBER_X = 160;
+	const TEAM_MEMBER_Y = 132;
+	Interface_printLineLoadDefault();
+	Interface_printLineColor(_creditsColor2);
+	Interface_printLineAt(TEAM_MEMBER_X, TEAM_MEMBER_Y);
+	Interface_printLineCenter();
+	Interface_printLineSaveDefault();
+	// We add spaces to force the credits to be printed longer
+	Interface_printLine("           %s{string}           ");
+}
+
+inline function _iceCaveRoom_fadeCredits(var start, var end, var step)
+{
+	var i;
+	for (i = start; i != end; i += step)
+	{
+		Room_setIntensity(i, _creditsColor1, _creditsColor1);
+		Room_setIntensity(i, _creditsColor2, _creditsColor2);
+		Script_delay(CREDITS_FADE_DELAY);
+	}
+	Room_setIntensity(end, _creditsColor1, _creditsColor1);
+	Room_setIntensity(end, _creditsColor2, _creditsColor2);
+}
+
+inline function _iceCaveRoom_fadeTeamMember(var start, var end, var step)
+{
+	var i;
+	for (i = start; i != end; i += step)
+	{
+		Room_setIntensity(i, _creditsColor2, _creditsColor2);
+		Script_delay(CREDITS_FADE_DELAY);
+	}
+	Room_setIntensity(end, _creditsColor2, _creditsColor2);
+}
+
+function _iceCaveRoom_haraldTopicRoot(var line)
+{
+	switch (line)
+	{
+		case HARALD_LINE_TORCH:
+			// Get torch
+			Script_delaySeconds(1);
+			Actor_pickup(unlitTorchInvObject);
+			Actor_talkEgo("Thanks!");
+			Script_waitForMessage();
+			Dialog_removeLine(_haraldDialog, HARALD_TOPIC_ROOT, HARALD_LINE_TORCH);
+			Dialog_show();
+			break;
+		case HARALD_LINE_LEAVE:
+			Dialog_hide();
+			Actor_setDirection(ACTOR_DIR_SOUTH);
+			break;
+	}
+}
+
 function _iceCaveRoom_intro()
 {
 	var previousVarTimerNext;
@@ -542,6 +384,125 @@ function _iceCaveRoom_intro()
 	VAR_TIMER_NEXT = previousVarTimerNext;
 }
 
+thread _iceCaveRoom_lightThread()
+{
+	var i;
+	var torchLit;
+	var ambientLightIntensity;
+
+	// Initialize torch state
+	torchLit = (Object_getOwner(litTorchInvObject1) == VAR_EGO);
+
+	// Loop and change intensity of the room
+	while (1)
+	{
+		// Increase the room intensity
+		if (ambientLightIntensity < AMBIENT_MEDIUM_INTENSITY)
+		{
+			Light_setColor(_iceCaveAmbientLight, ambientLightIntensity, ambientLightIntensity, ambientLightIntensity);
+			ambientLightIntensity++;
+		}
+
+		// Thunder strike
+		Light_setColor(_iceCaveLightningLight, LIGHTNING_MIN_INTENSITY, LIGHTNING_MIN_INTENSITY, LIGHTNING_MIN_INTENSITY);
+		if (Util_getRandomNumber(LIGHTNING_RANDOM) == 0)
+		{
+			Light_setColor(_iceCaveLightningLight, LIGHTNING_MAX_INTENSITY, LIGHTNING_MAX_INTENSITY, LIGHTNING_MAX_INTENSITY);
+			Util_printDebug("%V{thunderstrike}");
+			if (!torchLit)
+				ambientLightIntensity = AMBIENT_MIN_INTENSITY;
+		}
+
+		// Check if we just got the torch
+		if (!torchLit && (Object_getOwner(litTorchInvObject1) == VAR_EGO))
+		{
+			// Brighten the ice cave room completely
+			for (i = AMBIENT_MEDIUM_INTENSITY; i < AMBIENT_MAX_INTENSITY; i += AMBIENT_INTENSITY_STEP)
+			{
+				ambientLightIntensity = i;
+				Light_setColor(_iceCaveAmbientLight, ambientLightIntensity, ambientLightIntensity, ambientLightIntensity);
+				Script_break();
+			}
+
+			// Change omni light intensity
+			Light_setColor(_iceCaveEntranceOmniLight, OMNI_INTENSITY2, OMNI_INTENSITY2, OMNI_INTENSITY2);
+
+			// Change room object names
+			asm { pushWord .word daggerObject setObjectName .string "dagger" }
+			asm { pushWord .word ringObject setObjectName .string "ring" }
+
+			// Disable inventory touch mode
+			Inventory_setTouchVerb(0);
+			Inventory_show();
+	
+			Actor_talkEgo("And then there was light...");
+
+			// Set torch state
+			torchLit = 1;
+		}
+
+		Script_break();
+	}
+}
+
+inline function _iceCaveRoom_setupLights()
+{
+	// Add omni light
+	_iceCaveEntranceOmniLight = Light_new(LIGHT_TYPE_OMNI);
+	Light_setColor(_iceCaveEntranceOmniLight, OMNI_INTENSITY1, OMNI_INTENSITY1, OMNI_INTENSITY1);
+	Light_setPos(_iceCaveEntranceOmniLight, OMNI_POS_X, OMNI_POS_Y);
+	Light_setRange(_iceCaveEntranceOmniLight, OMNI_RANGE);
+
+	// Add ambient light
+	_iceCaveAmbientLight = Light_new(LIGHT_TYPE_AMBIENT);
+	Light_setColor(_iceCaveAmbientLight, AMBIENT_MIN_INTENSITY, AMBIENT_MIN_INTENSITY, AMBIENT_MIN_INTENSITY);
+
+	// Add lightning light
+	_iceCaveLightningLight = Light_new(LIGHT_TYPE_AMBIENT);
+	Light_setColor(_iceCaveLightningLight, LIGHTNING_MIN_INTENSITY, LIGHTNING_MIN_INTENSITY, LIGHTNING_MIN_INTENSITY);
+
+	// Add areas
+	_iceCaveDarkArea = Light_addArea(0, darkArea_start, darkArea_end);
+	_iceCaveRingObjectArea = Light_addArea(0, ringObjectArea_start, ringObjectArea_end);
+	_iceCaveDaggerObjectArea = Light_addArea(0, daggerObjectArea_start, daggerObjectArea_end);
+	_iceCaveindyCostumeArea = Light_addArea(actorIndy, indyCostumeArea_start, indyCostumeArea_end);
+}
+
+// Public functions
+inline function iceCaveRoom_init()
+{
+	// Setup entrance
+	Object_setClass(entranceObject, classPerson, 1);
+	Object_setState(entranceObject, OBJECT_STATE_PICKABLE);
+	Object_setOwner(entranceObject, OBJECT_OWNER_ROOM);
+
+	// Setup wall
+	Object_setState(wallObject, OBJECT_STATE_PICKABLE);
+	Object_setOwner(wallObject, OBJECT_OWNER_ROOM);
+
+	// Setup ring
+	Object_setState(ringObject, OBJECT_STATE_PICKABLE);
+	Object_setOwner(ringObject, OBJECT_OWNER_ROOM);
+
+	// Setup icy wall
+	Object_setState(iceObject, OBJECT_STATE_PICKABLE);
+	Object_setOwner(iceObject, OBJECT_OWNER_ROOM);
+	
+	// Setup skeleton
+	Object_setState(skeletonObject, OBJECT_STATE_PICKABLE);
+	Object_setOwner(skeletonObject, OBJECT_OWNER_ROOM);
+	
+	// Setup dagger
+	Object_setState(daggerObject, OBJECT_STATE_PICKABLE);
+	Object_setOwner(daggerObject, OBJECT_OWNER_ROOM);
+
+	// Create dialog
+	_haraldDialog = Dialog_new(N_HARALD_TOPICS);
+	Dialog_addTopic(_haraldDialog, HARALD_TOPIC_ROOT, _iceCaveRoom_haraldTopicRoot);
+	Dialog_addLine(_haraldDialog, HARALD_TOPIC_ROOT, HARALD_LINE_TORCH, "Send me the torch!");
+	Dialog_addLine(_haraldDialog, HARALD_TOPIC_ROOT, HARALD_LINE_LEAVE, "I'll talk to you later.");
+}
+
 // Room entry function
 function iceCaveRoom_entry()
 {
@@ -556,9 +517,6 @@ function iceCaveRoom_entry()
 
 			// Display credits first
 			_iceCaveRoom_intro();
-	
-			// Setup object states, classes and owners
-			_iceCaveRoom_setupObjects();
 
 			// Position Indy
 			Actor_putAtXY(VAR_EGO, START_X, START_Y, VAR_ROOM);
