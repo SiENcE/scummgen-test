@@ -575,7 +575,11 @@ function iceCaveRoom_entry()
 			Inventory_setTouchVerb(1);
 
 			// Set default charset
-			Interface_setCharset(font2);	
+			Interface_setCharset(font2);
+			Actor_printLoadDefault(actorIndy);
+			Actor_printCenter();
+			Actor_printOverhead();
+			Actor_printSaveDefault();
 
 			// TODO: Fall down and stand up animation *OUCH*
 			Interface_printLineLoadDefault();
