@@ -1,4 +1,39 @@
+// Constants
+const DAGGER_X = 145;
+const DAGGER_Y = 55;
+const DAGGER_WIDTH = 25;
+const DAGGER_HEIGHT = 60;
+const RING_X = 145;
+const RING_Y = 125;
+const RING_WIDTH = 25;
+const RING_HEIGHT = 25;
+
+// Enumerations
+enum { RING_STATE_DISABLED, RING_STATE_ENABLED };
+enum { DAGGER_STATE_DISABLED, DAGGER_STATE_UP, DAGGER_STATE_MIDDLE, DAGGER_STATE_DOWN };
+
+// Global variables
+var iceCaveMechanism_daggerState;
+var iceCaveMechanism_ringState;
+
 // Private functions
+function _iceCaveMechanismRoom_click()
+{
+	// Leave and reload the ice cave room
+	Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_1);
+	iceCaveEntrance = ICE_CAVE_MECHANISM_ENTRANCE;
+	Room_load(iceCaveRoom);
+}
+
+inline function _iceCaveMechanismRoom_mouseInBox(var x, var y, var width, var height)
+{
+	// Check if mouse is within box bounds
+	if ((VAR_MOUSE_X >= x) && (VAR_MOUSE_Y >= y) && (VAR_MOUSE_X < x + width) && (VAR_MOUSE_Y < y + height))
+		return 1;
+	
+	return 0;
+}
+
 thread iceCaveMechanismRoom_thread()
 {
 	// Setup print line charset
@@ -13,17 +48,27 @@ thread iceCaveMechanismRoom_thread()
 	while (1)
 	{
 		Interface_printLineAt(VAR_MOUSE_X, VAR_MOUSE_Y);
-     	Interface_printLine("cool isn't it?");
+     		
+		// Check if mouse is withing dagger or ring
+		if (_iceCaveMechanismRoom_mouseInBox(DAGGER_X, DAGGER_Y, DAGGER_WIDTH, DAGGER_HEIGHT / 2))
+			Interface_printLine("move up");
+		else if (_iceCaveMechanismRoom_mouseInBox(DAGGER_X, DAGGER_Y + DAGGER_HEIGHT / 2, DAGGER_WIDTH, DAGGER_HEIGHT / 2))
+			Interface_printLine("move down");
+		else if (_iceCaveMechanismRoom_mouseInBox(RING_X, RING_Y, RING_WIDTH, RING_HEIGHT))
+			Interface_printLine("push");
+		else
+			Interface_printLine("");
+
 		Script_break();
 	}
 }
 
-function _iceCaveMechanismRoom_click()
+// Public functions
+inline function iceCaveMechanismRoom_init()
 {
-	// Leave and reload the ice cave room
-	Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_1);
-	iceCaveEntrance = ICE_CAVE_MECHANISM_ENTRANCE;
-	Room_load(iceCaveRoom);
+	// Ring and dagger are disabled by default
+	iceCaveMechanism_ringState = RING_STATE_DISABLED;
+	iceCaveMechanism_daggerState = DAGGER_STATE_DISABLED;
 }
 
 // Entry function
@@ -34,6 +79,9 @@ function iceCaveMechanismRoom_entry()
 	Sentence_hide();
 	Inventory_disable();
 	Sentence_disable();
+
+	// TEMP
+	Input_enable();
 
 	// Register our click handler
 	Input_registerClickHandler(_iceCaveMechanismRoom_click);

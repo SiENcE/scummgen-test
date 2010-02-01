@@ -22,6 +22,7 @@ enum { INV_OBJ_TORCH };
 // Private functions
 function _Game_setupRooms()
 {
+	iceCaveMechanismRoom_init();
 	iceCaveRoom_init();
 }
 
@@ -38,6 +39,10 @@ function _Game_setupActors()
 	Actor_setStepDistance(STEP_DIST_X, STEP_DIST_Y);
 	Actor_setAnimSpeed(ANIM_SPEED);
 	Actor_setTalkColor(COLOR_WHITE);
+	Actor_printLoadDefault(actorIndy);
+	Actor_printCenter();
+	Actor_printOverhead();
+	Actor_printSaveDefault();
 	VAR_EGO = actorIndy;
 }
 
@@ -67,9 +72,6 @@ function Game_init()
 	_Game_setupRooms();
 	_Game_setupActors();
 	_Game_setupInvObjects();
-
-	// Set actors charset
-	Interface_setCharset(font2);
 }
 
 function Game_roomPreEntry()

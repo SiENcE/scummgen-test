@@ -4,18 +4,19 @@ const VERB_DIALOG_Y = 144;
 const LINE_X = 2;
 const LINE_Y = 152;
 const LINE_STEP = 10;
+const LINE_BORDER_Y = 150;
 const N_TOPIC_LINES = 5;
 
 // Enumerations
 enum { TOPIC_PARAM_CALLBACK, TOPIC_PARAM_LINES, N_TOPIC_PARAMS };
 
 // Dialog verbs
-verb verbDialog;
-verb verbLine1;
-verb verbLine2;
-verb verbLine3;
-verb verbLine4;
-verb verbLine5;
+verb _verbDialog;
+verb _verbLine1;
+verb _verbLine2;
+verb _verbLine3;
+verb _verbLine4;
+verb _verbLine5;
 
 // Line strings
 var _line1;
@@ -28,6 +29,7 @@ var _line5;
 var _dialogEnabled;
 var _currentDialog;
 var _currentTopicIndex;
+var _lineUnderMouse;
 var _tmpTopic;
 var _tmpLines;
 
@@ -54,16 +56,9 @@ function _Dialog_click()
 	if (!_dialogEnabled)
 		return;
 
-	// Check if it's the right area
-	if (inputArea != AREA_VERB)
-		return;
-
 	// Check selected verb
-	if (!Util_isAnyOf(inputCmd, [verbLine1, verbLine2, verbLine3, verbLine4, verbLine5], N_TOPIC_LINES))
+	if (_lineUnderMouse == -1)
 		return;
-
-	// Hide dialog lines
-	_Dialog_hideLineVerbs();
 
 	// Get topic, lines and callback
 	_tmpTopic = _currentDialog[_currentTopicIndex];
@@ -79,7 +74,7 @@ function _Dialog_click()
 			continue;
 
 		// Check if correct selection has been found
-		if (currentLine == (inputCmd - verbLine1))
+		if (currentLine == _lineUnderMouse)
 		{
 			selection = i;
 			break;
@@ -93,12 +88,27 @@ function _Dialog_click()
 	if (selection == -1)
 		return;
 
+	// Disable input
+	Input_disable();
+
+	// Hide dialog lines
+	_Dialog_hideLineVerbs();
+
 	// Display selected line
 	Actor_talkEgo(_tmpLines[selection]);
 	Script_waitForMessage();
 
 	// Execute callback
 	Script_startQuick(_tmpTopic[TOPIC_PARAM_CALLBACK], [selection], 1);
+	while (Script_isRunning(_tmpTopic[TOPIC_PARAM_CALLBACK]))
+		Script_break();
+
+	// Redraw dialog if it hasn't been disabled
+	if (_dialogEnabled)
+		Dialog_show();
+
+	// Re-enable input
+	Input_enable();
 }
 
 inline function _Dialog_hideLineVerbs()
@@ -107,9 +117,51 @@ inline function _Dialog_hideLineVerbs()
 	var i;
 	for (i = 0; i < N_TOPIC_LINES; i++)
 	{
-		Verb_setCurrent(verbLine1 + i);
+		Verb_setCurrent(_verbLine1 + i);
 		Verb_activate(0);
 		Verb_draw();
+	}
+}
+
+thread _Dialog_thread()
+{
+	var lineUnderMouse;
+
+	while (1)
+	{
+		// Check if dialog is enabled first
+		if (_dialogEnabled)
+		{
+			// Compute line under mouse
+			lineUnderMouse = -1;
+			if (VAR_MOUSE_Y >= LINE_BORDER_Y)
+				lineUnderMouse = (VAR_MOUSE_Y - LINE_BORDER_Y) / LINE_STEP;
+
+			// Update line under mouse
+			if (_lineUnderMouse != lineUnderMouse)
+			{
+				// Restore original verb color
+				if (_lineUnderMouse != -1)
+				{
+					Verb_setCurrent(_verbLine1 + _lineUnderMouse);
+					Verb_setColor(areaNormal_start);
+					Verb_draw();
+				}
+
+				// Update global variable
+				_lineUnderMouse = lineUnderMouse;
+
+				// Change verb color if needed
+				if (_lineUnderMouse != -1)
+				{
+					Verb_setCurrent(_verbLine1 + _lineUnderMouse);
+					Verb_setColor(areaHi_start);
+					Verb_draw();
+				}
+			}
+		}
+
+		Script_break();
 	}
 }
 
@@ -141,7 +193,7 @@ inline function Dialog_hide()
 	var i;
 
 	// Hide dialog background
-	Verb_setCurrent(verbDialog);
+	Verb_setCurrent(_verbDialog);
 	Verb_activate(0);
 	Verb_draw();
 
@@ -170,20 +222,26 @@ function Dialog_init()
 	Interface_printTextSaveDefault();
 
 	// Create dialog background
-	Verb_setCurrent(verbDialog);
+	Verb_setCurrent(_verbDialog);
 	Verb_new();
 	Verb_setImage(dialogObject);
 	Verb_setPos(VERB_DIALOG_X, VERB_DIALOG_Y);
 
 	// Setup line verbs
 	for (i = 0; i < N_TOPIC_LINES; i++)
-		_Dialog_addLineVerb(verbLine1 + i, i);
+		_Dialog_addLineVerb(_verbLine1 + i, i);
 
 	// Dialog is disabled by default
 	_dialogEnabled = 0;
 
+	// Initialize line under mouse
+	_lineUnderMouse = -1;
+
 	// Register our click handler
 	Input_registerClickHandler(_Dialog_click);
+
+	// Launch thread
+	_Dialog_thread();
 }
 
 inline function Dialog_new(var nTopics)
@@ -228,7 +286,7 @@ inline function Dialog_show()
 	_Dialog_hideLineVerbs();
 
 	// Draw dialog background
-	Verb_setCurrent(verbDialog);
+	Verb_setCurrent(_verbDialog);
 	Verb_activate(1);
 	Verb_draw();
 	
@@ -245,7 +303,7 @@ inline function Dialog_show()
 			continue;
 
 		// Set current verb
-		Verb_setCurrent(verbLine1 + currentLine);
+		Verb_setCurrent(_verbLine1 + currentLine);
 
 		// Update line string
 		switch (currentLine)

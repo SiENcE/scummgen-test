@@ -5,7 +5,7 @@ const OMNI_INTENSITY2 = 10;
 const OMNI_POS_X = 100;
 const OMNI_POS_Y = 40;
 const OMNI_RANGE = 25;
-const AMBIENT_MIN_INTENSITY = 35;
+const AMBIENT_MIN_INTENSITY = 20;
 const AMBIENT_MEDIUM_INTENSITY = 55;
 const AMBIENT_MAX_INTENSITY = 255;
 const AMBIENT_INTENSITY_STEP = 30;
@@ -31,8 +31,8 @@ var _haraldDialog;
 
 // Enumerations
 enum { ICE_CAVE_HOLE_ENTRANCE, ICE_CAVE_MECHANISM_ENTRANCE };
-enum { HARALD_TOPIC_ROOT, HARALD_TOPIC_QUESTIONS, N_HARALD_TOPICS };
-enum { HARALD_LINE_TORCH, HARALD_LINE_LEAVE };
+enum { HARALD_TOPIC_ROOT, N_HARALD_TOPICS };
+enum { HARALD_LINE_TORCH, HARALD_LINE_GET_OUT, HARALD_LINE_LEAVE };
 
 // Object action functions
 function daggerObject_verb(var objA, var objB)
@@ -98,11 +98,13 @@ function iceObject_verb(var objA, var objB)
 					Script_delay(PICK_UP_DELAY);
 					Actor_talkEgo("Brrr... it's cold.");
 				}
-			else
+			else if (Object_getOwner(runeStoneInvObject) != VAR_EGO)
 			{
 				Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_1);
 				Room_load(iceCaveMechanismRoom);
 			}
+			else
+				Actor_talkEgo("I already found what I wanted so now let's get out of here.");
 			break;
 	}
 }
@@ -178,6 +180,40 @@ function wallObject_verb(var objA, var objB)
 }
 
 // Private functions
+function _iceCaveRoom_checkMechanism()
+{
+	const ACTOR_X = 160;
+	const ACTOR_Y = 135;
+
+	// Check for success
+	if ((iceCaveMechanism_daggerState == DAGGER_STATE_DISABLED) && (iceCaveMechanism_ringState == RING_STATE_DISABLED))
+	{
+		cutscene (CUTSCENE_TYPE_A)
+		{
+			// Pick up rune stone
+			Actor_pickup(runeStoneInvObject);
+
+			Actor_talkEgo("There we go... it's a rune stone !");
+			Script_waitForMessage();
+			Actor_talkEgo("I'm a bit rusty, but let's try to find out what it says...");
+			Script_waitForMessage();
+
+			// Walk to the foreground
+			Actor_walkToXY(VAR_EGO, ACTOR_X, ACTOR_Y);
+			Script_waitForActor(VAR_EGO);
+
+			// Display upcoming game info
+			Actor_talkEgo("Be ready to experience The Call of Thunder, an upcoming and authentic old-school game...");
+			Script_waitForMessage();
+			Actor_talkEgo("... we're looking for MIDI music and sprite artists, so don't be shy and join us if you're up for the challenge!");
+			Script_waitForMessage();
+
+			// Add dialog line
+			Dialog_addLine(_haraldDialog, HARALD_TOPIC_ROOT, HARALD_LINE_GET_OUT, "Help me get out of here!");
+		}		
+	}
+}
+
 inline function _iceCaveRoom_displayCredits()
 {
 	const CREDITS_LOW_INTENSITY = 55;
@@ -345,7 +381,10 @@ function _iceCaveRoom_haraldTopicRoot(var line)
 			Actor_talkEgo("Thanks!");
 			Script_waitForMessage();
 			Dialog_removeLine(_haraldDialog, HARALD_TOPIC_ROOT, HARALD_LINE_TORCH);
-			Dialog_show();
+			break;
+		case HARALD_LINE_GET_OUT:
+			Script_delaySeconds(1);
+			Util_quit();
 			break;
 		case HARALD_LINE_LEAVE:
 			Dialog_hide();
@@ -389,6 +428,9 @@ thread _iceCaveRoom_lightThread()
 	var i;
 	var torchLit;
 	var ambientLightIntensity;
+
+	// Initialize ambient light intensity
+	ambientLightIntensity = AMBIENT_MIN_INTENSITY;
 
 	// Initialize torch state
 	torchLit = (Object_getOwner(litTorchInvObject1) == VAR_EGO);
@@ -508,6 +550,8 @@ function iceCaveRoom_entry()
 {
 	const START_X = 96;
 	const START_Y = 48;
+	const CLUE_X = 100;
+	const CLUE_Y = 100;
 
 	switch (iceCaveEntrance)
 	{
@@ -519,8 +563,9 @@ function iceCaveRoom_entry()
 			_iceCaveRoom_intro();
 
 			// Position Indy
+			Actor_setCurrent(VAR_EGO);
 			Actor_putAtXY(VAR_EGO, START_X, START_Y, VAR_ROOM);
-			Actor_setDirection(ACTOR_DIR_SOUTH);
+			Actor_setDirection(ACTOR_DIR_NORTH);
 
 			// Give default items to Indy
 			Actor_pickup(whipInvObject);
@@ -530,20 +575,22 @@ function iceCaveRoom_entry()
 			Inventory_setTouchVerb(1);
 
 			// Set default charset
-			Interface_setCharset(font2);
-			Actor_printLoadDefault(actorIndy);
-			Actor_printCenter();
-			Actor_printOverhead();
-			Actor_printSaveDefault();	
+			Interface_setCharset(font2);	
 
 			// TODO: Fall down and stand up animation *OUCH*
 			Interface_printLineLoadDefault();
-			Interface_printLineColor(COLOR_DODGER_BLUE);
+			Interface_printLineColor(COLOR_JAPANESE_LAUREL);
 			Interface_printLineAt(20, 3);
 			Interface_printLineLeft();
-			Interface_printLine("Everything alright Indy?");
+			Interface_printLine("Everything alright down there?");
 			Script_waitForMessage();
-			Actor_talkEgo("It's ok.");
+			Actor_talkEgo("I guess so, thanks!");
+			Script_waitForMessage();
+
+			// Clue
+			Actor_walkToXY(VAR_EGO, CLUE_X, CLUE_Y);
+			Script_waitForActor(VAR_EGO);
+			Actor_talkEgo("Alright Jones, how are you gonna find that ARTIFACT in such a DARK place?");
 			Script_waitForMessage();
 
 			// Launch lightning thread
@@ -551,7 +598,12 @@ function iceCaveRoom_entry()
 			break;
 
 		case ICE_CAVE_MECHANISM_ENTRANCE:
-			Actor_setDirection(ACTOR_DIR_SOUTH);
+			// Set actor direction
+			Actor_setDirection(ACTOR_DIR_EAST);
+			Script_waitForActor(VAR_EGO);
+
+			// Check mechanism
+			_iceCaveRoom_checkMechanism();
 			break;
 	}
 
