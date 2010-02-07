@@ -79,6 +79,8 @@ function entranceObject_verb(var objA, var objB)
 			{
 				Actor_talkEgo("Harald?");
 				Script_waitForMessage();
+				Actor_talk(actorHarald, "Yes?");
+				Script_waitForMessage();
 			}
 			Dialog_setTopic(_haraldDialog, HARALD_TOPIC_ROOT);
 			Dialog_show();
@@ -190,6 +192,14 @@ function _iceCaveRoom_checkMechanism()
 	{
 		cutscene (CUTSCENE_TYPE_A)
 		{
+			// TODO: Trigger mechanism
+
+			// Shake for a while
+			Room_setShaking(1);
+			Actor_talkEgo("Wow...");
+			Script_waitForMessage();
+			Room_setShaking(0);
+
 			// Pick up rune stone
 			Actor_pickup(runeStoneInvObject);
 
@@ -376,19 +386,23 @@ function _iceCaveRoom_haraldTopicRoot(var line)
 	{
 		case HARALD_LINE_TORCH:
 			// Get torch
-			Script_delaySeconds(1);
+			Actor_talk(actorHarald, "Alright, here it is!");
+			Script_waitForMessage();
 			Actor_pickup(unlitTorchInvObject);
 			Actor_talkEgo("Thanks!");
 			Script_waitForMessage();
 			Dialog_removeLine(_haraldDialog, HARALD_TOPIC_ROOT, HARALD_LINE_TORCH);
 			break;
 		case HARALD_LINE_GET_OUT:
-			Script_delaySeconds(1);
+			Actor_talk(actorHarald, "OK!");
+			Script_waitForMessage();
 			Util_quit();
 			break;
 		case HARALD_LINE_LEAVE:
+			Actor_talk(actorHarald, "I'll be here...");
+			Script_waitForMessage();
 			Dialog_hide();
-			Actor_setDirection(ACTOR_DIR_SOUTH);
+			Actor_turnToDirection(ACTOR_DIR_SOUTH);
 			break;
 	}
 }
@@ -552,6 +566,8 @@ function iceCaveRoom_entry()
 	const START_Y = 48;
 	const CLUE_X = 100;
 	const CLUE_Y = 100;
+	const HARALD_X = 10;
+	const HARALD_Y = 5;
 
 	switch (iceCaveEntrance)
 	{
@@ -567,6 +583,9 @@ function iceCaveRoom_entry()
 			Actor_putAtXY(VAR_EGO, START_X, START_Y, VAR_ROOM);
 			Actor_setDirection(ACTOR_DIR_NORTH);
 
+			// Position Harald
+			Actor_putAtXY(actorHarald, HARALD_X, HARALD_Y, VAR_ROOM);
+
 			// Give default items to Indy
 			Actor_pickup(whipInvObject);
 			Actor_pickup(matchesInvObject);
@@ -574,7 +593,7 @@ function iceCaveRoom_entry()
 			// Set inventory touch mode and enable inventory and input
 			Inventory_setTouchVerb(1);
 
-			// Set default charset
+			// Set default charset and print settings
 			Interface_setCharset(font2);
 			Actor_printLoadDefault(actorIndy);
 			Actor_printCenter();
@@ -582,11 +601,9 @@ function iceCaveRoom_entry()
 			Actor_printSaveDefault();
 
 			// TODO: Fall down and stand up animation *OUCH*
-			Interface_printLineLoadDefault();
-			Interface_printLineColor(COLOR_JAPANESE_LAUREL);
-			Interface_printLineAt(20, 3);
-			Interface_printLineLeft();
-			Interface_printLine("Everything alright down there?");
+
+			// Harald and Indy initial dialog
+			Actor_talk(actorHarald, "Everything alright down there?");
 			Script_waitForMessage();
 			Actor_talkEgo("I guess so, thanks!");
 			Script_waitForMessage();
@@ -604,7 +621,7 @@ function iceCaveRoom_entry()
 			break;
 
 		case ICE_CAVE_MECHANISM_ENTRANCE:
-			// Set actor direction
+			// Set Indy's direction
 			Actor_setDirection(ACTOR_DIR_EAST);
 
 			// Check mechanism

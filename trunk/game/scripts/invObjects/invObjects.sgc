@@ -83,7 +83,7 @@ function runeStoneInvObject_verb(var objA, var objB)
 		case verbLookAt:
 			Actor_talkEgo("Hmmm, no release date yet...");
 			Script_waitForMessage();
-			Actor_setDirection(ACTOR_DIR_SOUTH);
+			Actor_turnToDirection(ACTOR_DIR_SOUTH);
 			Actor_talkEgo("Looks like these guys need some help.");
 			break;
 	}

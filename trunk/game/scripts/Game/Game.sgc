@@ -7,6 +7,7 @@ const PICK_UP_DELAY = 30;
 
 // Actors list
 actor actorIndy;
+actor actorHarald;
 actor actorTemp;
 
 // Torch animation definitions
@@ -44,6 +45,16 @@ function _Game_setupActors()
 	Actor_printOverhead();
 	Actor_printSaveDefault();
 	VAR_EGO = actorIndy;
+
+	// Setup Harald
+	Actor_setCurrent(actorHarald);
+	asm { actorOps actorName .string "Harald" }
+	Actor_ignoreBoxes(1);
+	Actor_setTalkColor(COLOR_JAPANESE_LAUREL);
+	Actor_printLoadDefault(actorHarald);
+	Actor_printCenter();
+	Actor_printOverhead();
+	Actor_printSaveDefault();
 }
 
 function _Game_setupInvObjects()
