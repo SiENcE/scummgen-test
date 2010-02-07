@@ -123,7 +123,7 @@ function daggerInvObject_verb(var objA, var objB)
 			}
 			break;
 		case verbLookAt:
-			Actor_talkEgo("It looks like if it has been grinded just a few days ago!");
+			Actor_talkEgo("It looks like it has been forged just a few days ago.");
 			break;
 	}
 }
