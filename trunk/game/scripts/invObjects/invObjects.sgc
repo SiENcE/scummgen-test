@@ -76,6 +76,19 @@ function ringInvObject_verb(var objA, var objB)
 	}
 }
 
+function runeStoneInvObject_verb(var objA, var objB)
+{
+	action
+	{
+		case verbLookAt:
+			Actor_talkEgo("Hmmm, no release date yet...");
+			Script_waitForMessage();
+			Actor_setDirection(ACTOR_DIR_SOUTH);
+			Actor_talkEgo("Looks like these guys need some help.");
+			break;
+	}
+}
+
 function daggerInvObject_verb(var objA, var objB)
 {
 	const DELAY = 40;

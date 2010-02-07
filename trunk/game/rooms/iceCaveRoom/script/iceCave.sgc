@@ -205,7 +205,7 @@ function _iceCaveRoom_checkMechanism()
 			// Display upcoming game info
 			Actor_talkEgo("Be ready to experience The Call of Thunder, an upcoming and authentic old-school game...");
 			Script_waitForMessage();
-			Actor_talkEgo("... we're looking for MIDI music and sprite artists, so don't be shy and join us if you're up for the challenge!");
+			Actor_talkEgo("We're looking for MIDI music and sprite artists, so don't be shy and join us if you're up for the challenge!");
 			Script_waitForMessage();
 
 			// Add dialog line
@@ -541,7 +541,7 @@ inline function iceCaveRoom_init()
 	// Create dialog
 	_haraldDialog = Dialog_new(N_HARALD_TOPICS);
 	Dialog_addTopic(_haraldDialog, HARALD_TOPIC_ROOT, _iceCaveRoom_haraldTopicRoot);
-	Dialog_addLine(_haraldDialog, HARALD_TOPIC_ROOT, HARALD_LINE_TORCH, "Send me the torch!");
+	Dialog_addLine(_haraldDialog, HARALD_TOPIC_ROOT, HARALD_LINE_TORCH, "Throw me the torch!");
 	Dialog_addLine(_haraldDialog, HARALD_TOPIC_ROOT, HARALD_LINE_LEAVE, "I'll talk to you later.");
 }
 
@@ -594,7 +594,9 @@ function iceCaveRoom_entry()
 			// Clue
 			Actor_walkToXY(VAR_EGO, CLUE_X, CLUE_Y);
 			Script_waitForActor(VAR_EGO);
-			Actor_talkEgo("Alright Jones, how are you gonna find that ARTIFACT in such a DARK place?");
+			Actor_talkEgo("Alright, Jones...");
+			Script_waitForMessage();
+			Actor_talkEgo("How are you gonna find that ARTIFACT in such a DARK place?");
 			Script_waitForMessage();
 
 			// Launch lightning thread
@@ -604,7 +606,6 @@ function iceCaveRoom_entry()
 		case ICE_CAVE_MECHANISM_ENTRANCE:
 			// Set actor direction
 			Actor_setDirection(ACTOR_DIR_EAST);
-			Script_waitForActor(VAR_EGO);
 
 			// Check mechanism
 			_iceCaveRoom_checkMechanism();
