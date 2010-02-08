@@ -106,7 +106,7 @@ function iceObject_verb(var objA, var objB)
 				Room_load(iceCaveMechanismRoom);
 			}
 			else
-				Actor_talkEgo("I already found what I wanted so now let's get out of here.");
+				Actor_talkEgo("I already found what I needed.");
 			break;
 	}
 }
@@ -188,7 +188,7 @@ function _iceCaveRoom_checkMechanism()
 	const ACTOR_Y = 135;
 
 	// Check for success
-	if ((iceCaveMechanism_daggerState == DAGGER_STATE_DISABLED) && (iceCaveMechanism_ringState == RING_STATE_DISABLED))
+	if (iceCaveMechanism_solved)
 	{
 		cutscene (CUTSCENE_TYPE_A)
 		{
@@ -220,7 +220,12 @@ function _iceCaveRoom_checkMechanism()
 
 			// Add dialog line
 			Dialog_addLine(_haraldDialog, HARALD_TOPIC_ROOT, HARALD_LINE_GET_OUT, "Help me get out of here!");
-		}		
+		}
+	}
+	else
+	{
+		Actor_talkEgo("Nothing happened.");
+		Script_waitForMessage();
 	}
 }
 

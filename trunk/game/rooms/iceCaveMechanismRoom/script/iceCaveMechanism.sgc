@@ -9,17 +9,60 @@ const RING_WIDTH = 25;
 const RING_HEIGHT = 25;
 
 // Enumerations
-enum { RING_STATE_DISABLED, RING_STATE_ENABLED };
 enum { DAGGER_STATE_DISABLED, DAGGER_STATE_UP, DAGGER_STATE_MIDDLE, DAGGER_STATE_DOWN };
+enum { RING_STATE_DISABLED, RING_STATE_ENABLED };
 
 // Global variables
+var iceCaveMechanism_solved;
 var iceCaveMechanism_daggerState;
 var iceCaveMechanism_ringState;
+var _mouseInDaggerHighBox;
+var _mouseInDaggerLowBox;
+var _mouseInRingBox;
 
 // Private functions
+inline function _iceCaveMechanismRoom_checkMouse()
+{
+	// Check if dagger or ring boxes are underneath the mouse pointer
+	_mouseInDaggerHighBox = 0;
+	_mouseInDaggerLowBox = 0;
+	_mouseInRingBox = 0;
+	if ((iceCaveMechanism_daggerState != DAGGER_STATE_DISABLED) && _iceCaveMechanismRoom_mouseInBox(DAGGER_X, DAGGER_Y, DAGGER_WIDTH, DAGGER_HEIGHT / 2))
+		_mouseInDaggerHighBox = 1;
+	else if ((iceCaveMechanism_daggerState != DAGGER_STATE_DISABLED) && _iceCaveMechanismRoom_mouseInBox(DAGGER_X, DAGGER_Y + DAGGER_HEIGHT / 2, DAGGER_WIDTH, DAGGER_HEIGHT / 2))
+		_mouseInDaggerLowBox = 1;
+	else if ((iceCaveMechanism_ringState != RING_STATE_DISABLED) && _iceCaveMechanismRoom_mouseInBox(RING_X, RING_Y, RING_WIDTH, RING_HEIGHT))
+		_mouseInRingBox = 1;
+}
+
 function _iceCaveMechanismRoom_click()
 {
-	// Leave and reload the ice cave room
+	// Check mouse location
+	_iceCaveMechanismRoom_checkMouse();
+
+	// Move dagger if needed
+	if (_mouseInDaggerHighBox)
+	{
+		if (iceCaveMechanism_daggerState == DAGGER_STATE_DOWN)
+			iceCaveMechanism_daggerState = DAGGER_STATE_MIDDLE;
+		else if (iceCaveMechanism_daggerState == DAGGER_STATE_MIDDLE)
+			iceCaveMechanism_daggerState = DAGGER_STATE_UP;
+		return;
+	}
+	else if (_mouseInDaggerLowBox)
+	{
+		if (iceCaveMechanism_daggerState == DAGGER_STATE_UP)
+			iceCaveMechanism_daggerState = DAGGER_STATE_MIDDLE;
+		else if (iceCaveMechanism_daggerState == DAGGER_STATE_MIDDLE)
+			iceCaveMechanism_daggerState = DAGGER_STATE_DOWN;
+		return;
+	}
+
+	// Mechanism is solved if the dagger is in the up position and if we clicked on the ring
+	if (_mouseInRingBox && (iceCaveMechanism_daggerState == DAGGER_STATE_UP))
+		iceCaveMechanism_solved = 1;
+
+	// Leave room
 	Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_1);
 	iceCaveEntrance = ICE_CAVE_MECHANISM_ENTRANCE;
 	Room_load(iceCaveRoom);
@@ -48,13 +91,16 @@ thread iceCaveMechanismRoom_thread()
 	while (1)
 	{
 		Interface_printLineAt(VAR_MOUSE_X, VAR_MOUSE_Y);
-     		
-		// Check if mouse is withing dagger or ring
-		if (_iceCaveMechanismRoom_mouseInBox(DAGGER_X, DAGGER_Y, DAGGER_WIDTH, DAGGER_HEIGHT / 2))
+
+		// Check mouse location
+		_iceCaveMechanismRoom_checkMouse();
+
+		// Print dagger and ring options
+		if (_mouseInDaggerHighBox && (iceCaveMechanism_daggerState != DAGGER_STATE_UP))
 			Interface_printLine("move up");
-		else if (_iceCaveMechanismRoom_mouseInBox(DAGGER_X, DAGGER_Y + DAGGER_HEIGHT / 2, DAGGER_WIDTH, DAGGER_HEIGHT / 2))
+		else if (_mouseInDaggerLowBox && (iceCaveMechanism_daggerState != DAGGER_STATE_DOWN))
 			Interface_printLine("move down");
-		else if (_iceCaveMechanismRoom_mouseInBox(RING_X, RING_Y, RING_WIDTH, RING_HEIGHT))
+		else if (_mouseInRingBox)
 			Interface_printLine("push");
 		else
 			Interface_printLine("");
@@ -66,9 +112,12 @@ thread iceCaveMechanismRoom_thread()
 // Public functions
 inline function iceCaveMechanismRoom_init()
 {
-	// Ring and dagger are disabled by default
-	iceCaveMechanism_ringState = RING_STATE_DISABLED;
-	iceCaveMechanism_daggerState = DAGGER_STATE_DISABLED;
+	// Mechanism is not solved by default
+	iceCaveMechanism_solved = 0;
+
+	// Dagger and ring states are disabled by default
+	iceCaveMechanism_daggerState = DAGGER_STATE_MIDDLE;
+	iceCaveMechanism_ringState = RING_STATE_ENABLED;
 }
 
 // Entry function
@@ -79,9 +128,6 @@ function iceCaveMechanismRoom_entry()
 	Sentence_hide();
 	Inventory_disable();
 	Sentence_disable();
-
-	// TEMP
-	Input_enable();
 
 	// Register our click handler
 	Input_registerClickHandler(_iceCaveMechanismRoom_click);
