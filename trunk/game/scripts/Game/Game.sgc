@@ -23,8 +23,8 @@ enum { INV_OBJ_TORCH };
 // Private functions
 function _Game_setupRooms()
 {
-	iceCaveMechanismRoom_init();
-	iceCaveRoom_init();
+	roomIceCaveMechanism_init();
+	roomIceCave_init();
 }
 
 function _Game_setupActors()
@@ -32,11 +32,11 @@ function _Game_setupActors()
 	// Setup Indy
 	Actor_setCurrent(actorIndy);
 	asm { actorOps actorName .string "Indy" }
-	Actor_setCostume(indyCostume);
-	Actor_setInitAnim(indyCostume_stand);
-	Actor_setStandAnim(indyCostume_stand);
-	Actor_setWalkAnim(indyCostume_walk);
-	Actor_setTalkAnim(indyCostume_talk, indyCostume_stand);
+	Actor_setCostume(costIndy);
+	Actor_setInitAnim(costIndy_stand);
+	Actor_setStandAnim(costIndy_stand);
+	Actor_setWalkAnim(costIndy_walk);
+	Actor_setTalkAnim(costIndy_talk, costIndy_stand);
 	Actor_setStepDistance(STEP_DIST_X, STEP_DIST_Y);
 	Actor_setAnimSpeed(ANIM_SPEED);
 	Actor_setTalkColor(COLOR_WHITE);
@@ -63,9 +63,9 @@ function _Game_setupInvObjects()
 	var delays;
 
 	// Setup torch animation
-	frames = [litTorchInvObject1, litTorchInvObject2, litTorchInvObject3, litTorchInvObject4];
+	frames = [invLitTorch1, invLitTorch2, invLitTorch3, invLitTorch4];
 	delays = [INV_OBJ_TORCH_DELAY1, INV_OBJ_TORCH_DELAY2, INV_OBJ_TORCH_DELAY3, INV_OBJ_TORCH_DELAY4];
-	Inventory_addAnimatedObject(INV_OBJ_TORCH, litTorchInvObject1, INV_OBJ_TORCH_N_FRAMES, frames, delays);
+	Inventory_addAnimatedObject(INV_OBJ_TORCH, invLitTorch1, INV_OBJ_TORCH_N_FRAMES, frames, delays);
 }
 
 // Public functions

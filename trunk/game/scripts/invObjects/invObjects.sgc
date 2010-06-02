@@ -1,4 +1,4 @@
-function whipInvObject_verb(var objA, var objB)
+function invWhip_verb(var objA, var objB)
 {
 	const MAX_RANDOM_LINES = 2;
 	var random;
@@ -11,7 +11,7 @@ function whipInvObject_verb(var objA, var objB)
 				case 0:
 					Sentence_setPrepo(PREPO_ON);
 					break;
-				case entranceObject:
+				case objEntrance:
 					Actor_talkEgo("There is no point in leaving now.");
 					break;
 				default:
@@ -37,7 +37,7 @@ function whipInvObject_verb(var objA, var objB)
 	}
 }
 
-function matchesInvObject_verb(var objA, var objB)
+function invMatches_verb(var objA, var objB)
 {
 	action
 	{
@@ -49,7 +49,7 @@ function matchesInvObject_verb(var objA, var objB)
 	}
 }
 
-function ringInvObject_verb(var objA, var objB)
+function invRing_verb(var objA, var objB)
 {
 	action
 	{
@@ -59,7 +59,7 @@ function ringInvObject_verb(var objA, var objB)
 				case 0:
 					Sentence_setPrepo(PREPO_ON);
 					break;
-				case iceObject:
+				case objIce:
 					Actor_talkEgo("Hmmm... I guess we should implement this soon.");
 					break;
 				default:
@@ -73,7 +73,7 @@ function ringInvObject_verb(var objA, var objB)
 	}
 }
 
-function runeStoneInvObject_verb(var objA, var objB)
+function invRuneStone_verb(var objA, var objB)
 {
 	action
 	{
@@ -86,7 +86,7 @@ function runeStoneInvObject_verb(var objA, var objB)
 	}
 }
 
-function daggerInvObject_verb(var objA, var objB)
+function invDagger_verb(var objA, var objB)
 {
 	const DELAY = 40;
 	action
@@ -97,8 +97,8 @@ function daggerInvObject_verb(var objA, var objB)
 				case 0:
 					Sentence_setPrepo(PREPO_ON);
 					break;
-				case wallObject:
-					if (Object_getOwner(flintstonesInvObject) == actorIndy || Object_getOwner(pointyStoneInvObject) == actorIndy)
+				case objWall:
+					if (Object_getOwner(invFlintstones) == actorIndy || Object_getOwner(invPointyStone) == actorIndy)
 						Actor_talkEgo("I don't need more stones.");
 					else
 						cutscene (CUTSCENE_TYPE_A)
@@ -106,11 +106,11 @@ function daggerInvObject_verb(var objA, var objB)
 							Actor_talkEgo("Hmm. Maybe I can use one of these stones.");
 							Script_waitForMessage();
 							Actor_face(actorIndy, objA);
-							Actor_animate(actorIndy, indyCostume_pickUpLow); 
+							Actor_animate(actorIndy, costIndy_pickUpLow); 
 							Script_delay(DELAY);
-							Actor_pickup(angularStoneInvObject);
-							Actor_pickup(pointyStoneInvObject);
-							Actor_animate(actorIndy, indyCostume_stand);
+							Actor_pickup(invAngularStone);
+							Actor_pickup(invPointyStone);
+							Actor_animate(actorIndy, costIndy_stand);
 							Actor_talkEgo("Oh, I actually got two stones.");
 						}
 					break;
@@ -125,7 +125,7 @@ function daggerInvObject_verb(var objA, var objB)
 	}
 }
 
-function unlitTorchInvObject_verb(var objA, var objB)
+function objUnlitTorch_verb(var objA, var objB)
 {
 	action
 	{
@@ -135,10 +135,10 @@ function unlitTorchInvObject_verb(var objA, var objB)
 				case 0:
 					Sentence_setPrepo(PREPO_ON);
 					break;
-				case flintstonesInvObject:			
+				case invFlintstones:			
 					// Change unlit torch to lit torch
-					Actor_pickup(litTorchInvObject1);
-					Object_setOwner(unlitTorchInvObject, 0);
+					Actor_pickup(invLitTorch1);
+					Object_setOwner(invUnlitTorch, 0);
 					break;
 				default:
 					Actor_talkEgo("That doesn't work!");
@@ -151,7 +151,7 @@ function unlitTorchInvObject_verb(var objA, var objB)
 	}
 }
 
-function litTorchInvObject_verb(var objA, var objB)
+function invLitTorch_verb(var objA, var objB)
 {
 	action
 	{
@@ -161,7 +161,7 @@ function litTorchInvObject_verb(var objA, var objB)
 				case 0:
 					Sentence_setPrepo(PREPO_ON);
 					break;
-				case iceObject:
+				case objIce:
 					Actor_talkEgo("Maybe I can melt the ice with the torch.");
 					Script_waitForMessage();
 
@@ -177,7 +177,7 @@ function litTorchInvObject_verb(var objA, var objB)
 	}
 }
 
-function boneInvObject_verb(var objA, var objB)
+function invBone_verb(var objA, var objB)
 {
 	action
 	{
@@ -187,7 +187,7 @@ function boneInvObject_verb(var objA, var objB)
 				case 0:
 					Sentence_setPrepo(PREPO_ON);
 					break;
-				case tornRopeInvObject:
+				case invTornRope:
 					Actor_talkEgo("I'll bind it onto the rope.");
 					Script_waitForMessage();
 					break;
@@ -202,7 +202,7 @@ function boneInvObject_verb(var objA, var objB)
 	}
 }
 
-function angularStoneInvObject_verb(var objA, var objB)
+function invAngularStone_verb(var objA, var objB)
 {
 	action
 	{
@@ -212,10 +212,10 @@ function angularStoneInvObject_verb(var objA, var objB)
 				case 0:
 					Sentence_setPrepo(PREPO_ON);
 					break;
-				case pointyStoneInvObject:
-					Actor_pickup(flintstonesInvObject);
-					Object_setOwner(pointyStoneInvObject, 0);
-					Object_setOwner(angularStoneInvObject, 0);
+				case invPointyStone:
+					Actor_pickup(invFlintstones);
+					Object_setOwner(invPointyStone, 0);
+					Object_setOwner(invAngularStone, 0);
 					break;
 				default:
 					Actor_talkEgo("That doesn't work!");
@@ -228,7 +228,7 @@ function angularStoneInvObject_verb(var objA, var objB)
 	}
 }
 
-function pointyStoneInvObject_verb(var objA, var objB)
+function invPointyStone_verb(var objA, var objB)
 {
 	action
 	{
@@ -238,10 +238,10 @@ function pointyStoneInvObject_verb(var objA, var objB)
 				case 0:
 					Sentence_setPrepo(PREPO_ON);
 					break;
-				case angularStoneInvObject:
-					Actor_pickup(flintstonesInvObject);
-					Object_setOwner(angularStoneInvObject, 0);
-					Object_setOwner(pointyStoneInvObject, 0);
+				case invAngularStone:
+					Actor_pickup(invFlintstones);
+					Object_setOwner(invAngularStone, 0);
+					Object_setOwner(invPointyStone, 0);
 					break;
 				default:
 					Actor_talkEgo("That doesn't work!");
@@ -254,7 +254,7 @@ function pointyStoneInvObject_verb(var objA, var objB)
 	}
 }
 
-function flintstonesInvObject_verb(var objA, var objB)
+function invFlintstones_verb(var objA, var objB)
 {
 	action
 	{
@@ -264,10 +264,10 @@ function flintstonesInvObject_verb(var objA, var objB)
 				case 0:
 					Sentence_setPrepo(PREPO_ON);
 					break;
-				case unlitTorchInvObject:
+				case invUnlitTorch:
 					// Change unlit torch to lit torch
-					Actor_pickup(litTorchInvObject1);
-					Object_setOwner(unlitTorchInvObject, 0);
+					Actor_pickup(invLitTorch1);
+					Object_setOwner(invUnlitTorch, 0);
 					break;
 				default:
 					Actor_talkEgo("That doesn't work!");

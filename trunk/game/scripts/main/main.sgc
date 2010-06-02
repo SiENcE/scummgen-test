@@ -5,5 +5,5 @@ function main(var bootParam)
 	Game_init();
 
 	// Load the logo room
-	Room_load(logoRoom);
+	Room_load(roomLogo);
 }

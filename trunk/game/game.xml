@@ -3,28 +3,29 @@
 	<name>tentacle</name>
 	<description>Indiana Jones and the Call of Thunder</description>
 	<key>105</key>
-	<room>logoRoom</room>
-	<room>iceCaveRoom</room>
-	<room>iceCaveMechanismRoom</room>
-	<object>cursorObject</object>
-	<object>dialogObject</object>
-	<object>verbsObject</object>
-	<object>angularStoneInvObject</object>
-	<object>boneInvObject</object>
-	<object>daggerInvObject</object>
-	<object>flintstonesInvObject</object>
-	<object>litTorchInvObject1</object>
-	<object>litTorchInvObject2</object>
-	<object>litTorchInvObject3</object>
-	<object>litTorchInvObject4</object>
-	<object>matchesInvObject</object>
-	<object>pointyStoneInvObject</object>
-	<object>ringInvObject</object>
-	<object>runeStoneInvObject</object>
-	<object>tornRopeInvObject</object>
-	<object>unlitTorchInvObject</object>
-	<object>whipInvObject</object>
-	<costume>indyCostume</costume>
+	<room>roomLogo</room>
+	
+	<room>roomIceCave</room>
+	<room>roomIceCaveMechanism</room>
+	<object>objCursor</object>
+	<object>objDialog</object>
+	<object>objVerbs</object>
+	<object>invAngularStone</object>
+	<object>invBone</object>
+	<object>invDagger</object>
+	<object>invFlintstones</object>
+	<object>invLitTorch1</object>
+	<object>invLitTorch2</object>
+	<object>invLitTorch3</object>
+	<object>invLitTorch4</object>
+	<object>invMatches</object>
+	<object>invPointyStone</object>
+	<object>invRing</object>
+	<object>invRuneStone</object>
+	<object>invTornRope</object>
+	<object>invUnlitTorch</object>
+	<object>invWhip</object>
+	<costume>costIndy</costume>
 	<script>Cutscene</script>
 	<script>Dialog</script>
 	<script>Engine</script>
@@ -40,5 +41,5 @@
 	<charset>font3</charset>
 	<charset>font4</charset>
 	<charset>font5</charset>
-	<voice>thunderstrike</voice>
+	<voice>vocThunderstrike</voice>
 </game>

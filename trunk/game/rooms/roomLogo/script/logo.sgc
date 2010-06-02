@@ -1,0 +1,43 @@
+// Private functions
+function _roomLogo_displayLogo()
+{
+	const MIN_INDEX = 0;
+	const MAX_INDEX = 255;
+	const MIN_INTENSITY = 0;
+	const MAX_INTENSITY = 255;
+	const LOGO_FADE_DELAY = 3;
+	const COLOR_INC = 15;
+	var i;
+
+	Room_setIntensity(MIN_INTENSITY, MIN_INDEX, MAX_INDEX);
+	for (i = MIN_INTENSITY; i <= MAX_INTENSITY; i += COLOR_INC)
+	{
+		Room_setIntensity(i, MIN_INDEX, MAX_INDEX);
+		Script_delay(LOGO_FADE_DELAY);
+	}
+}
+
+// Entry function
+function roomLogo_entry()
+{
+	const SECONDS_DELAY = 3;
+	const FADE_DELAY = 4;
+
+	// User can skip the logo display
+	try
+	{
+		// Display the team logo
+		_roomLogo_displayLogo();
+
+		// Delay a bit
+		Script_delaySeconds(SECONDS_DELAY);
+	}
+
+	// Set fading effect
+	VAR_FADE_DELAY = FADE_DELAY;
+	Room_fade(ROOM_FADE_TRANSITION_IRIS_EFFECT, ROOM_FADE_TRANSITION_IRIS_EFFECT);
+
+	// Load the ice cave room
+	iceCaveEntrance = ICE_CAVE_HOLE_ENTRANCE;
+	Room_load(roomIceCave);
+}

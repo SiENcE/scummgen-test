@@ -390,7 +390,7 @@ function Inventory_init()
 	// Add verbs background
 	Verb_setCurrent(verbVerbs);
 	Verb_new();
-	Verb_setImage(verbsObject);
+	Verb_setImage(objVerbs);
 	Verb_setPos(VERB_VERBS_X, VERB_VERBS_Y);
 
 	// Add verbs

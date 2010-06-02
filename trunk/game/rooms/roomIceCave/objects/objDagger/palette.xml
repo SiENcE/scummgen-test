@@ -1,0 +1,8 @@
+<palette>
+	<transparent>true</transparent>
+	<area>
+		<name>objDaggerArea</name>
+		<start>1</start>
+		<end>5</end>
+	</area>
+</palette>

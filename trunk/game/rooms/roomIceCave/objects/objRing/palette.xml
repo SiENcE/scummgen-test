@@ -1,0 +1,8 @@
+<palette>
+	<transparent>true</transparent>
+	<area>
+		<name>objRingArea</name>
+		<start>1</start>
+		<end>12</end>
+	</area>
+</palette>

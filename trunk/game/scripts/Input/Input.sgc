@@ -55,7 +55,7 @@ inline function _Input_initCursor()
 	const CURSOR_HOTSPOT_Y = 7;
 
 	// Set cursor image
-	Interface_setCursorImage(cursorObject, RESOURCE_ROOM);
+	Interface_setCursorImage(objCursor, RESOURCE_ROOM);
 
 	// Enable cursor transparency
 	Interface_setCursorTransparentColor(0);

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<object>
+	<name>objRing</name>
+	<displayName>round thing</displayName>
+	<hotspotX>144</hotspotX>
+	<hotspotY>88</hotspotY>
+	<x>144</x>
+	<y>88</y>
+	<width>8</width>
+	<height>8</height>
+	<actorDir>east</actorDir>
+	<image>imgRing</image>
+</object>

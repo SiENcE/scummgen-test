@@ -224,7 +224,7 @@ function Dialog_init()
 	// Create dialog background
 	Verb_setCurrent(_verbDialog);
 	Verb_new();
-	Verb_setImage(dialogObject);
+	Verb_setImage(objDialog);
 	Verb_setPos(VERB_DIALOG_X, VERB_DIALOG_Y);
 
 	// Setup line verbs

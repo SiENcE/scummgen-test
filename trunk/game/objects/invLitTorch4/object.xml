@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<object>
+	<name>invLitTorch4</name>
+	<displayName>torch</displayName>
+	<hotspotX>0</hotspotX>
+	<hotspotY>0</hotspotY>
+	<x>0</x>
+	<y>0</y>
+	<width>32</width>
+	<height>24</height>
+	<actorDir>south</actorDir>
+	<image>imgTorch</image>
+</object>

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<object>
+	<name>objEntrance</name>
+	<displayName>entrance</displayName>
+	<hotspotX>100</hotspotX>
+	<hotspotY>45</hotspotY>
+	<x>88</x>
+	<y>8</y>
+	<width>24</width>
+	<height>24</height>
+	<actorDir>north</actorDir>
+</object>

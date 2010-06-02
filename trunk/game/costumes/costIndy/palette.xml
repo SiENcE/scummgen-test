@@ -1,0 +1,8 @@
+<palette>
+	<transparent>true</transparent>
+	<area>
+		<name>costIndyArea</name>
+		<start>1</start>
+		<end>15</end>
+	</area>
+</palette>

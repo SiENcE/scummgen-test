@@ -1,8 +1,0 @@
-<palette>
-	<transparent>true</transparent>
-	<area>
-		<name>ringObjectArea</name>
-		<start>1</start>
-		<end>12</end>
-	</area>
-</palette>

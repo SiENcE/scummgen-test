@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<costume>
+	<name>costLogo</name>
+	<mirror>false</mirror>
+	<anim>
+		<name>animLogo</name>
+		<loop>false</loop>
+	</anim>
+	<frame>
+		<bitmapName>logo.bmp</bitmapName>
+		<x>0</x>
+		<y>0</y>
+		<width>239</width>
+		<height>51</height>
+		<xOffset>-120</xOffset>
+		<yOffset>-26</yOffset>
+	</frame>
+</costume>

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<object>
+	<name>objIce</name>
+	<displayName>ice</displayName>
+	<hotspotX>280</hotspotX>
+	<hotspotY>88</hotspotY>
+	<x>272</x>
+	<y>24</y>
+	<width>32</width>
+	<height>64</height>
+	<actorDir>north</actorDir>
+</object>

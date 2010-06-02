@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<room>
+	<name>roomIceCave</name>
+	<background>background</background>
+	<costume>costLogo</costume>
+	<object>objDagger</object>
+	<object>objEntrance</object>
+	<object>objIce</object>
+	<object>objRing</object>
+	<object>objSkeleton</object>
+	<object>objTitle</object>
+	<object>objWall</object>
+	<script>script</script>
+</room>

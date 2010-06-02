@@ -1,0 +1,143 @@
+// Constants
+const DAGGER_X = 145;
+const DAGGER_Y = 55;
+const DAGGER_WIDTH = 25;
+const DAGGER_HEIGHT = 60;
+const RING_X = 145;
+const RING_Y = 125;
+const RING_WIDTH = 25;
+const RING_HEIGHT = 25;
+
+// Enumerations
+enum { DAGGER_STATE_DISABLED, DAGGER_STATE_UP, DAGGER_STATE_MIDDLE, DAGGER_STATE_DOWN };
+enum { RING_STATE_DISABLED, RING_STATE_ENABLED };
+
+// Global variables
+var iceCaveMechanism_solved;
+var iceCaveMechanism_daggerState;
+var iceCaveMechanism_ringState;
+var _mouseInDaggerHighBox;
+var _mouseInDaggerLowBox;
+var _mouseInRingBox;
+
+// Private functions
+inline function _roomIceCaveMechanism_checkMouse()
+{
+	// Check if dagger or ring boxes are underneath the mouse pointer
+	_mouseInDaggerHighBox = 0;
+	_mouseInDaggerLowBox = 0;
+	_mouseInRingBox = 0;
+	if ((iceCaveMechanism_daggerState != DAGGER_STATE_DISABLED) && _roomIceCaveMechanism_mouseInBox(DAGGER_X, DAGGER_Y, DAGGER_WIDTH, DAGGER_HEIGHT / 2))
+		_mouseInDaggerHighBox = 1;
+	else if ((iceCaveMechanism_daggerState != DAGGER_STATE_DISABLED) && _roomIceCaveMechanism_mouseInBox(DAGGER_X, DAGGER_Y + DAGGER_HEIGHT / 2, DAGGER_WIDTH, DAGGER_HEIGHT / 2))
+		_mouseInDaggerLowBox = 1;
+	else if ((iceCaveMechanism_ringState != RING_STATE_DISABLED) && _roomIceCaveMechanism_mouseInBox(RING_X, RING_Y, RING_WIDTH, RING_HEIGHT))
+		_mouseInRingBox = 1;
+}
+
+function _roomIceCaveMechanism_click()
+{
+	// Check mouse location
+	_roomIceCaveMechanism_checkMouse();
+
+	// Move dagger if needed
+	if (_mouseInDaggerHighBox)
+	{
+		if (iceCaveMechanism_daggerState == DAGGER_STATE_DOWN)
+			iceCaveMechanism_daggerState = DAGGER_STATE_MIDDLE;
+		else if (iceCaveMechanism_daggerState == DAGGER_STATE_MIDDLE)
+			iceCaveMechanism_daggerState = DAGGER_STATE_UP;
+		return;
+	}
+	else if (_mouseInDaggerLowBox)
+	{
+		if (iceCaveMechanism_daggerState == DAGGER_STATE_UP)
+			iceCaveMechanism_daggerState = DAGGER_STATE_MIDDLE;
+		else if (iceCaveMechanism_daggerState == DAGGER_STATE_MIDDLE)
+			iceCaveMechanism_daggerState = DAGGER_STATE_DOWN;
+		return;
+	}
+
+	// Mechanism is solved if the dagger is in the up position and if we clicked on the ring
+	if (_mouseInRingBox && (iceCaveMechanism_daggerState == DAGGER_STATE_UP))
+		iceCaveMechanism_solved = 1;
+
+	// Leave room
+	Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_1);
+	iceCaveEntrance = ICE_CAVE_MECHANISM_ENTRANCE;
+	Room_load(roomIceCave);
+}
+
+inline function _roomIceCaveMechanism_mouseInBox(var x, var y, var width, var height)
+{
+	// Check if mouse is within box bounds
+	if ((VAR_MOUSE_X >= x) && (VAR_MOUSE_Y >= y) && (VAR_MOUSE_X < x + width) && (VAR_MOUSE_Y < y + height))
+		return 1;
+	
+	return 0;
+}
+
+thread roomIceCaveMechanism_thread()
+{
+	// Setup print line charset
+	Interface_setCharset(font2);
+	Interface_printLineLoadDefault();
+	Interface_printLineColor(COLOR_PERSIMMON);
+	Interface_printLineCenter();
+	Interface_printLineOverhead();
+	Interface_printLineSaveDefault();
+
+	// Loop indefinitely
+	while (1)
+	{
+		Interface_printLineAt(VAR_MOUSE_X, VAR_MOUSE_Y);
+
+		// Check mouse location
+		_roomIceCaveMechanism_checkMouse();
+
+		// Print dagger and ring options
+		if (_mouseInDaggerHighBox && (iceCaveMechanism_daggerState != DAGGER_STATE_UP))
+			Interface_printLine("move up");
+		else if (_mouseInDaggerLowBox && (iceCaveMechanism_daggerState != DAGGER_STATE_DOWN))
+			Interface_printLine("move down");
+		else if (_mouseInRingBox)
+			Interface_printLine("push");
+		else
+			Interface_printLine("");
+
+		Script_break();
+	}
+}
+
+// Public functions
+inline function roomIceCaveMechanism_init()
+{
+	// Mechanism is not solved by default
+	iceCaveMechanism_solved = 0;
+
+	// Dagger and ring states are disabled by default
+	iceCaveMechanism_daggerState = DAGGER_STATE_MIDDLE;
+	iceCaveMechanism_ringState = RING_STATE_ENABLED;
+}
+
+// Entry function
+function roomIceCaveMechanism_entry()
+{
+	// Disable inventory and sentence first
+	Inventory_hide();
+	Sentence_hide();
+	Inventory_disable();
+	Sentence_disable();
+
+	// Register our click handler
+	Input_registerClickHandler(_roomIceCaveMechanism_click);
+
+	roomIceCaveMechanism_thread();
+}
+
+// Exit function
+function roomIceCaveMechanism_exit()
+{
+	// Unregister our click handler
+	Input_unregisterClickHandler(_roomIceCaveMechanism_click);
+}
