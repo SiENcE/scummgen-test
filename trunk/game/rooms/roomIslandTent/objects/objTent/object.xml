@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <object>
-	<name>tentObject</name>
+	<name>objTent</name>
 	<displayName>tent</displayName>
 	<hotspotX>94</hotspotX>
 	<hotspotY>105</hotspotY>

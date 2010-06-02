@@ -4,8 +4,8 @@
 	<description>Indiana Jones and the Call of Thunder</description>
 	<key>105</key>
 	<room>roomLogo</room>
-	
 	<room>roomIceCave</room>
+	<room>roomIceCaveEntrance</room>
 	<room>roomIceCaveMechanism</room>
 	<object>objCursor</object>
 	<object>objDialog</object>

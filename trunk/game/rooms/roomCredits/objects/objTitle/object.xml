@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <object>
-	<name>titleObject</name>
+	<name>objTitle</name>
 	<displayName></displayName>
 	<hotspotX>0</hotspotX>
 	<hotspotY>0</hotspotY>
@@ -9,5 +9,5 @@
 	<width>176</width>
 	<height>40</height>
 	<actorDir>south</actorDir>
-	<image>titleImage</image>
+	<image>imgTitle</image>
 </object>
