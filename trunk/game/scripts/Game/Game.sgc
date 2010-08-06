@@ -1,4 +1,7 @@
 // Global constants
+const true = 1;
+const false = 0;
+
 const STEP_DIST_X = 7;
 const STEP_DIST_Y = 4;
 const ANIM_SPEED = 1;

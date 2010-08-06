@@ -4,7 +4,7 @@ var creditsColor1;
 var creditsColor2;
 
 // Private functions
-function _creditsRoom_displayIJLogo()
+function _roomCredits_displayIJLogo()
 {
 	const SCALE_FACTOR = 20;
 	const LOGO_X = 161;
@@ -15,8 +15,8 @@ function _creditsRoom_displayIJLogo()
 
 	// Create and setup logo actor
 	Actor_setCurrent(actorLogo);
-	Actor_setCostume(logoCostume);
-	Actor_setInitAnim(logoCostume_logoAnim);
+	Actor_setCostume(costLogo);
+	Actor_setInitAnim(costLogo_anim);
 	Actor_ignoreBoxes(1);
 	Actor_putAtXY(actorLogo, LOGO_X, LOGO_Y, VAR_ROOM);
 
@@ -34,10 +34,10 @@ function _creditsRoom_displayIJLogo()
 
 	// Wait, and then display game title
 	Script_delaySeconds(1);
-	Object_draw(titleObject, 1);
+	Object_draw(objTitle, 1);
 }
 
-inline function _creditsRoom_displayTeamFunction(var string)
+inline function _roomCredits_displayTeamFunction(var string)
 {
 	const TEAM_FUNCTION_X = 160;
 	const TEAM_FUNCTION_Y = 150;
@@ -49,7 +49,7 @@ inline function _creditsRoom_displayTeamFunction(var string)
 	Interface_printText("%s{string}");
 }
 
-inline function _creditsRoom_displayTeamMember(var string)
+inline function _roomCredits_displayTeamMember(var string)
 {
 	const TEAM_MEMBER_X = 160;
 	const TEAM_MEMBER_Y = 165;
@@ -62,7 +62,7 @@ inline function _creditsRoom_displayTeamMember(var string)
 	Interface_printLine("           %s{string}           ");
 }
 
-function _creditsRoom_fadeTeamMember(var start, var end, var step)
+function _roomCredits_fadeTeamMember(var start, var end, var step)
 {
 	var i;
 	for (i = start; i != end; i += step)
@@ -73,7 +73,7 @@ function _creditsRoom_fadeTeamMember(var start, var end, var step)
 	Room_setIntensity(end, creditsColor2, creditsColor2);
 }
 
-function _creditsRoom_fadeCredits(var start, var end, var step)
+function _roomCredits_fadeCredits(var start, var end, var step)
 {
 	var i;
 	for (i = start; i != end; i += step)
@@ -86,7 +86,7 @@ function _creditsRoom_fadeCredits(var start, var end, var step)
 	Room_setIntensity(end, creditsColor2, creditsColor2);
 }
 
-function _creditsRoom_displayCredits()
+function _roomCredits_displayCredits()
 {
 	const CREDITS_LOW_INTENSITY = 55;
 	const CREDITS_HIGH_INTENSITY = 255;
@@ -164,7 +164,7 @@ function _creditsRoom_displayCredits()
 }
 
 // Entry function
-function creditsRoom_entry()
+function roomCredits_entry()
 {
 	var previousVarTimerNext;
 
@@ -187,5 +187,5 @@ function creditsRoom_entry()
 	Script_delaySeconds(1);
 	VAR_FADE_DELAY = 1;
 	Room_fade(ROOM_FADE_NO_EFFECT, ROOM_FADE_SCROLL_EFFECT_UP);
-	Room_load(islandTentRoom);
+	Room_load(roomIslandTent);
 }

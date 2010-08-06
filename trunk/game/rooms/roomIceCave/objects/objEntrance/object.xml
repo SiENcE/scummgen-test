@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <object>
 	<name>objEntrance</name>
-	<displayName>entrance</displayName>
+	<displayName></displayName>
 	<hotspotX>100</hotspotX>
 	<hotspotY>45</hotspotY>
 	<x>88</x>

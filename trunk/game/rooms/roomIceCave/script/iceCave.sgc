@@ -27,14 +27,21 @@ var _iceCaveObjDaggerArea;
 var _iceCaveCostIndyArea;
 var _iceCaveAmbientLightIntensity;
 var _iceCaveEntranceOmniLightIntensity;
-var _dialogHarald;
 
 // Enumerations
 enum { ICE_CAVE_HOLE_ENTRANCE, ICE_CAVE_MECHANISM_ENTRANCE };
-enum { HARALD_TOPIC_ROOT, N_HARALD_TOPICS };
-enum { HARALD_LINE_TORCH, HARALD_LINE_GET_OUT, HARALD_LINE_LEAVE };
 
 // Object action functions
+function objEntrance_verb(var objA, var objB)
+{
+	action
+	{
+		case verbWalk:
+			Room_load(roomIceCaveEntrance);
+			break;
+	}
+}
+
 function objDagger_verb(var objA, var objB)
 {
 	action
@@ -62,28 +69,6 @@ function objDagger_verb(var objA, var objB)
 				Actor_pickup(invDagger);
 				Actor_animate(actorIndy, costIndy_stand);
 			}
-			break;
-	}
-}
-
-function objEntrance_verb(var objA, var objB)
-{
-	action
-	{
-		case verbUse:
-			Actor_talkEgo("That's way too high to climb.");
-			break;
-		case verbTalkTo:
-			// Talk to Harald
-			cutscene (CUTSCENE_TYPE_B)
-			{
-				Actor_talkEgo("Harald?");
-				Script_waitForMessage();
-				Actor_talk(actorHarald, "Yes?");
-				Script_waitForMessage();
-			}
-			Dialog_setTopic(_dialogHarald, HARALD_TOPIC_ROOT);
-			Dialog_show();
 			break;
 	}
 }
@@ -195,10 +180,10 @@ function _roomIceCave_checkMechanism()
 			// TODO: Trigger mechanism
 
 			// Shake for a while
-			Room_setShaking(1);
+			Room_setShaking(true);
 			Actor_talkEgo("Wow...");
 			Script_waitForMessage();
-			Room_setShaking(0);
+			Room_setShaking(false);
 
 			// Pick up rune stone
 			Actor_pickup(invRuneStone);
@@ -219,7 +204,7 @@ function _roomIceCave_checkMechanism()
 			Script_waitForMessage();
 
 			// Add dialog line
-			Dialog_addLine(_dialogHarald, HARALD_TOPIC_ROOT, HARALD_LINE_GET_OUT, "Help me get out of here!");
+			//Dialog_addLine(_dialogHarald, HARALD_TOPIC_ROOT, HARALD_LINE_GET_OUT, "Help me get out of here!");
 		}
 	}
 	else
@@ -316,7 +301,7 @@ inline function _roomIceCave_displayIJLogo()
 	Actor_setCurrent(actorLogo);
 	Actor_setCostume(costLogo);
 	Actor_setInitAnim(costLogo_animLogo);
-	Actor_ignoreBoxes(1);
+	Actor_ignoreBoxes(true);
 	Actor_putAtXY(actorLogo, LOGO_X, LOGO_Y, VAR_ROOM);
 
 	// Scale Indiana Jones logo gradually
@@ -385,33 +370,6 @@ inline function _roomIceCave_fadeTeamMember(var start, var end, var step)
 	Room_setIntensity(end, _creditsColor2, _creditsColor2);
 }
 
-function _roomIceCave_haraldTopicRoot(var line)
-{
-	switch (line)
-	{
-		case HARALD_LINE_TORCH:
-			// Get torch
-			Actor_talk(actorHarald, "Alright, here it is!");
-			Script_waitForMessage();
-			Actor_pickup(invUnlitTorch);
-			Actor_talkEgo("Thanks!");
-			Script_waitForMessage();
-			Dialog_removeLine(_dialogHarald, HARALD_TOPIC_ROOT, HARALD_LINE_TORCH);
-			break;
-		case HARALD_LINE_GET_OUT:
-			Actor_talk(actorHarald, "OK!");
-			Script_waitForMessage();
-			Util_quit();
-			break;
-		case HARALD_LINE_LEAVE:
-			Actor_talk(actorHarald, "I'll be here...");
-			Script_waitForMessage();
-			Dialog_hide();
-			Actor_turnToDirection(ACTOR_DIR_SOUTH);
-			break;
-	}
-}
-
 function _roomIceCave_intro()
 {
 	var previousVarTimerNext;
@@ -455,7 +413,7 @@ thread _roomIceCave_lightThread()
 	torchLit = (Object_getOwner(invLitTorch1) == VAR_EGO);
 
 	// Loop and change intensity of the room
-	while (1)
+	while (true)
 	{
 		// Increase the room intensity
 		if (ambientLightIntensity < AMBIENT_MEDIUM_INTENSITY)
@@ -493,13 +451,13 @@ thread _roomIceCave_lightThread()
 			asm { pushWord .word objRing setObjectName .string "ring" }
 
 			// Disable inventory touch mode
-			Inventory_setTouchVerb(0);
+			Inventory_setTouchVerb(false);
 			Inventory_show();
 	
 			Actor_talkEgo("And then there was light...");
 
 			// Set torch state
-			torchLit = 1;
+			torchLit = true;
 		}
 
 		Script_break();
@@ -556,12 +514,6 @@ inline function roomIceCave_init()
 	// Setup dagger
 	Object_setState(objDagger, OBJECT_STATE_PICKABLE);
 	Object_setOwner(objDagger, OBJECT_OWNER_ROOM);
-
-	// Create dialog
-	_dialogHarald = Dialog_new(N_HARALD_TOPICS);
-	Dialog_addTopic(_dialogHarald, HARALD_TOPIC_ROOT, _roomIceCave_haraldTopicRoot);
-	Dialog_addLine(_dialogHarald, HARALD_TOPIC_ROOT, HARALD_LINE_TORCH, "Throw me the torch!");
-	Dialog_addLine(_dialogHarald, HARALD_TOPIC_ROOT, HARALD_LINE_LEAVE, "I'll talk to you later.");
 }
 
 // Room entry function
@@ -596,7 +548,7 @@ function roomIceCave_entry()
 			Actor_pickup(invMatches);
 
 			// Set inventory touch mode and enable inventory and input
-			Inventory_setTouchVerb(1);
+			Inventory_setTouchVerb(true);
 
 			// Set default charset and print settings
 			Interface_setCharset(font2);
@@ -605,9 +557,16 @@ function roomIceCave_entry()
 			Actor_printOverhead();
 			Actor_printSaveDefault();
 
-			// TODO: Fall down and stand up animation *OUCH*
-
 			// Harald and Indy initial dialog
+			Actor_talkEgo("Ok, I'm rapping of. Slowly give me some more rope...");
+			Script_waitForMessage();
+			Actor_talkEgo("Hey! That rope doesn't look very strong...");
+			Script_waitForMessage();
+			Actor_talkEgo("Hey, I think it's bursting. Quick! Take me up!");
+			Script_waitForMessage();
+			//*TSCH*
+			//*BONG*
+			
 			Actor_talk(actorHarald, "Everything alright down there?");
 			Script_waitForMessage();
 			Actor_talkEgo("I guess so, thanks!");

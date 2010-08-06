@@ -1,5 +1,5 @@
 // Object actions functions
-function tentObject_verb(var objA, var objB)
+function objTent_verb(var objA, var objB)
 {
 	action
 	{

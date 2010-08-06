@@ -3,7 +3,7 @@
 	<name>logoCostume</name>
 	<mirror>false</mirror>
 	<anim>
-		<name>logoAnim</name>
+		<name>anim</name>
 		<loop>false</loop>
 	</anim>
 	<frame>
