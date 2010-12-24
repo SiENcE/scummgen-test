@@ -1,35 +1,25 @@
 // Global constants
-/*const OMNI_INTENSITY1 = 255;
-const OMNI_INTENSITY2 = 10;
-const OMNI_POS_X = 100;
-const OMNI_POS_Y = 40;
-const OMNI_RANGE = 25;
-const AMBIENT_MIN_INTENSITY = 50;
-const AMBIENT_MEDIUM_INTENSITY = 65;
-const AMBIENT_MAX_INTENSITY = 255;
-const AMBIENT_INTENSITY_STEP = 30;
-const LIGHTNING_MIN_INTENSITY = 0;
-const LIGHTNING_MAX_INTENSITY = 300;
-const LIGHTNING_RANDOM = 200;
 
 // Global variables
-var _iceCaveEntranceOmniLight;
-var _iceCaveAmbientLight;
-var _iceCaveLightningLight;
-var _iceCaveDarkArea;
-var _iceCaveObjRingArea;
-var _iceCaveObjDaggerArea;
-var _iceCaveCostIndyArea;
-var _iceCaveAmbientLightIntensity;
-var _iceCaveEntranceOmniLightIntensity;*/
 var _dialogHarald;
 
 // Enumerations
 enum { HARALD_TOPIC_ROOT, N_HARALD_TOPICS };
-enum { HARALD_LINE_TORCH, HARALD_LINE_GET_OUT, HARALD_LINE_LEAVE };
-/*
+enum { HARALD_LINE_TORCH, HARALD_LINE_BURN, HARALD_LINE_GET_OUT, HARALD_LINE_LEAVE };
+
 // Object action functions
-function objEntrance_verb(var objA, var objB)
+function objDoor_verb(var objA, var objB)
+{
+	action
+	{
+		case verbWalk:
+			iceCaveEntrance = ICE_CAVE_DOOR_ENTRANCE;
+			Room_load(roomIceCave);
+			break;
+	}
+}
+
+function objHole_verb(var objA, var objB)
 {
 	action
 	{
@@ -37,7 +27,6 @@ function objEntrance_verb(var objA, var objB)
 			Actor_talkEgo("That's way too high to climb.");
 			break;
 		case verbTalkTo:
-			// Talk to Harald
 			cutscene (CUTSCENE_TYPE_B)
 			{
 				Actor_talkEgo("Harald?");
@@ -48,8 +37,11 @@ function objEntrance_verb(var objA, var objB)
 			Dialog_setTopic(_dialogHarald, HARALD_TOPIC_ROOT);
 			Dialog_show();
 			break;
+		case verbLookAt:
+			Actor_talkEgo("That's the way I came into this cave.");
+			break;
 	}
-}*/
+}
 
 function _roomIceCaveEntrance_haraldTopicRoot(var line)
 {
@@ -57,15 +49,45 @@ function _roomIceCaveEntrance_haraldTopicRoot(var line)
 	{
 		case HARALD_LINE_TORCH:
 			// Get torch
-			Actor_talk(actorHarald, "Alright, here it is!");
+			Actor_talk(actorHarald, "Okay, wait...");
 			Script_waitForMessage();
+			Script_delaySeconds(1);
+			Actor_talk(actorHarald, "Catch it!");
+			Script_waitForMessage();
+			// TODO: fall down anim of torch
 			Actor_pickup(invUnlitTorch);
 			Actor_talkEgo("Thanks!");
 			Script_waitForMessage();
 			Dialog_removeLine(_dialogHarald, HARALD_TOPIC_ROOT, HARALD_LINE_TORCH);
 			break;
+		case HARALD_LINE_BURN:
+			Actor_talk(actorHarald, "But I already gave you the torch.");
+			Script_waitForMessage();
+			Actor_talkEgo("Yes, but I need something to burn that ice wall.");
+			Script_waitForMessage();
+			Actor_talk(actorHarald, "Burn what??");
+			Script_waitForMessage();
+			Actor_talkEgo("Don't we have a gas can?");
+			Script_waitForMessage();
+			Actor_talk(actorHarald, "Yes but why do you want to burn the ice?");
+			Script_waitForMessage();
+			Actor_talkEgo("Don't reck your brain, I'll tell you later.");
+			Script_waitForMessage();
+			Actor_talk(actorHarald, "Okay. One moment, I'll get the petrol.");
+			Script_waitForMessage();
+			Script_delaySeconds(5);
+			Actor_talk(actorHarald, "Okay...");
+			Script_waitForMessage();
+			Actor_talk(actorHarald, "Catch it!");
+			Script_waitForMessage();
+			// TODO: fall down anim of can
+			Actor_pickup(invGasCan);
+			Actor_talkEgo("Thanks!");
+			Script_waitForMessage();
+			Dialog_removeLine(_dialogHarald, HARALD_TOPIC_ROOT, HARALD_LINE_BURN);
+			break;
 		case HARALD_LINE_GET_OUT:
-			Actor_talk(actorHarald, "OK!");
+			Actor_talk(actorHarald, "The rope is too short.");
 			Script_waitForMessage();
 			Util_quit();
 			break;
@@ -77,179 +99,45 @@ function _roomIceCaveEntrance_haraldTopicRoot(var line)
 			break;
 	}
 }
-/*
-thread _roomIceCaveEntrance_lightThread()
-{
-	var i;
-	var torchLit;
-	var ambientLightIntensity;
 
-	// Initialize ambient light intensity
-	ambientLightIntensity = AMBIENT_MIN_INTENSITY;
-
-	// Initialize torch state
-	torchLit = (Object_getOwner(invLitTorch1) == VAR_EGO);
-
-	// Loop and change intensity of the room
-	while (true)
-	{
-		// Increase the room intensity
-		if (ambientLightIntensity < AMBIENT_MEDIUM_INTENSITY)
-		{
-			Light_setColor(_iceCaveAmbientLight, ambientLightIntensity, ambientLightIntensity, ambientLightIntensity);
-			ambientLightIntensity++;
-		}
-
-		// Thunder strike
-		Light_setColor(_iceCaveLightningLight, LIGHTNING_MIN_INTENSITY, LIGHTNING_MIN_INTENSITY, LIGHTNING_MIN_INTENSITY);
-		if (Util_getRandomNumber(LIGHTNING_RANDOM) == 0)
-		{
-			Light_setColor(_iceCaveLightningLight, LIGHTNING_MAX_INTENSITY, LIGHTNING_MAX_INTENSITY, LIGHTNING_MAX_INTENSITY);
-			Util_printDebug("%V{vocThunderstrike}");
-			if (!torchLit)
-				ambientLightIntensity = AMBIENT_MIN_INTENSITY;
-		}
-
-		// Check if we just got the torch
-		if (!torchLit && (Object_getOwner(invLitTorch1) == VAR_EGO))
-		{
-			// Brighten the ice cave room completely
-			for (i = AMBIENT_MEDIUM_INTENSITY; i < AMBIENT_MAX_INTENSITY; i += AMBIENT_INTENSITY_STEP)
-			{
-				ambientLightIntensity = i;
-				Light_setColor(_iceCaveAmbientLight, ambientLightIntensity, ambientLightIntensity, ambientLightIntensity);
-				Script_break();
-			}
-
-			// Change omni light intensity
-			Light_setColor(_iceCaveEntranceOmniLight, OMNI_INTENSITY2, OMNI_INTENSITY2, OMNI_INTENSITY2);
-
-			// Change room object names
-			asm { pushWord .word objDagger setObjectName .string "dagger" }
-			asm { pushWord .word objRing setObjectName .string "ring" }
-
-			// Disable inventory touch mode
-			Inventory_setTouchVerb(0);
-			Inventory_show();
-	
-			Actor_talkEgo("And then there was light...");
-
-			// Set torch state
-			torchLit = 1;
-		}
-
-		Script_break();
-	}
-}
-
-inline function _roomIceCaveEntrance_setupLights()
-{
-	// Add omni light
-	_iceCaveEntranceOmniLight = Light_new(LIGHT_TYPE_OMNI);
-	Light_setColor(_iceCaveEntranceOmniLight, OMNI_INTENSITY1, OMNI_INTENSITY1, OMNI_INTENSITY1);
-	Light_setPos(_iceCaveEntranceOmniLight, OMNI_POS_X, OMNI_POS_Y);
-	Light_setRange(_iceCaveEntranceOmniLight, OMNI_RANGE);
-
-	// Add ambient light
-	_iceCaveAmbientLight = Light_new(LIGHT_TYPE_AMBIENT);
-	Light_setColor(_iceCaveAmbientLight, AMBIENT_MIN_INTENSITY, AMBIENT_MIN_INTENSITY, AMBIENT_MIN_INTENSITY);
-
-	// Add lightning light
-	_iceCaveLightningLight = Light_new(LIGHT_TYPE_AMBIENT);
-	Light_setColor(_iceCaveLightningLight, LIGHTNING_MIN_INTENSITY, LIGHTNING_MIN_INTENSITY, LIGHTNING_MIN_INTENSITY);
-
-	// Add areas
-	_iceCaveDarkArea = Light_addArea(0, darkArea_start, darkArea_end);
-	_iceCaveObjRingArea = Light_addArea(0, objRingArea_start, objRingArea_end);
-	_iceCaveObjDaggerArea = Light_addArea(0, objDaggerArea_start, objDaggerArea_end);
-	_iceCaveCostIndyArea = Light_addArea(actorIndy, costIndyArea_start, costIndyArea_end);
-}
-*/
 // Public functions
 inline function roomIceCaveEntrance_init()
 {
-	// Setup entrance
-	Object_setClass(objEntrance, classPerson, 1);
-	Object_setState(objEntrance, OBJECT_STATE_PICKABLE);
-	Object_setOwner(objEntrance, OBJECT_OWNER_ROOM);
+	// Setup hole
+	Object_setClass(objHole, classPerson, 1);
+	Object_setState(objHole, OBJECT_STATE_UNTOUCHABLE);
+	Object_setOwner(objHole, OBJECT_OWNER_ROOM);
 
+	// Setup door
+	Object_setState(objDoor, OBJECT_STATE_PICKABLE);
+	Object_setOwner(objDoor, OBJECT_OWNER_ROOM);
+	
 	// Create dialog
 	_dialogHarald = Dialog_new(N_HARALD_TOPICS);
-	Dialog_addTopic(_dialogHarald, HARALD_TOPIC_ROOT, _roomIceCave_haraldTopicRoot);
-	Dialog_addLine(_dialogHarald, HARALD_TOPIC_ROOT, HARALD_LINE_TORCH, "Throw me the torch!");
+	Dialog_addTopic(_dialogHarald, HARALD_TOPIC_ROOT, _roomIceCaveEntrance_haraldTopicRoot);
+	Dialog_addLine(_dialogHarald, HARALD_TOPIC_ROOT, HARALD_LINE_TORCH, "Throw me a torch, I can't see anything.");
+	Dialog_addLine(_dialogHarald, HARALD_TOPIC_ROOT, HARALD_LINE_BURN, "Harald, I need something flammable! [VISIBLE after LOOKAT ice]");
 	Dialog_addLine(_dialogHarald, HARALD_TOPIC_ROOT, HARALD_LINE_LEAVE, "I'll talk to you later.");
 }
 
 // Room entry function
 function roomIceCaveEntrance_entry()
 {
-	const START_X = 96;
-	const START_Y = 48;
-	const CLUE_X = 100;
-	const CLUE_Y = 100;
-	const HARALD_X = 10;
+	const START_X = 216;
+	const START_Y = 104;
+	const HARALD_X = 150;
 	const HARALD_Y = 5;
+	
+	// Disable Touch Mode
+	Inventory_setTouchVerb(false);
 
-	/*switch (iceCaveEntrance)
-	{
-		case  ICE_CAVE_HOLE_ENTRANCE:
-			// Setup lights first
-			_roomIceCave_setupLights();
+	// Position Indy
+	Actor_putAtXY(VAR_EGO, START_X, START_Y, VAR_ROOM);
+	Actor_setDirection(ACTOR_DIR_WEST);
 
-			// Display credits first
-			_roomIceCave_intro();
-
-			// Position Indy
-			Actor_setCurrent(VAR_EGO);
-			Actor_putAtXY(VAR_EGO, START_X, START_Y, VAR_ROOM);
-			Actor_setDirection(ACTOR_DIR_NORTH);
-
-			// Position Harald
-			Actor_putAtXY(actorHarald, HARALD_X, HARALD_Y, VAR_ROOM);
-
-			// Give default items to Indy
-			Actor_pickup(invWhip);
-			Actor_pickup(invMatches);
-
-			// Set inventory touch mode and enable inventory and input
-			Inventory_setTouchVerb(1);
-
-			// Set default charset and print settings
-			Interface_setCharset(font2);
-			Actor_printLoadDefault(actorIndy);
-			Actor_printCenter();
-			Actor_printOverhead();
-			Actor_printSaveDefault();
-
-			// TODO: Fall down and stand up animation *OUCH*
-
-			// Harald and Indy initial dialog
-			Actor_talk(actorHarald, "Everything alright down there?");
-			Script_waitForMessage();
-			Actor_talkEgo("I guess so, thanks!");
-			Script_waitForMessage();
-
-			// Clue
-			Actor_walkToXY(VAR_EGO, CLUE_X, CLUE_Y);
-			Script_waitForActor(VAR_EGO);
-			Actor_talkEgo("Alright, Jones...");
-			Script_waitForMessage();
-			Actor_talkEgo("How are you gonna find that ARTIFACT in such a DARK place?");
-			Script_waitForMessage();
-
-			// Launch lightning thread
-			_roomIceCave_lightThread();
-			break;
-
-		case ICE_CAVE_MECHANISM_ENTRANCE:
-			// Set Indy's direction
-			Actor_setDirection(ACTOR_DIR_EAST);
-
-			// Check mechanism
-			_roomIceCave_checkMechanism();
-			break;
-	}
-*/
+	// Position Harald
+	Actor_putAtXY(actorHarald, HARALD_X, HARALD_Y, VAR_ROOM);
+	
 	// Enable sentence and inventory
 	Sentence_enable();
 	Inventory_enable();
@@ -261,14 +149,5 @@ function roomIceCaveEntrance_entry()
 // Room exit function
 function roomIceCaveEntrance_exit()
 {
-	/*// Delete lights
-	Light_delete(_iceCaveEntranceOmniLight);
-	Light_delete(_iceCaveAmbientLight);
-	Light_delete(_iceCaveLightningLight);
 
-	// Remove areas
-	Light_removeArea(_iceCaveDarkArea);
-	Light_removeArea(_iceCaveObjRingArea);
-	Light_removeArea(_iceCaveObjDaggerArea);
-	Light_removeArea(_iceCaveCostIndyArea);*/
 }

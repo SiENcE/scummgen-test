@@ -24,15 +24,15 @@ var _mouseInRingBox;
 inline function _roomIceCaveMechanism_checkMouse()
 {
 	// Check if dagger or ring boxes are underneath the mouse pointer
-	_mouseInDaggerHighBox = 0;
-	_mouseInDaggerLowBox = 0;
-	_mouseInRingBox = 0;
+	_mouseInDaggerHighBox = false;
+	_mouseInDaggerLowBox = false;
+	_mouseInRingBox = false;
 	if ((iceCaveMechanism_daggerState != DAGGER_STATE_DISABLED) && _roomIceCaveMechanism_mouseInBox(DAGGER_X, DAGGER_Y, DAGGER_WIDTH, DAGGER_HEIGHT / 2))
-		_mouseInDaggerHighBox = 1;
+		_mouseInDaggerHighBox = true;
 	else if ((iceCaveMechanism_daggerState != DAGGER_STATE_DISABLED) && _roomIceCaveMechanism_mouseInBox(DAGGER_X, DAGGER_Y + DAGGER_HEIGHT / 2, DAGGER_WIDTH, DAGGER_HEIGHT / 2))
-		_mouseInDaggerLowBox = 1;
+		_mouseInDaggerLowBox = true;
 	else if ((iceCaveMechanism_ringState != RING_STATE_DISABLED) && _roomIceCaveMechanism_mouseInBox(RING_X, RING_Y, RING_WIDTH, RING_HEIGHT))
-		_mouseInRingBox = 1;
+		_mouseInRingBox = true;
 }
 
 function _roomIceCaveMechanism_click()
@@ -60,7 +60,7 @@ function _roomIceCaveMechanism_click()
 
 	// Mechanism is solved if the dagger is in the up position and if we clicked on the ring
 	if (_mouseInRingBox && (iceCaveMechanism_daggerState == DAGGER_STATE_UP))
-		iceCaveMechanism_solved = 1;
+		iceCaveMechanism_solved = true;
 
 	// Leave room
 	Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_1);
@@ -72,9 +72,9 @@ inline function _roomIceCaveMechanism_mouseInBox(var x, var y, var width, var he
 {
 	// Check if mouse is within box bounds
 	if ((VAR_MOUSE_X >= x) && (VAR_MOUSE_Y >= y) && (VAR_MOUSE_X < x + width) && (VAR_MOUSE_Y < y + height))
-		return 1;
+		return true;
 	
-	return 0;
+	return false;
 }
 
 thread roomIceCaveMechanism_thread()
@@ -88,7 +88,7 @@ thread roomIceCaveMechanism_thread()
 	Interface_printLineSaveDefault();
 
 	// Loop indefinitely
-	while (1)
+	while (true)
 	{
 		Interface_printLineAt(VAR_MOUSE_X, VAR_MOUSE_Y);
 
@@ -113,7 +113,7 @@ thread roomIceCaveMechanism_thread()
 inline function roomIceCaveMechanism_init()
 {
 	// Mechanism is not solved by default
-	iceCaveMechanism_solved = 0;
+	iceCaveMechanism_solved = false;
 
 	// Dagger and ring states are disabled by default
 	iceCaveMechanism_daggerState = DAGGER_STATE_MIDDLE;

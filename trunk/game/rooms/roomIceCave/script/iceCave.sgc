@@ -5,8 +5,8 @@ const OMNI_INTENSITY2 = 10;
 const OMNI_POS_X = 100;
 const OMNI_POS_Y = 40;
 const OMNI_RANGE = 25;
-const AMBIENT_MIN_INTENSITY = 50;
-const AMBIENT_MEDIUM_INTENSITY = 65;
+const AMBIENT_MIN_INTENSITY = 5;
+const AMBIENT_MEDIUM_INTENSITY = 45;
 const AMBIENT_MAX_INTENSITY = 255;
 const AMBIENT_INTENSITY_STEP = 30;
 const LIGHTNING_MIN_INTENSITY = 0;
@@ -15,6 +15,7 @@ const LIGHTNING_RANDOM = 200;
 
 // Global variables
 var iceCaveEntrance;
+var iceCaveWallState;
 var actorLogo;
 var _creditsColor1;
 var _creditsColor2;
@@ -28,8 +29,10 @@ var _iceCaveCostIndyArea;
 var _iceCaveAmbientLightIntensity;
 var _iceCaveEntranceOmniLightIntensity;
 
+
 // Enumerations
-enum { ICE_CAVE_HOLE_ENTRANCE, ICE_CAVE_MECHANISM_ENTRANCE };
+enum { ICE_CAVE_FIRST_ENTRY, ICE_CAVE_MECHANISM_ENTRANCE, ICE_CAVE_DOOR_ENTRANCE };
+enum { ICE_CAVE_WALL_ICED, ICE_CAVE_WALL_GAS, ICE_CAVE_WALL_BURNED, ICE_CAVE_WALL_FIXED };
 
 // Object action functions
 function objEntrance_verb(var objA, var objB)
@@ -65,6 +68,8 @@ function objDagger_verb(var objA, var objB)
 			{
 				Actor_animate(actorIndy, costIndy_pickUpLow);
 				Script_delay(PICK_UP_DELAY);
+				Actor_talkEgo("OUCH!");
+				Script_waitForMessage();
 				Object_setState(objA, OBJECT_STATE_DISABLED);
 				Actor_pickup(invDagger);
 				Actor_animate(actorIndy, costIndy_stand);
@@ -77,6 +82,14 @@ function objIce_verb(var objA, var objB)
 {
 	action
 	{
+		case verbPickUp:
+			if (iceCaveWallState == ICE_CAVE_WALL_FIXED)
+			{
+				iceCaveWallState = ICE_CAVE_WALL_BURNED;
+				Actor_pickup(invDagger);
+				Actor_pickup(invRing);
+			}
+		break;
 		case verbLookAt:
 			if (Object_getOwner(invLitTorch1) != VAR_EGO)
 				cutscene (CUTSCENE_TYPE_A)
@@ -85,13 +98,27 @@ function objIce_verb(var objA, var objB)
 					Script_delay(PICK_UP_DELAY);
 					Actor_talkEgo("Brrr... it's cold.");
 				}
-			else if (Object_getOwner(invRuneStone) != VAR_EGO)
+			else if (Object_getOwner(invRuneStone) == VAR_EGO)
+			{
+				Actor_talkEgo("I already found what I needed.");
+			}
+			else if (iceCaveWallState == ICE_CAVE_WALL_GAS)
+				Actor_talkEgo("There's enough oil to burn the whole thing.");
+			else if (iceCaveWallState == ICE_CAVE_WALL_BURNED) 
+			{
+				Actor_talkEgo("There are two little openings...");
+				Script_waitForMessage();
+				Actor_talkEgo("One small round pit...");
+				Script_waitForMessage();
+				Actor_talkEgo("and a very thin slot.");
+			}
+			else if (iceCaveWallState == ICE_CAVE_WALL_FIXED)
 			{
 				Room_fade(ROOM_FADE_DISSOLVE_EFFECT_1, ROOM_FADE_DISSOLVE_EFFECT_1);
 				Room_load(roomIceCaveMechanism);
 			}
 			else
-				Actor_talkEgo("I already found what I needed.");
+				Actor_talkEgo("Hm, it seems like there is something behind the ice.");
 			break;
 	}
 }
@@ -132,9 +159,7 @@ function objSkeleton_verb(var objA, var objB)
 			Actor_talkEgo("Poor guy. I wonder how long he's been lying here.");
 			break;
 		case verbPickUp:
-			if (Object_getOwner(invBone) == VAR_EGO)
-				Actor_talkEgo("I already found what I needed.");
-			else
+			if (Object_getOwner(invBone) != VAR_EGO)
 				cutscene (CUTSCENE_TYPE_A)
 				{
 					Actor_talkEgo("Hmmm, I guess this bone could come in handy.");
@@ -144,6 +169,8 @@ function objSkeleton_verb(var objA, var objB)
 					Actor_pickup(invBone);
 					Actor_animate(actorIndy, costIndy_stand);
 				}
+			else
+				Actor_talkEgo("I already found what I needed.");	
 			break;
 	}
 }
@@ -158,11 +185,23 @@ function objWall_verb(var objA, var objB)
 					{
 						Actor_animate(actorIndy, costIndy_pickUpMedium);
 						Script_delay(PICK_UP_DELAY);
-						Actor_talkEgo("It feels loose somehow.");
+						Actor_talkEgo("It feels somehow loose.");
 					}
+			else if (Object_getOwner(invFlintstones) == actorIndy || Object_getOwner(invPointyStone) == actorIndy)
+				Actor_talkEgo("I don't need more stones.");
 			else
 				Actor_talkEgo("It's loose.");
 			break;
+		case verbPush:
+		case verbPull:
+			if (Object_getOwner(invFlintstones) == actorIndy || Object_getOwner(invPointyStone) == actorIndy)
+				Actor_talkEgo("I don't need more stones.");
+			else 
+			{
+				Actor_talkEgo("It's too heavy.");
+				Script_waitForMessage();
+				Actor_talkEgo("I need some kind of lever.");
+			}
 	}
 }
 
@@ -185,6 +224,9 @@ function _roomIceCave_checkMechanism()
 			Script_waitForMessage();
 			Room_setShaking(false);
 
+			Actor_talkEgo("Now the water flows off...");
+			
+			/*
 			// Pick up rune stone
 			Actor_pickup(invRuneStone);
 
@@ -202,9 +244,9 @@ function _roomIceCave_checkMechanism()
 			Script_waitForMessage();
 			Actor_talkEgo("We're looking for MIDI music and sprite artists, so don't be shy and join us if you're up for the challenge!");
 			Script_waitForMessage();
-
+*/
 			// Add dialog line
-			//Dialog_addLine(_dialogHarald, HARALD_TOPIC_ROOT, HARALD_LINE_GET_OUT, "Help me get out of here!");
+			Dialog_addLine(_dialogHarald, HARALD_TOPIC_ROOT, HARALD_LINE_GET_OUT, "Help me get out of here!");
 		}
 	}
 	else
@@ -420,6 +462,7 @@ thread _roomIceCave_lightThread()
 		{
 			Light_setColor(_iceCaveAmbientLight, ambientLightIntensity, ambientLightIntensity, ambientLightIntensity);
 			ambientLightIntensity++;
+			// TODO: MAKE IT GO SLOWER  about one step per 2 seconds
 		}
 
 		// Thunder strike
@@ -429,7 +472,7 @@ thread _roomIceCave_lightThread()
 			Light_setColor(_iceCaveLightningLight, LIGHTNING_MAX_INTENSITY, LIGHTNING_MAX_INTENSITY, LIGHTNING_MAX_INTENSITY);
 			Util_printDebug("%V{vocThunderstrike}");
 			if (!torchLit)
-				ambientLightIntensity = AMBIENT_MIN_INTENSITY;
+				ambientLightIntensity = AMBIENT_MIN_INTENSITY + 10;  // SHOULD GO COMPLETELY DARK
 		}
 
 		// Check if we just got the torch
@@ -491,7 +534,6 @@ inline function _roomIceCave_setupLights()
 inline function roomIceCave_init()
 {
 	// Setup entrance
-	Object_setClass(objEntrance, classPerson, 1);
 	Object_setState(objEntrance, OBJECT_STATE_PICKABLE);
 	Object_setOwner(objEntrance, OBJECT_OWNER_ROOM);
 
@@ -506,6 +548,7 @@ inline function roomIceCave_init()
 	// Setup icy wall
 	Object_setState(objIce, OBJECT_STATE_PICKABLE);
 	Object_setOwner(objIce, OBJECT_OWNER_ROOM);
+	iceCaveWallState = ICE_CAVE_WALL_ICED;
 	
 	// Setup skeleton
 	Object_setState(objSkeleton, OBJECT_STATE_PICKABLE);
@@ -528,17 +571,12 @@ function roomIceCave_entry()
 
 	switch (iceCaveEntrance)
 	{
-		case  ICE_CAVE_HOLE_ENTRANCE:
-			// Setup lights first
+		case  ICE_CAVE_FIRST_ENTRY:
+			// Setup lights
 			_roomIceCave_setupLights();
-
+		
 			// Display credits first
 			_roomIceCave_intro();
-
-			// Position Indy
-			Actor_setCurrent(VAR_EGO);
-			Actor_putAtXY(VAR_EGO, START_X, START_Y, VAR_ROOM);
-			Actor_setDirection(ACTOR_DIR_NORTH);
 
 			// Position Harald
 			Actor_putAtXY(actorHarald, HARALD_X, HARALD_Y, VAR_ROOM);
@@ -546,6 +584,7 @@ function roomIceCave_entry()
 			// Give default items to Indy
 			Actor_pickup(invWhip);
 			Actor_pickup(invMatches);
+			Actor_pickup(invTornRope);
 
 			// Set inventory touch mode and enable inventory and input
 			Inventory_setTouchVerb(true);
@@ -558,32 +597,68 @@ function roomIceCave_entry()
 			Actor_printSaveDefault();
 
 			// Harald and Indy initial dialog
-			Actor_talkEgo("Ok, I'm rapping of. Slowly give me some more rope...");
+			Interface_printLineColor(COLOR_WHITE);
+			Interface_printLineAt(60, 0);
+			Interface_printLine("Ok, I'm rapping of. Slowly give me some more rope...");
 			Script_waitForMessage();
-			Actor_talkEgo("Hey! That rope doesn't look very strong...");
+			
+			Interface_printLineAt(60, 8);
+			Interface_printLine("Hey! That rope doesn't look very strong...");
 			Script_waitForMessage();
-			Actor_talkEgo("Hey, I think it's bursting. Quick! Take me up!");
+			
+			Interface_printLineAt(60, 16);
+			Interface_printLine("Hey, I think it's bursting. Quick! Take me up!");
 			Script_waitForMessage();
-			//*TSCH*
-			//*BONG*
+
+			Interface_printLineColor(COLOR_GORSE);
+			Interface_printLineAt(60, 24);
+			Interface_printLine("*CRACKLE*");
+			Script_delay(40);
+			
+			Interface_printLineColor(COLOR_WHITE);
+			Interface_printLineAt(60, 40);
+			Interface_printLine("OUCH!");
+			Script_waitForMessage();
 			
 			Actor_talk(actorHarald, "Everything alright down there?");
 			Script_waitForMessage();
-			Actor_talkEgo("I guess so, thanks!");
+			Interface_printLineAt(60, 40);
+			Interface_printLine("I guess so, thanks!");
 			Script_waitForMessage();
 
+			// Position Indy
+			Actor_setCurrent(actorIndy);
+			Actor_putAtXY(actorIndy, START_X, START_Y, VAR_ROOM);
+			Actor_setDirection(ACTOR_DIR_SOUTH);
+						
+			// Launch light thread
+			_roomIceCave_lightThread();
+			
 			// Clue
-			Actor_walkToXY(VAR_EGO, CLUE_X, CLUE_Y);
-			Script_waitForActor(VAR_EGO);
+			Actor_walkToXY(actorIndy, CLUE_X, CLUE_Y);
+			Script_waitForActor(actorIndy);
 			Actor_talkEgo("Alright, Jones...");
 			Script_waitForMessage();
 			Actor_talkEgo("How are you gonna find that ARTIFACT in such a DARK place?");
 			Script_waitForMessage();
-
+			break;
+		
+		case ICE_CAVE_DOOR_ENTRANCE:
+			// Setup lights
+			_roomIceCave_setupLights();
+			
 			// Launch lightning thread
 			_roomIceCave_lightThread();
+			
+			// Set Touch Mode
+			if (Object_getOwner(invLitTorch1) != VAR_EGO)
+				Inventory_setTouchVerb(true);
+				
+			// Position Indy
+			Actor_putAtXY(actorIndy, START_X, START_Y, VAR_ROOM);
+			Actor_setDirection(ACTOR_DIR_SOUTH);
 			break;
-
+			
 		case ICE_CAVE_MECHANISM_ENTRANCE:
 			// Set Indy's direction
 			Actor_setDirection(ACTOR_DIR_EAST);

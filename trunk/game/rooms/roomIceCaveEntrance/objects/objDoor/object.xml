@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<object>
+	<name>objDoor</name>
+	<displayName>door</displayName>
+	<hotspotX>200</hotspotX>
+	<hotspotY>104</hotspotY>
+	<x>192</x>
+	<y>48</y>
+	<width>24</width>
+	<height>56</height>
+	<actorDir>east</actorDir>
+</object>

@@ -1,27 +1,13 @@
 <?xml version="1.0"?>
 <map>
-	<scale>
-		<s1>0</s1>
-		<y1>0</y1>
-		<s2>0</s2>
-		<y2>0</y2>
-	</scale>
-	<scale>
-		<s1>0</s1>
-		<y1>0</y1>
-		<s2>0</s2>
-		<y2>0</y2>
-	</scale>
-	<scale>
-		<s1>0</s1>
-		<y1>0</y1>
-		<s2>0</s2>
-		<y2>0</y2>
-	</scale>
-	<scale>
-		<s1>0</s1>
-		<y1>0</y1>
-		<s2>0</s2>
-		<y2>0</y2>
-	</scale>
+	<box>
+		<name>box1</name>
+		<ulx>131</ulx><uly>106</uly>
+		<urx>210</urx><ury>106</ury>
+		<lrx>210</lrx><lry>112</lry>
+		<llx>138</llx><lly>126</lly>
+        <mask>1</mask>
+		<flags>0</flags>
+		<scale>32768</scale>
+	</box>
 </map>

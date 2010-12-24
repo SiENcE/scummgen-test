@@ -2,5 +2,7 @@
 <room>
 	<name>roomIceCaveEntrance</name>
 	<background>background</background>
+	<object>objHole</object>
+	<object>objDoor</object>
 	<script>script</script>
 </room>

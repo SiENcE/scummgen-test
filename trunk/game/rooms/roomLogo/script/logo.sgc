@@ -38,6 +38,6 @@ function roomLogo_entry()
 	Room_fade(ROOM_FADE_TRANSITION_IRIS_EFFECT, ROOM_FADE_TRANSITION_IRIS_EFFECT);
 
 	// Load the ice cave room
-	iceCaveEntrance = ICE_CAVE_HOLE_ENTRANCE;
+	iceCaveEntrance = ICE_CAVE_FIRST_ENTRY;
 	Room_load(roomIceCave);
 }

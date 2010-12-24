@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <object>
 	<name>objEntrance</name>
-	<displayName></displayName>
-	<hotspotX>100</hotspotX>
-	<hotspotY>45</hotspotY>
+	<displayName>door</displayName>
+	<hotspotX>96</hotspotX>
+	<hotspotY>48</hotspotY>
 	<x>88</x>
 	<y>8</y>
 	<width>24</width>
